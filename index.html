@@ -76,9 +76,9 @@
         protocolCard.className = 'protocol-card';
         protocolCard.innerHTML = `
           <h4>${protocol.name}</h4>
+          <p style="font-size: 1.1em;"><strong>Source Organization:</strong> ${sourceOrg}</p>
           <p><strong>Category:</strong> ${protocol.category}</p>
           <p><strong>Type:</strong> ${protocol.type}</p>
-          <p><strong>Source Organization:</strong> ${sourceOrg}</p>
           ${protocol.notes ? `<p><strong>Notes:</strong> ${protocol.notes}</p>` : ''}
           <a href="${protocol.url}" target="_blank" rel="noopener">View Protocol</a>
         `;
