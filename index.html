@@ -26,8 +26,11 @@
         </div>
         <div class="hero-search">
           <label for="protocol-search" class="sr-only">Search protocols</label>
-          <input id="protocol-search" type="search" placeholder="Search protocols by keyword" />
-          <div id="search-help">Try terms like "ACL", "rotator cuff", or "return to sport".</div>
+          <div class="search-input-container">
+            <input id="protocol-search" type="search" placeholder="Search protocols by keyword" />
+            <button id="clear-search" onclick="clearSearch()" style="display: none;">✕</button>
+          </div>
+          <div id="search-help">Try terms like "ACL", "rotator cuff", or "return to sport". Press "/" to focus search.</div>
         </div>
       </div>
     </section>
@@ -68,12 +71,16 @@
     const resultsSummary = document.getElementById('results-summary');
     const protocolResults = document.getElementById('protocol-results');
 
+    let currentQuery = '';
+    let currentCategory = '';
+
     function displayProtocols(protocolsToShow) {
       protocolResults.innerHTML = '';
-      protocolsToShow.forEach(protocol => {
+      protocolsToShow.forEach((protocol, index) => {
         const sourceOrg = extractSourceOrganization(protocol.url);
         const protocolCard = document.createElement('div');
         protocolCard.className = 'protocol-card';
+        protocolCard.style.animationDelay = `${index * 0.05}s`;
         protocolCard.innerHTML = `
           <h4 style="text-align: center;">${protocol.name}</h4>
           <p style="font-size: 1.1em;"><strong>Source Organization:</strong> ${sourceOrg}</p>
@@ -84,7 +91,7 @@
         `;
         protocolResults.appendChild(protocolCard);
       });
-      resultsSummary.textContent = `Showing ${protocolsToShow.length} protocols.`;
+      resultsSummary.textContent = `Found ${protocolsToShow.length} protocols${currentQuery ? ` matching "${currentQuery}"` : currentCategory ? ` for ${currentCategory}` : ''}.`;
     }
 
     function extractSourceOrganization(url) {
@@ -171,6 +178,8 @@
       // Add selected class to the clicked card
       element.classList.add('selected');
       // Filter and display protocols
+      currentCategory = category;
+      currentQuery = '';
       const filtered = protocols.filter(protocol => protocol.category === category);
       displayProtocols(filtered);
     }
@@ -178,6 +187,8 @@
     function filterProtocols(query) {
       // Remove selected class when searching
       document.querySelectorAll('.category-card').forEach(card => card.classList.remove('selected'));
+      currentQuery = query;
+      currentCategory = '';
       if (!query) {
         displayProtocols(protocols);
         return;
@@ -199,7 +210,27 @@
     // Search functionality
     searchInput.addEventListener('input', (e) => {
       filterProtocols(e.target.value);
+      toggleClearButton(e.target.value);
     });
+
+    // Keyboard shortcut to focus search
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && e.target.tagName !== 'INPUT') {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    });
+
+    function clearSearch() {
+      searchInput.value = '';
+      filterProtocols('');
+      toggleClearButton('');
+    }
+
+    function toggleClearButton(query) {
+      const clearBtn = document.getElementById('clear-search');
+      clearBtn.style.display = query ? 'block' : 'none';
+    }
   </script>
 </body>
 </html>

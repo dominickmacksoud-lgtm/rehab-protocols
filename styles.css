@@ -87,7 +87,7 @@ img {
   width: 100%;
   border: 1px solid #b8d7d0;
   border-radius: 12px;
-  padding: 1rem 1rem;
+  padding: 1rem 2.5rem 1rem 1rem;
   font-size: 1rem;
   color: #1a3a5c;
 }
@@ -95,6 +95,35 @@ img {
 .hero-search input:focus {
   outline: 2px solid #2a9d8f;
   outline-offset: 2px;
+}
+
+.search-input-container {
+  position: relative;
+}
+
+#clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #4b6574;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+#clear-search:hover {
+  background: rgba(42, 157, 143, 0.1);
+  color: #1a3a5c;
 }
 
 #search-help {
@@ -200,6 +229,18 @@ img {
   justify-content: space-between;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .protocol-card:hover {
