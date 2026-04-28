@@ -38,14 +38,14 @@
         <p>Quick access to focused protocol collections.</p>
       </div>
       <div class="category-grid">
-        <a href="shoulder.html" class="category-card">Shoulder</a>
-        <a href="knee.html" class="category-card">Knee</a>
-        <a href="hip.html" class="category-card">Hip</a>
-        <a href="spine.html" class="category-card">Spine</a>
-        <a href="ankle-foot.html" class="category-card">Ankle/Foot</a>
-        <a href="elbow.html" class="category-card">Elbow</a>
-        <a href="wrist-hand.html" class="category-card">Wrist/Hand</a>
-        <a href="other.html" class="category-card">Other</a>
+        <div class="category-card" onclick="filterByCategory('Shoulder')" style="cursor: pointer;">Shoulder</div>
+        <div class="category-card" onclick="filterByCategory('Knee')" style="cursor: pointer;">Knee</div>
+        <div class="category-card" onclick="filterByCategory('Hip')" style="cursor: pointer;">Hip</div>
+        <div class="category-card" onclick="filterByCategory('Spine')" style="cursor: pointer;">Spine</div>
+        <div class="category-card" onclick="filterByCategory('Ankle/Foot')" style="cursor: pointer;">Ankle/Foot</div>
+        <div class="category-card" onclick="filterByCategory('Elbow')" style="cursor: pointer;">Elbow</div>
+        <div class="category-card" onclick="filterByCategory('Wrist/Hand')" style="cursor: pointer;">Wrist/Hand</div>
+        <div class="category-card" onclick="filterByCategory('Other')" style="cursor: pointer;">Other</div>
       </div>
     </section>
 
@@ -163,6 +163,11 @@
       } catch (e) {
         return 'Unknown';
       }
+    }
+
+    function filterByCategory(category) {
+      const filtered = protocols.filter(protocol => protocol.category === category);
+      displayProtocols(filtered);
     }
 
     function filterProtocols(query) {
