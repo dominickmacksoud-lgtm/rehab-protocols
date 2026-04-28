@@ -149,6 +149,11 @@ img {
   transform: translateY(-2px);
 }
 
+.category-card.selected {
+  background: #2a9d8f;
+  color: white;
+}
+
 .results-summary {
   margin: 0 0 1rem;
   color: #4b6574;
