@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rehab Protocols | Clinical Reference for PTs</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <h1>Rehab Protocols</h1>
+        <p>Clinical reference tools for physical therapists.</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Evidence-informed reference</p>
+          <h2>Find rehab protocols by body region and treatment phase.</h2>
+          <p>Search protocols for postop, nonoperative, and return-to-sport progressions tailored to each body part.</p>
+        </div>
+        <div class="hero-search">
+          <label for="protocol-search" class="sr-only">Search protocols</label>
+          <input id="protocol-search" type="search" placeholder="Search protocols by keyword" />
+          <div id="search-help">Try terms like "ACL", "rotator cuff", or "return to sport".</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-section container">
+      <h3>Search results</h3>
+      <div id="results-summary" class="results-summary">Showing all protocols. Use the search bar to narrow results.</div>
+      <div id="protocol-results" class="protocol-grid"></div>
+    </section>
+
+    <section class="category-section container">
+      <div class="section-heading">
+        <h3>Browse by body part</h3>
+        <p>Quick access to focused protocol collections.</p>
+      </div>
+      <div class="category-grid">
+        <a href="shoulder.html" class="category-card">Shoulder</a>
+        <a href="knee.html" class="category-card">Knee</a>
+        <a href="hip.html" class="category-card">Hip</a>
+        <a href="spine.html" class="category-card">Spine</a>
+        <a href="ankle-foot.html" class="category-card">Ankle/Foot</a>
+        <a href="elbow.html" class="category-card">Elbow</a>
+        <a href="wrist-hand.html" class="category-card">Wrist/Hand</a>
+        <a href="other.html" class="category-card">Other</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>This site is intended for licensed physical therapy professionals. All protocols link to external sources. Always use clinical judgment.</p>
+    </div>
+  </footer>
+
+  <script src="protocols.js"></script>
+</body>
+</html>
