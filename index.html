@@ -63,5 +63,49 @@
   </footer>
 
   <script src="protocols.js"></script>
+  <script>
+    const searchInput = document.getElementById('protocol-search');
+    const resultsSummary = document.getElementById('results-summary');
+    const protocolResults = document.getElementById('protocol-results');
+
+    function displayProtocols(protocolsToShow) {
+      protocolResults.innerHTML = '';
+      protocolsToShow.forEach(protocol => {
+        const protocolCard = document.createElement('div');
+        protocolCard.className = 'protocol-card';
+        protocolCard.innerHTML = `
+          <h4>${protocol.name}</h4>
+          <p><strong>Category:</strong> ${protocol.category}</p>
+          <p><strong>Type:</strong> ${protocol.type}</p>
+          ${protocol.notes ? `<p><strong>Notes:</strong> ${protocol.notes}</p>` : ''}
+          <a href="${protocol.url}" target="_blank" rel="noopener">View Protocol</a>
+        `;
+        protocolResults.appendChild(protocolCard);
+      });
+      resultsSummary.textContent = `Showing ${protocolsToShow.length} protocols.`;
+    }
+
+    function filterProtocols(query) {
+      if (!query) {
+        displayProtocols(protocols);
+        return;
+      }
+      const filtered = protocols.filter(protocol =>
+        protocol.name.toLowerCase().includes(query.toLowerCase()) ||
+        protocol.category.toLowerCase().includes(query.toLowerCase()) ||
+        protocol.type.toLowerCase().includes(query.toLowerCase()) ||
+        (protocol.notes && protocol.notes.toLowerCase().includes(query.toLowerCase()))
+      );
+      displayProtocols(filtered);
+    }
+
+    // Initial display
+    displayProtocols(protocols);
+
+    // Search functionality
+    searchInput.addEventListener('input', (e) => {
+      filterProtocols(e.target.value);
+    });
+  </script>
 </body>
 </html>
