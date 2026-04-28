@@ -80,7 +80,7 @@
           <p><strong>Category:</strong> ${protocol.category}</p>
           <p><strong>Type:</strong> ${protocol.type}</p>
           ${protocol.notes ? `<p><strong>Notes:</strong> ${protocol.notes}</p>` : ''}
-          <a href="${protocol.url}" target="_blank" rel="noopener">View Protocol</a>
+          <div style="text-align: center;"><a href="${protocol.url}" target="_blank" rel="noopener" style="display: inline-block; border: 1px solid #007bff; background-color: #007bff; color: white; padding: 8px 16px; text-decoration: none;">View Protocol</a></div>
         `;
         protocolResults.appendChild(protocolCard);
       });
