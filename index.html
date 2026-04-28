@@ -71,12 +71,14 @@
     function displayProtocols(protocolsToShow) {
       protocolResults.innerHTML = '';
       protocolsToShow.forEach(protocol => {
+        const sourceOrg = extractSourceOrganization(protocol.url);
         const protocolCard = document.createElement('div');
         protocolCard.className = 'protocol-card';
         protocolCard.innerHTML = `
           <h4>${protocol.name}</h4>
           <p><strong>Category:</strong> ${protocol.category}</p>
           <p><strong>Type:</strong> ${protocol.type}</p>
+          <p><strong>Source Organization:</strong> ${sourceOrg}</p>
           ${protocol.notes ? `<p><strong>Notes:</strong> ${protocol.notes}</p>` : ''}
           <a href="${protocol.url}" target="_blank" rel="noopener">View Protocol</a>
         `;
@@ -85,17 +87,97 @@
       resultsSummary.textContent = `Showing ${protocolsToShow.length} protocols.`;
     }
 
+    function extractSourceOrganization(url) {
+      try {
+        const domain = new URL(url).hostname;
+        // Common mappings for known organizations
+        const orgMap = {
+          'medicine.osu.edu': 'Ohio State University',
+          'hrs.osu.edu': 'Ohio State University',
+          'wexnermedical.osu.edu': 'Ohio State University',
+          'www.slu.edu': 'Saint Louis University',
+          'www.massgeneral.org': 'Massachusetts General Hospital',
+          'www.brighamandwomens.org': 'Brigham and Women\'s Hospital',
+          'www.meganwolfmd.com': 'Megan Wolf MD',
+          'orthopedicspecialistsofseattle.com': 'Orthopedic Specialists of Seattle',
+          'iorthomd.com': 'Iowa Orthopedic Medicine',
+          'www.kevinrothmd.com': 'Kevin Roth MD',
+          'tcomn.com': 'The Center for Orthopedic Medicine',
+          'mountainortho.com': 'Mountain Orthopedics',
+          'www.jfasap.com': 'Journal of Foot and Ankle Surgery',
+          'www.sbortho.com': 'Southern Bone and Joint Specialists',
+          'medicine.osu.edu': 'Ohio State University',
+          'medschool.cuanschutz.edu': 'University of Colorado Anschutz',
+          'www.eandbortho.com': 'East and Badillo Orthopedics',
+          'med.virginia.edu': 'University of Virginia',
+          'www.brighamandwomens.org': 'Brigham and Women\'s Hospital',
+          'bpb-us-w2.wpmucdn.com': 'University of Delaware',
+          'www.briancolemd.com': 'Brian Cole MD',
+          'www.parkerorthopedics.com': 'Parker Orthopedics',
+          'www.davidtrofamd.com': 'David Trofa MD',
+          'www.massgeneral.org': 'Massachusetts General Hospital',
+          'www.chop.edu': 'Children\'s Hospital of Philadelphia',
+          'utahorthopedicspineandinjurycenter.com': 'Utah Orthopedic Surgery',
+          'www.slu.edu': 'Saint Louis University',
+          'universityorthopedics.com': 'University Orthopedics',
+          'www.lahey.org': 'Lahey Hospital & Medical Center',
+          'www.massgeneral.org': 'Massachusetts General Hospital',
+          'www.oregonortho.com': 'Oregon Orthopedics',
+          'www.kaplinsportsmed.com': 'Kaplin Sports Medicine',
+          'www.jorgechahlamd.com': 'Jorge Chahla MD',
+          'jacobstirtonmd.com': 'Jacob Stirton MD',
+          'www.orthopedicone.com': 'Orthopedic One',
+          'www.iowaclinic.com': 'Iowa Clinic',
+          'www.grantgarciamd.com': 'Grant Garcia MD',
+          'www.mammothortho.com': 'Mammoth Orthopedic Institute',
+          'www.jonwatsonmd.com': 'Jon Watson MD',
+          'www.drcoyner.com': 'Dr. Coyner',
+          'www.drgshoulder.com': 'Dr. G',
+          'www.denvershouldersurgeon.com': 'Denver Shoulder Surgeon',
+          'www.orthoillinois.com': 'OrthoIllinois',
+          'www.gundersenhealth.org': 'Gundersen Health System',
+          'faculty.washington.edu': 'University of Washington',
+          'hsc.unm.edu': 'University of New Mexico',
+          'www.axisspinecenter.com': 'Axis Spine Center',
+          'wexnermedical.osu.edu': 'Ohio State University',
+          'www.ahsmp.com': 'Australian Health Services Medical Professionals',
+          'www.houstonspinesurgeon.com': 'Houston Spine Surgeon',
+          'landstuhl.tricare.mil': 'Landstuhl Regional Medical Center',
+          'southshoreorthopedics.com': 'South Shore Orthopedics',
+          'www.orthopedicsri.com': 'Orthopedics Rhode Island',
+          'www.stlorthospecialists.com': 'St. Louis Orthopedic Specialists',
+          'www.tricitiesjointsurgeon.com': 'Tri-Cities Joint Surgeon',
+          'salinaregionalorthopedicclinic.com': 'Salina Regional Orthopedic Clinic',
+          'www.drgarrettkerns.com': 'Dr. Garrett Kerns',
+          'www.bogardortho.com': 'Bogard Orthopedics',
+          'www.drmattbyington.com': 'Dr. Matt Byington',
+          'www.lahey.org': 'Lahey Hospital & Medical Center',
+          'www.sanfordhealth.org': 'Sanford Health',
+          'www.ohsu.edu': 'Oregon Health & Science University',
+          'www.iskinstitute.com': 'International Sports Knee Institute',
+          'www.nebraskaortho.com': 'Nebraska Orthopedics',
+          'bostonshoulderinstitute.com': 'Boston Shoulder Institute',
+          'www.cincysportssurgeon.com': 'Cincinnati Sports Surgery'
+        };
+        return orgMap[domain] || domain.replace('www.', '').replace('.com', '').replace('.org', '').replace('.edu', '').replace('.mil', '').replace(/\b\w/g, l => l.toUpperCase());
+      } catch (e) {
+        return 'Unknown';
+      }
+    }
+
     function filterProtocols(query) {
       if (!query) {
         displayProtocols(protocols);
         return;
       }
-      const filtered = protocols.filter(protocol =>
-        protocol.name.toLowerCase().includes(query.toLowerCase()) ||
-        protocol.category.toLowerCase().includes(query.toLowerCase()) ||
-        protocol.type.toLowerCase().includes(query.toLowerCase()) ||
-        (protocol.notes && protocol.notes.toLowerCase().includes(query.toLowerCase()))
-      );
+      const filtered = protocols.filter(protocol => {
+        const sourceOrg = extractSourceOrganization(protocol.url);
+        return protocol.name.toLowerCase().includes(query.toLowerCase()) ||
+               protocol.category.toLowerCase().includes(query.toLowerCase()) ||
+               protocol.type.toLowerCase().includes(query.toLowerCase()) ||
+               sourceOrg.toLowerCase().includes(query.toLowerCase()) ||
+               (protocol.notes && protocol.notes.toLowerCase().includes(query.toLowerCase()));
+      });
       displayProtocols(filtered);
     }
 
