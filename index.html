@@ -30,7 +30,7 @@
             <input id="protocol-search" type="search" placeholder="Search protocols by keyword" />
             <button id="clear-search" onclick="clearSearch()" style="display: none;">✕</button>
           </div>
-          <div id="search-help">Try terms like "ACL", "rotator cuff", or "return to sport". Press "/" to focus search.</div>
+          <div id="search-help">Try "ACL", "rotator cuff", "NWB", or surgeon name. Press "/" to focus.</div>
         </div>
       </div>
     </section>
@@ -41,20 +41,59 @@
         <p>Quick access to focused protocol collections.</p>
       </div>
       <div class="category-grid">
-        <div class="category-card" onclick="filterByCategory('Shoulder', this)" style="cursor: pointer;">Shoulder</div>
-        <div class="category-card" onclick="filterByCategory('Knee', this)" style="cursor: pointer;">Knee</div>
-        <div class="category-card" onclick="filterByCategory('Hip', this)" style="cursor: pointer;">Hip</div>
-        <div class="category-card" onclick="filterByCategory('Spine', this)" style="cursor: pointer;">Spine</div>
-        <div class="category-card" onclick="filterByCategory('Ankle/Foot', this)" style="cursor: pointer;">Ankle/Foot</div>
-        <div class="category-card" onclick="filterByCategory('Elbow', this)" style="cursor: pointer;">Elbow</div>
-        <div class="category-card" onclick="filterByCategory('Wrist/Hand', this)" style="cursor: pointer;">Wrist/Hand</div>
-        <div class="category-card" onclick="filterByCategory('Other', this)" style="cursor: pointer;">Other</div>
+        <div class="category-card" onclick="filterByCategory('Shoulder', this)" style="cursor:pointer;">Shoulder</div>
+        <div class="category-card" onclick="filterByCategory('Knee', this)" style="cursor:pointer;">Knee</div>
+        <div class="category-card" onclick="filterByCategory('Hip', this)" style="cursor:pointer;">Hip</div>
+        <div class="category-card" onclick="filterByCategory('Spine', this)" style="cursor:pointer;">Spine</div>
+        <div class="category-card" onclick="filterByCategory('Ankle/Foot', this)" style="cursor:pointer;">Ankle/Foot</div>
+        <div class="category-card" onclick="filterByCategory('Elbow', this)" style="cursor:pointer;">Elbow</div>
+        <div class="category-card" onclick="filterByCategory('Wrist/Hand', this)" style="cursor:pointer;">Wrist/Hand</div>
+        <div class="category-card" onclick="filterByCategory('Other', this)" style="cursor:pointer;">Other</div>
+      </div>
+    </section>
+
+    <section id="favorites-section" class="quick-section container" style="display:none;">
+      <div class="quick-section-header">
+        <h3>Favorites</h3>
+        <button id="fav-toggle" class="quick-section-toggle" onclick="toggleSectionCollapse('favorites-cards','fav-toggle')">▾</button>
+      </div>
+      <div id="favorites-cards" class="quick-cards"></div>
+    </section>
+
+    <section id="recents-section" class="quick-section container" style="display:none;">
+      <div class="quick-section-header">
+        <h3>Recently Viewed</h3>
+        <button id="recents-toggle" class="quick-section-toggle" onclick="toggleSectionCollapse('recents-cards','recents-toggle')">▾</button>
+      </div>
+      <div id="recents-cards" class="quick-cards"></div>
+    </section>
+
+    <section class="container">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">Type</span>
+          <button class="filter-btn active" data-filter="type" onclick="setTypeFilter('',this)">All</button>
+          <button class="filter-btn" data-filter="type" onclick="setTypeFilter('postop',this)">Post-Op</button>
+          <button class="filter-btn" data-filter="type" onclick="setTypeFilter('nonop',this)">Non-Op</button>
+          <button class="filter-btn" data-filter="type" onclick="setTypeFilter('education',this)">Education</button>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">WB Status</span>
+          <button class="filter-btn active" data-filter="wb" onclick="setWbFilter('',this)">All</button>
+          <button class="filter-btn wb-NWB" data-filter="wb" onclick="setWbFilter('NWB',this)">NWB</button>
+          <button class="filter-btn wb-WBAT" data-filter="wb" onclick="setWbFilter('WBAT',this)">WBAT</button>
+          <button class="filter-btn wb-PWB" data-filter="wb" onclick="setWbFilter('PWB',this)">PWB</button>
+          <button class="filter-btn wb-FWB" data-filter="wb" onclick="setWbFilter('FWB',this)">FWB</button>
+        </div>
+        <div class="view-toggle">
+          <button id="grid-view-btn" class="view-toggle-btn active" onclick="setView('grid')" title="Grid view">⊞</button>
+          <button id="list-view-btn" class="view-toggle-btn" onclick="setView('list')" title="List view">≡</button>
+        </div>
       </div>
     </section>
 
     <section class="results-section container">
-      <h3>Search results</h3>
-      <div id="results-summary" class="results-summary">Showing all protocols. Use the search bar to narrow results.</div>
+      <div id="results-summary" class="results-summary"></div>
       <div id="protocol-results" class="protocol-grid"></div>
     </section>
   </main>
@@ -67,170 +106,253 @@
 
   <script src="protocols.js"></script>
   <script>
-    const searchInput = document.getElementById('protocol-search');
-    const resultsSummary = document.getElementById('results-summary');
-    const protocolResults = document.getElementById('protocol-results');
-
     let currentQuery = '';
     let currentCategory = '';
+    let currentType = '';
+    let currentWb = '';
+    let currentView = 'grid';
 
-    function displayProtocols(protocolsToShow) {
-      protocolResults.innerHTML = '';
-      protocolsToShow.forEach((protocol, index) => {
-        const sourceOrg = extractSourceOrganization(protocol.url);
-        const protocolCard = document.createElement('div');
-        protocolCard.className = 'protocol-card';
-        protocolCard.style.animationDelay = `${index * 0.05}s`;
-        protocolCard.innerHTML = `
-          <h4 style="text-align: center;">${protocol.name}</h4>
-          <p style="font-size: 1.1em;"><strong>Source Organization:</strong> ${sourceOrg}</p>
-          <p><strong>Category:</strong> ${protocol.category}</p>
-          <p><strong>Type:</strong> ${protocol.type}</p>
-          ${protocol.notes ? `<p><strong>Notes:</strong> ${protocol.notes}</p>` : ''}
-          <div style="text-align: center;"><a href="${protocol.url}" target="_blank" rel="noopener" style="display: inline-block; border: 1px solid #007bff; background-color: #007bff; color: white; padding: 8px 16px; text-decoration: none;">View Protocol</a></div>
-        `;
-        protocolResults.appendChild(protocolCard);
-      });
-      resultsSummary.textContent = `Found ${protocolsToShow.length} protocols${currentQuery ? ` matching "${currentQuery}"` : currentCategory ? ` for ${currentCategory}` : ''}.`;
+    const TYPE_LABELS = { postop: 'POST-OP', nonop: 'NON-OP', education: 'EDUCATION', service: 'SERVICE' };
+    const SOURCE_LABELS = { academic: 'Academic', hospital: 'Hospital', surgeon: 'Surgeon', clinic: 'Clinic' };
+
+    // ── localStorage helpers ──────────────────────────────────────────────
+    function getFavorites() {
+      try { return JSON.parse(localStorage.getItem('rp_favorites') || '[]'); } catch { return []; }
+    }
+    function saveFavorites(f) { localStorage.setItem('rp_favorites', JSON.stringify(f)); }
+
+    function getRecents() {
+      try { return JSON.parse(localStorage.getItem('rp_recent') || '[]'); } catch { return []; }
+    }
+    function trackView(idx) {
+      const url = protocols[idx].url;
+      const recent = getRecents().filter(u => u !== url);
+      recent.unshift(url);
+      localStorage.setItem('rp_recent', JSON.stringify(recent.slice(0, 10)));
+      renderRecents();
     }
 
-    function extractSourceOrganization(url) {
-      try {
-        const domain = new URL(url).hostname;
-        // Common mappings for known organizations
-        const orgMap = {
-          'medicine.osu.edu': 'Ohio State University',
-          'hrs.osu.edu': 'Ohio State University',
-          'wexnermedical.osu.edu': 'Ohio State University',
-          'www.slu.edu': 'Saint Louis University',
-          'www.massgeneral.org': 'Massachusetts General Hospital',
-          'www.brighamandwomens.org': 'Brigham and Women\'s Hospital',
-          'www.meganwolfmd.com': 'Megan Wolf MD',
-          'orthopedicspecialistsofseattle.com': 'Orthopedic Specialists of Seattle',
-          'iorthomd.com': 'Iowa Orthopedic Medicine',
-          'www.kevinrothmd.com': 'Kevin Roth MD',
-          'tcomn.com': 'The Center for Orthopedic Medicine',
-          'mountainortho.com': 'Mountain Orthopedics',
-          'www.jfasap.com': 'Journal of Foot and Ankle Surgery',
-          'www.sbortho.com': 'Southern Bone and Joint Specialists',
-          'medicine.osu.edu': 'Ohio State University',
-          'medschool.cuanschutz.edu': 'University of Colorado Anschutz',
-          'www.eandbortho.com': 'East and Badillo Orthopedics',
-          'med.virginia.edu': 'University of Virginia',
-          'www.brighamandwomens.org': 'Brigham and Women\'s Hospital',
-          'bpb-us-w2.wpmucdn.com': 'University of Delaware',
-          'www.briancolemd.com': 'Brian Cole MD',
-          'www.parkerorthopedics.com': 'Parker Orthopedics',
-          'www.davidtrofamd.com': 'David Trofa MD',
-          'www.massgeneral.org': 'Massachusetts General Hospital',
-          'www.chop.edu': 'Children\'s Hospital of Philadelphia',
-          'utahorthopedicspineandinjurycenter.com': 'Utah Orthopedic Surgery',
-          'www.slu.edu': 'Saint Louis University',
-          'universityorthopedics.com': 'University Orthopedics',
-          'www.lahey.org': 'Lahey Hospital & Medical Center',
-          'www.massgeneral.org': 'Massachusetts General Hospital',
-          'www.oregonortho.com': 'Oregon Orthopedics',
-          'www.kaplinsportsmed.com': 'Kaplin Sports Medicine',
-          'www.jorgechahlamd.com': 'Jorge Chahla MD',
-          'jacobstirtonmd.com': 'Jacob Stirton MD',
-          'www.orthopedicone.com': 'Orthopedic One',
-          'www.iowaclinic.com': 'Iowa Clinic',
-          'www.grantgarciamd.com': 'Grant Garcia MD',
-          'www.mammothortho.com': 'Mammoth Orthopedic Institute',
-          'www.jonwatsonmd.com': 'Jon Watson MD',
-          'www.drcoyner.com': 'Dr. Coyner',
-          'www.drgshoulder.com': 'Dr. G',
-          'www.denvershouldersurgeon.com': 'Denver Shoulder Surgeon',
-          'www.orthoillinois.com': 'OrthoIllinois',
-          'www.gundersenhealth.org': 'Gundersen Health System',
-          'faculty.washington.edu': 'University of Washington',
-          'hsc.unm.edu': 'University of New Mexico',
-          'www.axisspinecenter.com': 'Axis Spine Center',
-          'wexnermedical.osu.edu': 'Ohio State University',
-          'www.ahsmp.com': 'Australian Health Services Medical Professionals',
-          'www.houstonspinesurgeon.com': 'Houston Spine Surgeon',
-          'landstuhl.tricare.mil': 'Landstuhl Regional Medical Center',
-          'southshoreorthopedics.com': 'South Shore Orthopedics',
-          'www.orthopedicsri.com': 'Orthopedics Rhode Island',
-          'www.stlorthospecialists.com': 'St. Louis Orthopedic Specialists',
-          'www.tricitiesjointsurgeon.com': 'Tri-Cities Joint Surgeon',
-          'salinaregionalorthopedicclinic.com': 'Salina Regional Orthopedic Clinic',
-          'www.drgarrettkerns.com': 'Dr. Garrett Kerns',
-          'www.bogardortho.com': 'Bogard Orthopedics',
-          'www.drmattbyington.com': 'Dr. Matt Byington',
-          'www.lahey.org': 'Lahey Hospital & Medical Center',
-          'www.sanfordhealth.org': 'Sanford Health',
-          'www.ohsu.edu': 'Oregon Health & Science University',
-          'www.iskinstitute.com': 'International Sports Knee Institute',
-          'www.nebraskaortho.com': 'Nebraska Orthopedics',
-          'bostonshoulderinstitute.com': 'Boston Shoulder Institute',
-          'www.cincysportssurgeon.com': 'Cincinnati Sports Surgery'
-        };
-        return orgMap[domain] || domain.replace('www.', '').replace('.com', '').replace('.org', '').replace('.edu', '').replace('.mil', '').replace(/\b\w/g, l => l.toUpperCase());
-      } catch (e) {
-        return 'Unknown';
+    function isFav(url) { return getFavorites().includes(url); }
+
+    function toggleFavorite(idx) {
+      const url = protocols[idx].url;
+      const favs = getFavorites();
+      saveFavorites(favs.includes(url) ? favs.filter(u => u !== url) : [url, ...favs]);
+      renderAll();
+      renderFavorites();
+    }
+
+    // ── Badge helpers ─────────────────────────────────────────────────────
+    function wbBadge(wbInitial) {
+      if (!wbInitial) return '';
+      return `<span class="badge badge-wb wb-${wbInitial}">${wbInitial}</span>`;
+    }
+
+    function trunc(s, n) {
+      return s && s.length > n ? s.slice(0, n) + '…' : (s || '');
+    }
+
+    // ── Card builders ─────────────────────────────────────────────────────
+    function cardHTML(p, idx, ri) {
+      const tLabel = TYPE_LABELS[p.type] || p.type.toUpperCase();
+      const sLabel = SOURCE_LABELS[p.sourceType] || '';
+      const wb = wbBadge(p.wbInitial);
+      const fmt = p.isPdf
+        ? '<span class="format-badge fmt-pdf">PDF</span>'
+        : '<span class="format-badge fmt-web">WEB</span>';
+      const fav = isFav(p.url);
+      const year = p.publicationDate && p.publicationDate !== 'Not listed' ? p.publicationDate : '';
+
+      return `<div class="protocol-card" style="animation-delay:${ri * 0.04}s">
+        <div class="card-top">
+          <h4>${p.name}</h4>
+          <div class="card-badges">
+            <span class="badge badge-type badge-${p.type}">${tLabel}</span>
+            ${wb}${fmt}
+          </div>
+        </div>
+        <div class="card-source">
+          <strong>${p.sourceOrganization || 'Unknown'}</strong>
+          ${sLabel ? `<span class="source-label src-${p.sourceType}">${sLabel}</span>` : ''}
+          ${year ? `<span class="pub-year">${year}</span>` : ''}
+        </div>
+        ${p.wbStatus ? `<div class="card-detail"><strong>WB:</strong> ${trunc(p.wbStatus, 90)}</div>` : ''}
+        ${p.keyRestrictions ? `<div class="card-detail"><strong>Restrictions:</strong> ${trunc(p.keyRestrictions, 100)}</div>` : ''}
+        ${p.timelinePhases ? `<div class="card-detail"><strong>Timeline:</strong> ${trunc(p.timelinePhases, 80)}</div>` : ''}
+        <div class="card-footer">
+          <button class="fav-btn${fav ? ' is-fav' : ''}" onclick="toggleFavorite(${idx})" title="${fav ? 'Remove from favorites' : 'Save to favorites'}">${fav ? '♥' : '♡'}</button>
+          <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="trackView(${idx})">View Protocol</a>
+        </div>
+      </div>`;
+    }
+
+    function listItemHTML(p, idx) {
+      const tLabel = TYPE_LABELS[p.type] || p.type.toUpperCase();
+      const wb = wbBadge(p.wbInitial);
+      const year = p.publicationDate && p.publicationDate !== 'Not listed' ? ` · ${p.publicationDate}` : '';
+      return `<div class="protocol-list-item">
+        <div class="list-main">
+          <span class="list-name">${p.name}</span>
+          <span class="badge badge-type badge-${p.type}">${tLabel}</span>
+          ${wb}
+        </div>
+        <a href="${p.url}" target="_blank" rel="noopener" class="list-link" onclick="trackView(${idx})">View →</a>
+        <div class="list-meta">
+          <span>${p.sourceOrganization || 'Unknown'}${year}</span>
+          <span>${p.category}</span>
+        </div>
+      </div>`;
+    }
+
+    // ── Filtering ─────────────────────────────────────────────────────────
+    function getFiltered() {
+      return protocols.reduce((acc, p, idx) => {
+        if (currentCategory && p.category !== currentCategory) return acc;
+        if (currentType && p.type !== currentType) return acc;
+        if (currentWb && p.wbInitial !== currentWb) return acc;
+        if (currentQuery) {
+          const q = currentQuery.toLowerCase();
+          const hit =
+            p.name.toLowerCase().includes(q) ||
+            p.category.toLowerCase().includes(q) ||
+            p.type.toLowerCase().includes(q) ||
+            (p.sourceOrganization || '').toLowerCase().includes(q) ||
+            (p.surgeons || '').toLowerCase().includes(q) ||
+            (p.wbStatus || '').toLowerCase().includes(q) ||
+            (p.keyRestrictions || '').toLowerCase().includes(q) ||
+            (p.timelinePhases || '').toLowerCase().includes(q) ||
+            (p.notes || '').toLowerCase().includes(q);
+          if (!hit) return acc;
+        }
+        acc.push({ p, idx });
+        return acc;
+      }, []);
+    }
+
+    // ── Rendering ─────────────────────────────────────────────────────────
+    function displayProtocols(filtered) {
+      const container = document.getElementById('protocol-results');
+      if (currentView === 'list') {
+        container.className = 'protocol-list-view';
+        container.innerHTML = filtered.map(({ p, idx }) => listItemHTML(p, idx)).join('');
+      } else {
+        container.className = 'protocol-grid';
+        container.innerHTML = filtered.map(({ p, idx }, ri) => cardHTML(p, idx, ri)).join('');
+      }
+
+      const parts = [];
+      if (currentQuery) parts.push(`matching "${currentQuery}"`);
+      else if (currentCategory) parts.push(`in ${currentCategory}`);
+      if (currentType) parts.push(TYPE_LABELS[currentType]);
+      if (currentWb) parts.push(currentWb);
+      const ctx = parts.length ? ' — ' + parts.join(', ') : '';
+      document.getElementById('results-summary').textContent =
+        `Found ${filtered.length} protocol${filtered.length !== 1 ? 's' : ''}${ctx}.`;
+    }
+
+    function urlsToCards(urls, maxCount) {
+      return urls
+        .map(url => { const idx = protocols.findIndex(p => p.url === url); return idx >= 0 ? { p: protocols[idx], idx } : null; })
+        .filter(Boolean)
+        .slice(0, maxCount);
+    }
+
+    function renderFavorites() {
+      const section = document.getElementById('favorites-section');
+      const items = urlsToCards(getFavorites(), 20);
+      section.style.display = items.length ? 'block' : 'none';
+      if (items.length) {
+        document.getElementById('favorites-cards').innerHTML = items.map(({ p, idx }, ri) => cardHTML(p, idx, ri)).join('');
       }
     }
 
-    function filterByCategory(category, element) {
-      // Remove selected class from all category cards
-      document.querySelectorAll('.category-card').forEach(card => card.classList.remove('selected'));
-      // Add selected class to the clicked card
-      element.classList.add('selected');
-      // Filter and display protocols
-      currentCategory = category;
+    function renderRecents() {
+      const section = document.getElementById('recents-section');
+      const items = urlsToCards(getRecents(), 5);
+      section.style.display = items.length ? 'block' : 'none';
+      if (items.length) {
+        document.getElementById('recents-cards').innerHTML = items.map(({ p, idx }, ri) => cardHTML(p, idx, ri)).join('');
+      }
+    }
+
+    function renderAll() {
+      displayProtocols(getFiltered());
+      renderRecents();
+    }
+
+    // ── Filter controls ───────────────────────────────────────────────────
+    function filterByCategory(category, el) {
+      const already = currentCategory === category;
+      document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+      currentCategory = already ? '' : category;
+      if (!already) el.classList.add('selected');
       currentQuery = '';
-      const filtered = protocols.filter(protocol => protocol.category === category);
-      displayProtocols(filtered);
+      document.getElementById('protocol-search').value = '';
+      toggleClearBtn('');
+      renderAll();
+    }
+
+    function setTypeFilter(type, btn) {
+      document.querySelectorAll('[data-filter="type"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentType = type;
+      renderAll();
+    }
+
+    function setWbFilter(wb, btn) {
+      document.querySelectorAll('[data-filter="wb"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentWb = wb;
+      renderAll();
+    }
+
+    function setView(view) {
+      currentView = view;
+      document.getElementById('grid-view-btn').classList.toggle('active', view === 'grid');
+      document.getElementById('list-view-btn').classList.toggle('active', view === 'list');
+      renderAll();
     }
 
     function filterProtocols(query) {
-      // Remove selected class when searching
-      document.querySelectorAll('.category-card').forEach(card => card.classList.remove('selected'));
+      document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
       currentQuery = query;
       currentCategory = '';
-      if (!query) {
-        displayProtocols(protocols);
-        return;
-      }
-      const filtered = protocols.filter(protocol => {
-        const sourceOrg = extractSourceOrganization(protocol.url);
-        return protocol.name.toLowerCase().includes(query.toLowerCase()) ||
-               protocol.category.toLowerCase().includes(query.toLowerCase()) ||
-               protocol.type.toLowerCase().includes(query.toLowerCase()) ||
-               sourceOrg.toLowerCase().includes(query.toLowerCase()) ||
-               (protocol.notes && protocol.notes.toLowerCase().includes(query.toLowerCase()));
-      });
-      displayProtocols(filtered);
+      renderAll();
     }
-
-    // Initial display
-    displayProtocols(protocols);
-
-    // Search functionality
-    searchInput.addEventListener('input', (e) => {
-      filterProtocols(e.target.value);
-      toggleClearButton(e.target.value);
-    });
-
-    // Keyboard shortcut to focus search
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '/' && e.target.tagName !== 'INPUT') {
-        e.preventDefault();
-        searchInput.focus();
-      }
-    });
 
     function clearSearch() {
-      searchInput.value = '';
+      document.getElementById('protocol-search').value = '';
       filterProtocols('');
-      toggleClearButton('');
+      toggleClearBtn('');
     }
 
-    function toggleClearButton(query) {
-      const clearBtn = document.getElementById('clear-search');
-      clearBtn.style.display = query ? 'block' : 'none';
+    function toggleClearBtn(q) {
+      document.getElementById('clear-search').style.display = q ? 'block' : 'none';
     }
+
+    function toggleSectionCollapse(cardsId, btnId) {
+      const el = document.getElementById(cardsId);
+      const btn = document.getElementById(btnId);
+      const collapsed = el.style.display === 'none';
+      el.style.display = collapsed ? '' : 'none';
+      btn.textContent = collapsed ? '▾' : '▸';
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────────
+    renderAll();
+    renderFavorites();
+
+    document.getElementById('protocol-search').addEventListener('input', e => {
+      filterProtocols(e.target.value);
+      toggleClearBtn(e.target.value);
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === '/' && e.target.tagName !== 'INPUT') {
+        e.preventDefault();
+        document.getElementById('protocol-search').focus();
+      }
+    });
   </script>
 </body>
 </html>
