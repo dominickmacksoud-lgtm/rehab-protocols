@@ -98,6 +98,14 @@
     </section>
   </main>
 
+  <!-- Protocol detail modal -->
+  <div id="protocol-modal" class="modal-overlay" style="display:none;" onclick="handleModalClick(event)" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeModal()" aria-label="Close">×</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
   <footer class="site-footer">
     <div class="container">
       <p>This site is intended for licensed physical therapy professionals. All protocols link to external sources. Always use clinical judgment.</p>
@@ -163,7 +171,7 @@
       const fav = isFav(p.url);
       const year = p.publicationDate && p.publicationDate !== 'Not listed' ? p.publicationDate : '';
 
-      return `<div class="protocol-card" style="animation-delay:${ri * 0.04}s">
+      return `<div class="protocol-card" style="animation-delay:${ri * 0.04}s" onclick="openModal(${idx})">
         <div class="card-top">
           <h4>${p.name}</h4>
           <div class="card-badges">
@@ -180,8 +188,8 @@
         ${p.keyRestrictions ? `<div class="card-detail"><strong>Restrictions:</strong> ${trunc(p.keyRestrictions, 100)}</div>` : ''}
         ${p.timelinePhases ? `<div class="card-detail"><strong>Timeline:</strong> ${trunc(p.timelinePhases, 80)}</div>` : ''}
         <div class="card-footer">
-          <button class="fav-btn${fav ? ' is-fav' : ''}" onclick="toggleFavorite(${idx})" aria-label="${fav ? 'Remove from favorites' : 'Save to favorites'}">${fav ? '♥' : '♡'}</button>
-          <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="trackView(${idx})">View Protocol</a>
+          <button class="fav-btn${fav ? ' is-fav' : ''}" onclick="event.stopPropagation(); toggleFavorite(${idx})" aria-label="${fav ? 'Remove from favorites' : 'Save to favorites'}">${fav ? '♥' : '♡'}</button>
+          <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="event.stopPropagation(); trackView(${idx})">View Protocol</a>
         </div>
       </div>`;
     }
@@ -190,13 +198,13 @@
       const tLabel = TYPE_LABELS[p.type] || p.type.toUpperCase();
       const wb = wbBadge(p.wbInitial);
       const year = p.publicationDate && p.publicationDate !== 'Not listed' ? ` · ${p.publicationDate}` : '';
-      return `<div class="protocol-list-item">
+      return `<div class="protocol-list-item" onclick="openModal(${idx})">
         <div class="list-main">
           <span class="list-name">${p.name}</span>
           <span class="badge badge-type badge-${p.type}">${tLabel}</span>
           ${wb}
         </div>
-        <a href="${p.url}" target="_blank" rel="noopener" class="list-link" onclick="trackView(${idx})">View →</a>
+        <a href="${p.url}" target="_blank" rel="noopener" class="list-link" onclick="event.stopPropagation(); trackView(${idx})">View →</a>
         <div class="list-meta">
           <span>${p.sourceOrganization || 'Unknown'}${year}</span>
           <span>${p.category}</span>
@@ -349,6 +357,66 @@
       btn.textContent = collapsed ? '▾' : '▸';
     }
 
+    // ── Modal ─────────────────────────────────────────────────────────────
+    function openModal(idx) {
+      const p = protocols[idx];
+      const tLabel = TYPE_LABELS[p.type] || p.type.toUpperCase();
+      const sLabel = SOURCE_LABELS[p.sourceType] || '';
+      const wb = wbBadge(p.wbInitial);
+      const fmt = p.isPdf
+        ? '<span class="format-badge fmt-pdf">PDF</span>'
+        : '<span class="format-badge fmt-web">WEB</span>';
+      const fav = isFav(p.url);
+      const year = p.publicationDate && p.publicationDate !== 'Not listed' ? p.publicationDate : '';
+
+      document.getElementById('modal-body').innerHTML = `
+        <div class="modal-header">
+          <h2 id="modal-title">${p.name}</h2>
+          <div class="card-badges">
+            <span class="badge badge-type badge-${p.type}">${tLabel}</span>
+            ${wb}${fmt}
+          </div>
+        </div>
+        <div class="modal-source">
+          <strong>${p.sourceOrganization || 'Unknown'}</strong>
+          ${sLabel ? `<span class="source-label src-${p.sourceType}">${sLabel}</span>` : ''}
+          ${year ? `<span class="pub-year">${year}</span>` : ''}
+        </div>
+        ${p.surgeons ? `<div class="modal-row"><span class="modal-row-label">Surgeon / Author</span><span>${p.surgeons}</span></div>` : ''}
+        ${p.wbStatus ? `<div class="modal-row"><span class="modal-row-label">WB Status</span><span>${p.wbStatus}</span></div>` : ''}
+        ${p.keyRestrictions ? `<div class="modal-row"><span class="modal-row-label">Key Restrictions</span><span>${p.keyRestrictions}</span></div>` : ''}
+        ${p.timelinePhases ? `<div class="modal-row"><span class="modal-row-label">Timeline / Phases</span><span>${p.timelinePhases}</span></div>` : ''}
+        ${p.notes ? `<div class="modal-row"><span class="modal-row-label">Notes</span><span>${p.notes}</span></div>` : ''}
+        <div class="modal-actions">
+          <button id="modal-fav-btn" class="fav-btn${fav ? ' is-fav' : ''}" onclick="toggleFavoriteFromModal(${idx})" aria-label="${fav ? 'Remove from favorites' : 'Save to favorites'}">
+            ${fav ? '♥' : '♡'} ${fav ? 'Saved' : 'Save'}
+          </button>
+          <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="trackView(${idx})">View Protocol →</a>
+        </div>
+      `;
+
+      document.getElementById('protocol-modal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function toggleFavoriteFromModal(idx) {
+      toggleFavorite(idx);
+      const fav = isFav(protocols[idx].url);
+      const btn = document.getElementById('modal-fav-btn');
+      btn.className = `fav-btn${fav ? ' is-fav' : ''}`;
+      btn.setAttribute('aria-label', fav ? 'Remove from favorites' : 'Save to favorites');
+      btn.innerHTML = `${fav ? '♥' : '♡'} ${fav ? 'Saved' : 'Save'}`;
+    }
+
+    function closeModal() {
+      document.getElementById('protocol-modal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function handleModalClick(e) {
+      if (e.target === document.getElementById('protocol-modal')) closeModal();
+    }
+
     // ── Init ──────────────────────────────────────────────────────────────
     renderAll();
     renderFavorites();
@@ -359,6 +427,7 @@
     });
 
     document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeModal(); return; }
       const searchInput = document.getElementById('protocol-search');
       if (e.key === '/' && e.target.tagName !== 'INPUT' && document.activeElement !== searchInput) {
         e.preventDefault();
