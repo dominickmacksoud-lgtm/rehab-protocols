@@ -16,6 +16,10 @@
     </div>
   </header>
 
+  <div class="clinical-banner">
+    <div class="container"><strong>Clinical Reference Only:</strong> Protocols are cataloged from third-party sources and provided for reference only. Treating clinicians must verify current accuracy and follow the operative report and surgeon's specific instructions.</div>
+  </div>
+
   <main>
     <section class="hero">
       <div class="container hero-grid">
@@ -106,9 +110,32 @@
     </div>
   </div>
 
+  <!-- First-visit disclaimer modal -->
+  <div id="disclaimer-modal" class="disclaimer-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="disclaimer-title">
+    <div class="disclaimer-box">
+      <div class="disclaimer-header">
+        <h2 id="disclaimer-title">For Licensed Healthcare Professionals Only</h2>
+      </div>
+      <div class="disclaimer-body">
+        <p>RehabProtocols.com catalogs rehabilitation protocols sourced from third-party academic medical centers, hospital systems, and orthopedic specialists. This site is intended exclusively for use by <strong>licensed healthcare professionals</strong> — physical therapists, athletic trainers, physician assistants, and surgeons.</p>
+        <p><strong>This site is not intended for patients or the general public.</strong></p>
+        <p>All content is provided for clinical reference and educational purposes only. Protocol summaries may not reflect the most current version of a source document. Nothing on this site constitutes medical advice, and use of this site does not create a clinician-patient relationship.</p>
+        <p>The operative surgeon's postoperative instructions and the original source protocol always take precedence over any summary on this site. Always verify the currency and accuracy of any protocol before clinical application.</p>
+        <a href="/terms-of-use" target="_blank" rel="noopener" class="disclaimer-terms-link">Read full Terms of Use →</a>
+      </div>
+      <div class="disclaimer-footer">
+        <label class="disclaimer-check-label">
+          <input type="checkbox" id="disclaimer-checkbox" />
+          <span>I confirm that I am a licensed healthcare professional and I accept the Terms of Use.</span>
+        </label>
+        <button id="disclaimer-btn" class="disclaimer-btn" disabled onclick="acknowledgeDisclaimer()">Acknowledge &amp; Continue</button>
+      </div>
+    </div>
+  </div>
+
   <footer class="site-footer">
     <div class="container">
-      <p>This site is intended for licensed physical therapy professionals. All protocols link to external sources. Always use clinical judgment.</p>
+      <p>This site is intended for licensed physical therapy professionals. All protocols link to external sources. Always use clinical judgment. <a href="/terms-of-use" class="footer-terms-link">Terms of Use</a></p>
     </div>
   </footer>
 
@@ -434,6 +461,48 @@
         searchInput.focus();
       }
     });
+
+    // ── Disclaimer ────────────────────────────────────────────────────────
+    function hasDisclaimerAck() {
+      return document.cookie.split(';').some(c => c.trim().startsWith('rp_disclaimer_ack=1'));
+    }
+    function setDisclaimerAck() {
+      const d = new Date();
+      d.setFullYear(d.getFullYear() + 1);
+      document.cookie = `rp_disclaimer_ack=1; path=/; SameSite=Lax; expires=${d.toUTCString()}`;
+    }
+    function acknowledgeDisclaimer() {
+      setDisclaimerAck();
+      document.getElementById('disclaimer-modal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    const disclaimerModal = document.getElementById('disclaimer-modal');
+    const disclaimerCheckbox = document.getElementById('disclaimer-checkbox');
+    const disclaimerBtn = document.getElementById('disclaimer-btn');
+
+    disclaimerCheckbox.addEventListener('change', function() {
+      disclaimerBtn.disabled = !this.checked;
+    });
+
+    // Focus trap inside disclaimer modal
+    disclaimerModal.addEventListener('keydown', function(e) {
+      if (e.key !== 'Tab') return;
+      const focusable = Array.from(this.querySelectorAll('a[href], button:not([disabled]), input[type="checkbox"]'));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    });
+
+    if (!hasDisclaimerAck()) {
+      disclaimerModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => disclaimerCheckbox.focus(), 100);
+    }
   </script>
 </body>
 </html>
