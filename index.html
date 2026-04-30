@@ -41,14 +41,14 @@
         <p>Quick access to focused protocol collections.</p>
       </div>
       <div class="category-grid">
-        <div class="category-card" onclick="filterByCategory('Shoulder', this)" style="cursor:pointer;">Shoulder</div>
-        <div class="category-card" onclick="filterByCategory('Knee', this)" style="cursor:pointer;">Knee</div>
-        <div class="category-card" onclick="filterByCategory('Hip', this)" style="cursor:pointer;">Hip</div>
-        <div class="category-card" onclick="filterByCategory('Spine', this)" style="cursor:pointer;">Spine</div>
-        <div class="category-card" onclick="filterByCategory('Ankle/Foot', this)" style="cursor:pointer;">Ankle/Foot</div>
-        <div class="category-card" onclick="filterByCategory('Elbow', this)" style="cursor:pointer;">Elbow</div>
-        <div class="category-card" onclick="filterByCategory('Wrist/Hand', this)" style="cursor:pointer;">Wrist/Hand</div>
-        <div class="category-card" onclick="filterByCategory('Other', this)" style="cursor:pointer;">Other</div>
+        <button class="category-card" onclick="filterByCategory('Shoulder', this)">Shoulder</button>
+        <button class="category-card" onclick="filterByCategory('Knee', this)">Knee</button>
+        <button class="category-card" onclick="filterByCategory('Hip', this)">Hip</button>
+        <button class="category-card" onclick="filterByCategory('Spine', this)">Spine</button>
+        <button class="category-card" onclick="filterByCategory('Ankle/Foot', this)">Ankle/Foot</button>
+        <button class="category-card" onclick="filterByCategory('Elbow', this)">Elbow</button>
+        <button class="category-card" onclick="filterByCategory('Wrist/Hand', this)">Wrist/Hand</button>
+        <button class="category-card" onclick="filterByCategory('Other', this)">Other</button>
       </div>
     </section>
 
@@ -112,7 +112,7 @@
     let currentWb = '';
     let currentView = 'grid';
 
-    const TYPE_LABELS = { postop: 'POST-OP', nonop: 'NON-OP', education: 'EDUCATION', service: 'SERVICE' };
+    const TYPE_LABELS = { postop: 'POST-OP', nonop: 'NON-OP', education: 'EDUCATION' };
     const SOURCE_LABELS = { academic: 'Academic', hospital: 'Hospital', surgeon: 'Surgeon', clinic: 'Clinic' };
 
     // ── localStorage helpers ──────────────────────────────────────────────
@@ -180,7 +180,7 @@
         ${p.keyRestrictions ? `<div class="card-detail"><strong>Restrictions:</strong> ${trunc(p.keyRestrictions, 100)}</div>` : ''}
         ${p.timelinePhases ? `<div class="card-detail"><strong>Timeline:</strong> ${trunc(p.timelinePhases, 80)}</div>` : ''}
         <div class="card-footer">
-          <button class="fav-btn${fav ? ' is-fav' : ''}" onclick="toggleFavorite(${idx})" title="${fav ? 'Remove from favorites' : 'Save to favorites'}">${fav ? '♥' : '♡'}</button>
+          <button class="fav-btn${fav ? ' is-fav' : ''}" onclick="toggleFavorite(${idx})" aria-label="${fav ? 'Remove from favorites' : 'Save to favorites'}">${fav ? '♥' : '♡'}</button>
           <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="trackView(${idx})">View Protocol</a>
         </div>
       </div>`;
@@ -359,9 +359,10 @@
     });
 
     document.addEventListener('keydown', e => {
-      if (e.key === '/' && e.target.tagName !== 'INPUT') {
+      const searchInput = document.getElementById('protocol-search');
+      if (e.key === '/' && e.target.tagName !== 'INPUT' && document.activeElement !== searchInput) {
         e.preventDefault();
-        document.getElementById('protocol-search').focus();
+        searchInput.focus();
       }
     });
   </script>

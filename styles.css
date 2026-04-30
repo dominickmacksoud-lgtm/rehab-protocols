@@ -108,10 +108,15 @@ img { max-width: 100%; }
   display: block;
   padding: 1.5rem;
   border-radius: 18px;
+  border: none;
   text-decoration: none;
   background: #eef7f6;
   color: #1a3a5c;
   font-weight: 600;
+  font-family: inherit;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
   transition: transform 0.2s, background 0.2s;
 }
 .category-card:hover, .category-card:focus-visible {
@@ -141,7 +146,7 @@ img { max-width: 100%; }
 }
 .quick-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
 }
 .removable-card { position: relative; }
@@ -238,7 +243,7 @@ img { max-width: 100%; }
 .protocol-grid {
   display: grid;
   gap: 1.25rem;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
 }
 
 /* ── Protocol card ───────────────────────────────────────────────────────── */
