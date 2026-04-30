@@ -144,6 +144,28 @@ img { max-width: 100%; }
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 }
+.removable-card { position: relative; }
+.remove-recent-btn {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid #e1e8ed;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #4b6574;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  padding: 0;
+  font-family: inherit;
+}
+.remove-recent-btn:hover { background: #e53e3e; color: white; border-color: #e53e3e; }
 
 /* ── Filter bar ──────────────────────────────────────────────────────────── */
 .filter-bar {

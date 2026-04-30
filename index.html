@@ -266,12 +266,23 @@
       }
     }
 
+    function removeFromRecent(idx) {
+      const url = protocols[idx].url;
+      localStorage.setItem('rp_recent', JSON.stringify(getRecents().filter(u => u !== url)));
+      renderRecents();
+    }
+
     function renderRecents() {
       const section = document.getElementById('recents-section');
       const items = urlsToCards(getRecents(), 5);
       section.style.display = items.length ? 'block' : 'none';
       if (items.length) {
-        document.getElementById('recents-cards').innerHTML = items.map(({ p, idx }, ri) => cardHTML(p, idx, ri)).join('');
+        document.getElementById('recents-cards').innerHTML = items.map(({ p, idx }, ri) =>
+          `<div class="removable-card">
+            ${cardHTML(p, idx, ri)}
+            <button class="remove-recent-btn" onclick="removeFromRecent(${idx})" title="Remove from recently viewed">×</button>
+          </div>`
+        ).join('');
       }
     }
 
