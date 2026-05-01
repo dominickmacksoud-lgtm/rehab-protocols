@@ -2,7 +2,7 @@ const protocols = [
   {
     "url": "https://medicine.osu.edu/-/media/files/medicine/departments/sports-medicine/medical-professionals/knee-ankle-and-foot/achilles-repair-protocol-2022updates.pdf",
     "category": "Ankle/Foot",
-    "name": "Achilles Tendon Repair \u2014 Achilles Tendon Repair",
+    "name": "Achilles Tendon Repair",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -66,7 +66,7 @@ const protocols = [
   {
     "url": "https://www.sbortho.com/wp-content/uploads/2023/09/ankle-fx-protocol-nonop-with-pt-2021.pdf",
     "category": "Ankle/Foot",
-    "name": "Ankle Fracture \u2014 Ankle Fracture Non-Operative",
+    "name": "Ankle Fracture \u2014 Non-Operative",
     "type": "nonop",
     "sourceOrganization": "South Bend Orthopaedics",
     "sourceType": "clinic",
@@ -82,7 +82,7 @@ const protocols = [
   {
     "url": "https://www.meganwolfmd.com/pdf/foot-and-ankle/ankle-fracture-non-op-protocol.pdf",
     "category": "Ankle/Foot",
-    "name": "Ankle Fracture \u2014 Ankle Fracture Non-Operative",
+    "name": "Ankle Fracture \u2014 Non-Operative",
     "type": "nonop",
     "sourceOrganization": "Dr. Megan Wolf Sports Medicine",
     "sourceType": "surgeon",
@@ -98,7 +98,7 @@ const protocols = [
   {
     "url": "https://orthopedicspecialistsofseattle.com/healthcare/guidelines/non-operative-treatment-of-an-ankle-fracture/",
     "category": "Ankle/Foot",
-    "name": "Ankle Fracture \u2014 Ankle Fracture Non-Operative",
+    "name": "Ankle Fracture \u2014 Non-Operative",
     "type": "nonop",
     "sourceOrganization": "Orthopedic Specialists of Seattle",
     "sourceType": "clinic",
@@ -114,7 +114,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/mgh/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-ankle-fracture-with-orif.pdf",
     "category": "Ankle/Foot",
-    "name": "Ankle Fracture \u2014 Ankle Fracture ORIF",
+    "name": "Ankle Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -130,7 +130,7 @@ const protocols = [
   {
     "url": "https://iorthomd.com/wp-content/uploads/2024/09/Rehabilitation-Protocol-for-Ankle-Fracture-with-ORIF.pdf",
     "category": "Ankle/Foot",
-    "name": "Ankle Fracture \u2014 Ankle Fracture ORIF",
+    "name": "Ankle Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "iOrtho \u2014 The Orthopedic Institute",
     "sourceType": "clinic",
@@ -146,7 +146,7 @@ const protocols = [
   {
     "url": "https://medschool.cuanschutz.edu/docs/librariesprovider65/foot-ankle/foot-and-ankle-post-op-protocols/ankle-fracture-orif.pdf?sfvrsn=6e1577bb_2",
     "category": "Ankle/Foot",
-    "name": "Ankle Fracture \u2014 Ankle Fracture ORIF",
+    "name": "Ankle Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "University of Colorado Anschutz (CU)",
     "sourceType": "academic",
@@ -162,7 +162,7 @@ const protocols = [
   {
     "url": "https://www.kevinrothmd.com/pdfs/ankle-orif-protocol-2024.pdf",
     "category": "Ankle/Foot",
-    "name": "Ankle Fracture \u2014 Ankle Fracture ORIF",
+    "name": "Ankle Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "Dr. Kevin Roth Orthopedics",
     "sourceType": "surgeon",
@@ -178,7 +178,7 @@ const protocols = [
   {
     "url": "https://tcomn.com/wp-content/uploads/2020/08/Ridley_Ankle-Fracture-ORIF-ADVANCED-Rehab-Protocol_11-2023.pdf",
     "category": "Ankle/Foot",
-    "name": "Ankle Fracture \u2014 Ankle Fracture ORIF (Advanced \u2014 Early WB)",
+    "name": "Ankle Fracture \u2014 ORIF (Advanced \u2014 Early WB)",
     "type": "postop",
     "sourceOrganization": "Twin Cities Orthopedics (TCOMN)",
     "sourceType": "clinic",
@@ -258,7 +258,7 @@ const protocols = [
   {
     "url": "https://medschool.cuanschutz.edu/docs/librariesprovider65/foot-ankle/foot-and-ankle-post-op-protocols/calcaneus-fracture---orif-protocols.pdf?sfvrsn=ad1577bb_2",
     "category": "Ankle/Foot",
-    "name": "Calcaneus Fracture \u2014 Calcaneus Fracture ORIF",
+    "name": "Calcaneus Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "University of Colorado Anschutz (CU)",
     "sourceType": "academic",
@@ -274,7 +274,7 @@ const protocols = [
   {
     "url": "https://www.jfasap.com/abstractArticleContentBrowse/JFASAP/21127/JPJ/fullText",
     "category": "Ankle/Foot",
-    "name": "Calcaneus Fracture \u2014 Calcaneus Fracture \u2014 Non-Operative",
+    "name": "Calcaneus Fracture \u2014 Non-Operative",
     "type": "nonop",
     "sourceOrganization": "Journal of Foot and Ankle Surgery (Asia Pacific)",
     "sourceType": "clinic",
@@ -290,7 +290,7 @@ const protocols = [
   {
     "url": "https://www.sbortho.com/wp-content/uploads/2023/09/calcaneus-fx-protocol-nonop-with-pt-2021.pdf",
     "category": "Ankle/Foot",
-    "name": "Calcaneus Fracture \u2014 Calcaneus Fracture \u2014 Non-Operative",
+    "name": "Calcaneus Fracture \u2014 Non-Operative",
     "type": "nonop",
     "sourceOrganization": "South Bend Orthopaedics",
     "sourceType": "clinic",
@@ -306,7 +306,7 @@ const protocols = [
   {
     "url": "https://www.sbortho.com/wp-content/uploads/2023/09/calcaneus-fx-protocol-op-with-pt-2021.pdf",
     "category": "Ankle/Foot",
-    "name": "Calcaneus Fracture \u2014 Calcaneus Fracture \u2014 Operative (ORIF or Subtalar Fusion)",
+    "name": "Calcaneus Fracture \u2014 Operative (ORIF or Subtalar Fusion)",
     "type": "postop",
     "sourceOrganization": "South Bend Orthopaedics",
     "sourceType": "clinic",
@@ -354,7 +354,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/mgh/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-total-ankle-arthroplasty.pdf",
     "category": "Ankle/Foot",
-    "name": "Total Ankle Arthroplasty \u2014 Total Ankle Arthroplasty",
+    "name": "Total Ankle Arthroplasty",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -370,7 +370,7 @@ const protocols = [
   {
     "url": "https://eandbortho.com/wp-content/uploads/2023/09/ACL-RECONSTRUCTION-WITH-MEDIAL-MENISCUS-REPAIR-PROTOCOL.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction with Medial Meniscus Repair",
+    "name": "ACL Reconstruction \u2014 with Medial Meniscus Repair",
     "type": "postop",
     "sourceOrganization": "E&B Orthopedics",
     "sourceType": "clinic",
@@ -386,7 +386,7 @@ const protocols = [
   {
     "url": "https://med.virginia.edu/orthopaedic-surgery/wp-content/uploads/sites/242/2023/01/ACL-Meniscal-Repair-protocol.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction with Meniscus Repair or Microfracture",
+    "name": "ACL Reconstruction \u2014 with Meniscus Repair or Microfracture",
     "type": "postop",
     "sourceOrganization": "University of Virginia Orthopaedic Surgery",
     "sourceType": "academic",
@@ -402,7 +402,7 @@ const protocols = [
   {
     "url": "https://www.brighamandwomens.org/assets/BWH/patients-and-families/rehabilitation-services/pdfs/acl-protocol.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 All Graft Types",
+    "name": "ACL Reconstruction \u2014 All Graft Types",
     "type": "postop",
     "sourceOrganization": "Brigham and Women's Hospital",
     "sourceType": "hospital",
@@ -418,7 +418,7 @@ const protocols = [
   {
     "url": "https://bpb-us-w2.wpmucdn.com/sites.udel.edu/dist/c/3448/files/2016/01/UDPT-ACL-Rehab-Guideline-REVISED.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 All Graft Types",
+    "name": "ACL Reconstruction \u2014 All Graft Types",
     "type": "postop",
     "sourceOrganization": "University of Delaware Physical Therapy",
     "sourceType": "academic",
@@ -434,7 +434,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/mgh/pdf/orthopaedices/sports-medicine/physical-therapy/rehabilitation-protocol-for-acl.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 Allograft",
+    "name": "ACL Reconstruction \u2014 Allograft",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -450,7 +450,7 @@ const protocols = [
   {
     "url": "https://www.brighamandwomens.org/assets/bwh/patients-and-families/pdfs/knee---acl-allograft-protocol.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 Allograft",
+    "name": "ACL Reconstruction \u2014 Allograft",
     "type": "postop",
     "sourceOrganization": "Brigham and Women's Hospital",
     "sourceType": "hospital",
@@ -466,7 +466,7 @@ const protocols = [
   {
     "url": "https://www.briancolemd.com/wp-content/themes/ypo-theme/pdf/aclallograft2.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 BPTB Allograft/Autograft",
+    "name": "ACL Reconstruction \u2014 BPTB Allograft/Autograft",
     "type": "postop",
     "sourceOrganization": "Dr. Brian Cole",
     "sourceType": "surgeon",
@@ -482,7 +482,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/mgh/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-acl.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 BPTB Autograft",
+    "name": "ACL Reconstruction \u2014 BPTB Autograft",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -498,7 +498,7 @@ const protocols = [
   {
     "url": "https://www.brighamandwomens.org/assets/BWH/patients-and-families/rehabilitation-services/pdfs/knee-acl-patella-tendon-autograft-protocol-bwh.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 BPTB Autograft",
+    "name": "ACL Reconstruction \u2014 BPTB Autograft",
     "type": "postop",
     "sourceOrganization": "Brigham and Women's Hospital",
     "sourceType": "hospital",
@@ -514,7 +514,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/mgh/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-acl.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 Hamstring Autograft",
+    "name": "ACL Reconstruction \u2014 Hamstring Autograft",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -530,7 +530,7 @@ const protocols = [
   {
     "url": "https://www.brighamandwomens.org/assets/bwh/patients-and-families/rehabilitation-services/pdfs/knee-acl-hamstring-tendon-autograft-protocol-bwh.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 Hamstring Autograft",
+    "name": "ACL Reconstruction \u2014 Hamstring Autograft",
     "type": "postop",
     "sourceOrganization": "Brigham and Women's Hospital",
     "sourceType": "hospital",
@@ -546,7 +546,7 @@ const protocols = [
   {
     "url": "https://medicine.osu.edu/-/media/files/medicine/departments/sports-medicine/medical-professionals/knee-ankle-and-foot/acl-reconstruction-hamstrings-autograft_2023.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 Hamstring Autograft",
+    "name": "ACL Reconstruction \u2014 Hamstring Autograft",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -562,7 +562,7 @@ const protocols = [
   {
     "url": "https://med.virginia.edu/orthopaedic-surgery/wp-content/uploads/sites/242/2021/06/ACL-Reconstruction-1.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 Multiple Graft Types",
+    "name": "ACL Reconstruction \u2014 Multiple Graft Types",
     "type": "postop",
     "sourceOrganization": "University of Virginia Orthopaedic Surgery",
     "sourceType": "academic",
@@ -578,7 +578,7 @@ const protocols = [
   {
     "url": "https://hrs.osu.edu/-/media/files/wexnermedical/patient-care/healthcare-services/sports-medicine/education/medical-professionals/knee-ankle-and-foot/acl-quad-tendon-81319.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction \u2014 Quad Tendon Autograft",
+    "name": "ACL Reconstruction \u2014 Quad Tendon Autograft",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -594,7 +594,7 @@ const protocols = [
   {
     "url": "https://www.parkerorthopedics.com/pdfs/mpfl-reconstruction-updated.pdf",
     "category": "Knee",
-    "name": "MPFL Reconstruction \u2014 MPFL Reconstruction",
+    "name": "MPFL Reconstruction",
     "type": "postop",
     "sourceOrganization": "Parker Orthopedics (Dallas, TX)",
     "sourceType": "clinic",
@@ -610,7 +610,7 @@ const protocols = [
   {
     "url": "https://www.davidtrofamd.com/pdf/mpfl-medial-patellofemoral-ligament-reconstruction.pdf",
     "category": "Knee",
-    "name": "MPFL Reconstruction \u2014 MPFL Reconstruction",
+    "name": "MPFL Reconstruction",
     "type": "postop",
     "sourceOrganization": "Dr. David P. Trofa MD / Columbia University Medical Center",
     "sourceType": "academic",
@@ -930,7 +930,7 @@ const protocols = [
   {
     "url": "https://www.cincysportssurgeon.com/pdf/quad-tendon-patellar-tendon-repair-protocol.pdf",
     "category": "Knee",
-    "name": "Quad / Patellar Tendon Repair \u2014 Quad / Patellar Tendon Repair",
+    "name": "Quad / Patellar Tendon Repair",
     "type": "postop",
     "sourceOrganization": "UW Health Sports Medicine (Madison, WI)",
     "sourceType": "hospital",
@@ -1586,7 +1586,7 @@ const protocols = [
   {
     "url": "https://wexnermedical.osu.edu/-/media/files/wexnermedical/patient-care/healthcare-services/neurological-institute/ohio-state-spine-care/cervical-arthroplasty-april-2022-branded.pdf?la=en&hash=58BAAAF8E30EFD0F5DB347A251744827FB4D4F66",
     "category": "Spine",
-    "name": "Cervical Disc Arthroplasty \u2014 Cervical Disc Arthroplasty (CDA / Total Disc Replacement)",
+    "name": "Cervical Disc Arthroplasty \u2014 (CDA / Total Disc Replacement)",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -1618,7 +1618,7 @@ const protocols = [
   {
     "url": "https://www.ahsmp.com/wp-content/uploads/2023/05/CERVICAL-LAMINECTOMY_-POST-OP-REHABILITATION-PROTOCOL-2.pdf",
     "category": "Spine",
-    "name": "Cervical Laminectomy \u2014 Cervical Laminectomy Post-Op",
+    "name": "Cervical Laminectomy \u2014 Post-Op",
     "type": "postop",
     "sourceOrganization": "Advanced Health and Sports Medicine Physiotherapy (AHSMP)",
     "sourceType": "hospital",
@@ -1650,7 +1650,7 @@ const protocols = [
   {
     "url": "https://wexnermedical.osu.edu/-/media/files/wexnermedical/patient-care/healthcare-services/neurological-institute/ohio-state-spine-care/lumbar-laminectomy-april-2022-brandedpdf.pdf",
     "category": "Spine",
-    "name": "Lumbar Laminectomy \u2014 Lumbar Laminectomy / Decompression",
+    "name": "Lumbar Laminectomy \u2014 / Decompression",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -1666,7 +1666,7 @@ const protocols = [
   {
     "url": "https://www.axisspinecenter.com/wp-content/uploads/2022/03/Lumbar-Laminectomy-PT-Protocol.pdf",
     "category": "Spine",
-    "name": "Lumbar Laminectomy \u2014 Lumbar Laminectomy / Decompression",
+    "name": "Lumbar Laminectomy \u2014 / Decompression",
     "type": "postop",
     "sourceOrganization": "Axis Spine Center",
     "sourceType": "clinic",
@@ -1682,7 +1682,7 @@ const protocols = [
   {
     "url": "https://www.ahsmp.com/wp-content/uploads/2023/05/LUMBAR-LAMINECTOMY_-POST-OP-REHABILITATION-PROTOCOL-2.pdf",
     "category": "Spine",
-    "name": "Lumbar Laminectomy \u2014 Lumbar Laminectomy: POST-OP Rehabilitation",
+    "name": "Lumbar Laminectomy \u2014 POST-OP Rehabilitation",
     "type": "postop",
     "sourceOrganization": "Advanced Health and Sports Medicine Physiotherapy (AHSMP)",
     "sourceType": "hospital",
@@ -1714,7 +1714,7 @@ const protocols = [
   {
     "url": "https://wexnermedical.osu.edu/-/media/files/wexnermedical/patient-care/healthcare-services/neurological-institute/ohio-state-spine-care/lumbar-discectomy-april-2022-branded.pdf?hash=64ECD88F436B3ADA6C89FA7D71F7889A652ED766&la=en",
     "category": "Spine",
-    "name": "Lumbar Microdiscectomy \u2014 Lumbar Microdiscectomy / Discectomy",
+    "name": "Lumbar Microdiscectomy \u2014 / Discectomy",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -1730,7 +1730,7 @@ const protocols = [
   {
     "url": "https://www.axisspinecenter.com/wp-content/uploads/2022/03/Lumbar-Microdiscectomy-PT-Protocol.pdf",
     "category": "Spine",
-    "name": "Lumbar Microdiscectomy \u2014 Lumbar Microdiscectomy / Discectomy",
+    "name": "Lumbar Microdiscectomy \u2014 / Discectomy",
     "type": "postop",
     "sourceOrganization": "Axis Spine Center",
     "sourceType": "clinic",
@@ -1810,7 +1810,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/MGH/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-clavicle-ORIF.pdf",
     "category": "Shoulder",
-    "name": "Clavicle Fracture ORIF \u2014 Clavicle Fracture ORIF",
+    "name": "Clavicle Fracture ORIF",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -1826,7 +1826,7 @@ const protocols = [
   {
     "url": "https://www.mammothortho.com/pdf/shoulder-clavicle-fx-orif-protocol.pdf",
     "category": "Shoulder",
-    "name": "Clavicle Fracture ORIF \u2014 Clavicle Fracture ORIF",
+    "name": "Clavicle Fracture ORIF",
     "type": "postop",
     "sourceOrganization": "Mammoth Orthopedic Institute / Sierra Park PT",
     "sourceType": "clinic",
@@ -1842,7 +1842,7 @@ const protocols = [
   {
     "url": "https://www.gundersenhealth.org/sites/default/files/2022-06/Sports-Medicine-Protocol-Clavicle-Fracture-sp-ORIF.pdf",
     "category": "Shoulder",
-    "name": "Clavicle Fracture ORIF \u2014 Clavicle Fracture ORIF",
+    "name": "Clavicle Fracture ORIF",
     "type": "postop",
     "sourceOrganization": "Gundersen Health System (GLSM)",
     "sourceType": "hospital",
@@ -1858,7 +1858,7 @@ const protocols = [
   {
     "url": "https://www.drcoyner.com/pdf/orif-clavicle-fractures.pdf",
     "category": "Shoulder",
-    "name": "Clavicle Fracture ORIF \u2014 Clavicle Fracture ORIF",
+    "name": "Clavicle Fracture ORIF",
     "type": "postop",
     "sourceOrganization": "Dr. Katherine J. Coyner MD / UConn Musculoskeletal Institute",
     "sourceType": "surgeon",
@@ -1874,7 +1874,7 @@ const protocols = [
   {
     "url": "https://www.jonwatsonmd.com/pdfs/pt-protocols/pt-clavicle-orif.pdf",
     "category": "Shoulder",
-    "name": "Clavicle Fracture ORIF \u2014 Clavicle Fracture ORIF",
+    "name": "Clavicle Fracture ORIF",
     "type": "postop",
     "sourceOrganization": "Dr. Jonathan Watson MD",
     "sourceType": "surgeon",
@@ -2050,7 +2050,7 @@ const protocols = [
   {
     "url": "https://www.grantgarciamd.com/non-op-protocols/proximal-humerus-fracture-non-op.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture / Greater Tuberosity Avulsion \u2014 Non-Operative",
+    "name": "Proximal Humerus Fracture \u2014 / Greater Tuberosity Avulsion \u2014 Non-Operative",
     "type": "nonop",
     "sourceOrganization": "Grant Garcia MD Orthopedics (Seattle, WA)",
     "sourceType": "surgeon",
@@ -2066,7 +2066,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/MGH/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-proximal-humeral-fracture-with-ORIF.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture ORIF",
+    "name": "Proximal Humerus Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -2082,7 +2082,7 @@ const protocols = [
   {
     "url": "https://www.mammothortho.com/pdf/proximal-humerus-fracture-orif-crall.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture ORIF",
+    "name": "Proximal Humerus Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "Mammoth Orthopedic Institute / Sierra Park PT",
     "sourceType": "clinic",
@@ -2098,7 +2098,7 @@ const protocols = [
   {
     "url": "https://www.jonwatsonmd.com/pdfs/pt-protocols/pt-proximal-humerus-orif.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture ORIF",
+    "name": "Proximal Humerus Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "Dr. Jonathan Watson MD",
     "sourceType": "surgeon",
@@ -2114,7 +2114,7 @@ const protocols = [
   {
     "url": "https://www.drcoyner.com/pdf/orif-proximal-humerus-fractures-protocol.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture ORIF",
+    "name": "Proximal Humerus Fracture \u2014 ORIF",
     "type": "postop",
     "sourceOrganization": "Dr. Katherine J. Coyner MD / UConn Musculoskeletal Institute",
     "sourceType": "surgeon",
@@ -2130,7 +2130,7 @@ const protocols = [
   {
     "url": "https://www.drgshoulder.com/pdfs/proximal-humerus-fracture-surgical-fixation-orif.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture ORIF (Locking Plate)",
+    "name": "Proximal Humerus Fracture \u2014 ORIF (Locking Plate)",
     "type": "postop",
     "sourceOrganization": "Dr. Grant S. Garrigues MD / drgshoulder.com",
     "sourceType": "surgeon",
@@ -2146,7 +2146,7 @@ const protocols = [
   {
     "url": "https://www.denvershouldersurgeon.com/pdf/non-operative-rehabilitation-proximal-humerus-fracture-protocol.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture \u2014 Non-Operative",
+    "name": "Proximal Humerus Fracture \u2014 Non-Operative",
     "type": "nonop",
     "sourceOrganization": "University of Colorado / Denver Shoulder Surgeon",
     "sourceType": "academic",
@@ -2162,7 +2162,7 @@ const protocols = [
   {
     "url": "https://www.mammothortho.com/pdf/proximal-humerus-fracture-non-operative-crall.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture \u2014 Non-Operative",
+    "name": "Proximal Humerus Fracture \u2014 Non-Operative",
     "type": "nonop",
     "sourceOrganization": "Mammoth Orthopedic Institute / Sierra Park PT",
     "sourceType": "clinic",
@@ -2178,7 +2178,7 @@ const protocols = [
   {
     "url": "https://www.orthoillinois.com/wp-content/uploads/2015/03/Non-Operative-PROXIMAL-HUMERAL-FX.pdf",
     "category": "Shoulder",
-    "name": "Proximal Humerus Fracture \u2014 Proximal Humerus Fracture \u2014 Non-Operative (Non-Displaced)",
+    "name": "Proximal Humerus Fracture \u2014 Non-Operative (Non-Displaced)",
     "type": "nonop",
     "sourceOrganization": "Ortho Illinois / Crystal Lake Orthopaedics",
     "sourceType": "clinic",
@@ -2194,7 +2194,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/mgh/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-reverse-shoulder-arthroplasty.pdf",
     "category": "Shoulder",
-    "name": "Reverse Total Shoulder Arthroplasty \u2014 Reverse Total Shoulder Arthroplasty (rTSA)",
+    "name": "Reverse Total Shoulder Arthroplasty \u2014 (rTSA)",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -2210,7 +2210,7 @@ const protocols = [
   {
     "url": "https://www.brighamandwomens.org/assets/bwh/patients-and-families/rehabilitation-services/pdfs/shoulder-reverse-total-shoulder-arthroplasty-protocol.pdf",
     "category": "Shoulder",
-    "name": "Reverse Total Shoulder Arthroplasty \u2014 Reverse Total Shoulder Arthroplasty (rTSA)",
+    "name": "Reverse Total Shoulder Arthroplasty \u2014 (rTSA)",
     "type": "postop",
     "sourceOrganization": "Brigham and Women's Hospital",
     "sourceType": "hospital",
@@ -2226,7 +2226,7 @@ const protocols = [
   {
     "url": "https://medicine.osu.edu/-/media/files/medicine/departments/sports-medicine/medical-professionals/shoulder-and-elbow/rtsa-2023-ccg-revision.pdf?rev=b6c10cf9738a4241af8c41f35734c258&hash=DFD317475B7C1DF84CBC847926BEB296",
     "category": "Shoulder",
-    "name": "Reverse Total Shoulder Arthroplasty \u2014 Reverse Total Shoulder Arthroplasty (rTSA)",
+    "name": "Reverse Total Shoulder Arthroplasty \u2014 (rTSA)",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -2242,7 +2242,7 @@ const protocols = [
   {
     "url": "https://med.virginia.edu/orthopaedic-surgery/wp-content/uploads/sites/242/2021/06/Reverse-Total-Shoulder-Arthroplasty.pdf",
     "category": "Shoulder",
-    "name": "Reverse Total Shoulder Arthroplasty \u2014 Reverse Total Shoulder Arthroplasty (rTSA)",
+    "name": "Reverse Total Shoulder Arthroplasty \u2014 (rTSA)",
     "type": "postop",
     "sourceOrganization": "University of Virginia Sports Medicine",
     "sourceType": "academic",
@@ -2274,7 +2274,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/mgh/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-rotator-cuff-tear-large-to-massive-tear.pdf",
     "category": "Shoulder",
-    "name": "Rotator Cuff Repair \u2014 Rotator Cuff Repair \u2014 Large to Massive Tears (>3 cm)",
+    "name": "Rotator Cuff Repair \u2014 Large to Massive Tears (>3 cm)",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -2290,7 +2290,7 @@ const protocols = [
   {
     "url": "https://medicine.osu.edu/-/media/files/wexnermedical/patient-care/healthcare-services/sports-medicine/education/medical-professionals/shoulder-and-elbow/rtc_largemassive.pdf?la=en&hash=42D58E12154E363779DC3F28D1C365AA09354EBA",
     "category": "Shoulder",
-    "name": "Rotator Cuff Repair \u2014 Rotator Cuff Repair \u2014 Large to Massive Tears (>3 cm)",
+    "name": "Rotator Cuff Repair \u2014 Large to Massive Tears (>3 cm)",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -2306,7 +2306,7 @@ const protocols = [
   {
     "url": "https://nebraskaortho.com/wp-content/uploads/2023/04/PT-Protocol-Rotator-Cuff-Repair-Type-III-massive.pdf",
     "category": "Shoulder",
-    "name": "Rotator Cuff Repair \u2014 Rotator Cuff Repair \u2014 Massive Tears (>5 cm) / Type III Protocol",
+    "name": "Rotator Cuff Repair \u2014 Massive Tears (>5 cm) / Type III Protocol",
     "type": "postop",
     "sourceOrganization": "Nebraska Orthopaedic Center",
     "sourceType": "clinic",
@@ -2322,7 +2322,7 @@ const protocols = [
   {
     "url": "https://www.gundersenhealth.org/sites/default/files/2022-06/Sports-Medicine-Protocol-Rotator-cuff-repair-smallmedium-comprehensive.pdf",
     "category": "Shoulder",
-    "name": "Rotator Cuff Repair \u2014 Rotator Cuff Repair \u2014 Small to Medium Tears (<1\u20134 cm)",
+    "name": "Rotator Cuff Repair \u2014 Small to Medium Tears (<1\u20134 cm)",
     "type": "postop",
     "sourceOrganization": "Gundersen Health System (GLSM)",
     "sourceType": "hospital",
@@ -2338,7 +2338,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/MGH/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-rotator-cuff-tear-small-to-medium-tear.pdf",
     "category": "Shoulder",
-    "name": "Rotator Cuff Repair \u2014 Rotator Cuff Repair \u2014 Small to Medium Tears (\u22643 cm)",
+    "name": "Rotator Cuff Repair \u2014 Small to Medium Tears (\u22643 cm)",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -2354,7 +2354,7 @@ const protocols = [
   {
     "url": "https://medicine.osu.edu/-/media/files/medicine/departments/sports-medicine/medical-professionals/shoulder-and-elbow/rotator-cuff-repair_small_medium-2020.pdf?la=en&hash=0EE8FEC16AC332FB91E3FBACE1BEA4CBC318D728",
     "category": "Shoulder",
-    "name": "Rotator Cuff Repair \u2014 Rotator Cuff Repair \u2014 Small to Medium Tears (\u22643 cm)",
+    "name": "Rotator Cuff Repair \u2014 Small to Medium Tears (\u22643 cm)",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -2370,7 +2370,7 @@ const protocols = [
   {
     "url": "https://wexnermedical.osu.edu/-/media/files/wexnermedical/patient-care/healthcare-services/sports-medicine/education/medical-professionals/shoulder-and-elbow/totalshoulderarthroplasty.pdf?la=en&hash=ED0F2B267F31E3E578CE73247D4BB9215F07FDF8",
     "category": "Shoulder",
-    "name": "Total Shoulder Arthroplasty \u2014 Total Shoulder Arthroplasty (TSA)",
+    "name": "Total Shoulder Arthroplasty \u2014 (TSA)",
     "type": "postop",
     "sourceOrganization": "Ohio State University Wexner Medical Center",
     "sourceType": "academic",
@@ -2386,7 +2386,7 @@ const protocols = [
   {
     "url": "https://med.virginia.edu/orthopaedic-surgery/wp-content/uploads/sites/242/2021/06/Total-Shoulder-Arthroplasty.pdf",
     "category": "Shoulder",
-    "name": "Total Shoulder Arthroplasty \u2014 Total Shoulder Arthroplasty (TSA)",
+    "name": "Total Shoulder Arthroplasty \u2014 (TSA)",
     "type": "postop",
     "sourceOrganization": "University of Virginia Sports Medicine",
     "sourceType": "academic",
@@ -2402,7 +2402,7 @@ const protocols = [
   {
     "url": "https://bostonshoulderinstitute.com/wp-content/uploads/2020/04/PT-TSA.pdf",
     "category": "Shoulder",
-    "name": "Total Shoulder Arthroplasty \u2014 Total Shoulder Arthroplasty (TSA)",
+    "name": "Total Shoulder Arthroplasty \u2014 (TSA)",
     "type": "postop",
     "sourceOrganization": "Boston Shoulder Institute / Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -2418,7 +2418,7 @@ const protocols = [
   {
     "url": "https://www.massgeneral.org/assets/mgh/pdf/orthopaedics/sports-medicine/physical-therapy/rehabilitation-protocol-for-total-shoulder-arthroplasty-and-hemi.pdf",
     "category": "Shoulder",
-    "name": "Total Shoulder Arthroplasty \u2014 Total Shoulder Arthroplasty (TSA) / Hemiarthroplasty",
+    "name": "Total Shoulder Arthroplasty \u2014 (TSA) / Hemiarthroplasty",
     "type": "postop",
     "sourceOrganization": "Massachusetts General Hospital",
     "sourceType": "hospital",
@@ -2434,7 +2434,7 @@ const protocols = [
   {
     "url": "https://www.brighamandwomens.org/assets/bwh/patients-and-families/rehabilitation-services/pdfs/shoulder-total-shoulder-arthroplasty-protocol.pdf",
     "category": "Shoulder",
-    "name": "Total Shoulder Arthroplasty \u2014 Total Shoulder Arthroplasty (TSA) / Hemiarthroplasty",
+    "name": "Total Shoulder Arthroplasty \u2014 (TSA) / Hemiarthroplasty",
     "type": "postop",
     "sourceOrganization": "Brigham and Women's Hospital",
     "sourceType": "hospital",
@@ -2450,7 +2450,7 @@ const protocols = [
   {
     "url": "https://s43932.pcdn.co/wp-content/uploads/sites/206/2024/12/ACL-BTB.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction (BTB - Bone-Tendon-Bone)",
+    "name": "ACL Reconstruction \u2014 (BTB - Bone-Tendon-Bone)",
     "type": "postop",
     "sourceOrganization": "Mountain Orthopaedics",
     "sourceType": "clinic",
@@ -2466,7 +2466,7 @@ const protocols = [
   {
     "url": "https://s43932.pcdn.co/wp-content/uploads/sites/206/2024/12/ACL-HAMSTRING.pdf",
     "category": "Knee",
-    "name": "ACL Reconstruction \u2014 ACL Reconstruction (Hamstring Graft)",
+    "name": "ACL Reconstruction \u2014 (Hamstring Graft)",
     "type": "postop",
     "sourceOrganization": "Mountain Orthopaedics",
     "sourceType": "clinic",
@@ -2514,7 +2514,7 @@ const protocols = [
   {
     "url": "https://s43932.pcdn.co/wp-content/uploads/sites/206/2025/04/MPFL-RECONSTRUCTION.pdf",
     "category": "Knee",
-    "name": "MPFL Reconstruction \u2014 MPFL Reconstruction",
+    "name": "MPFL Reconstruction",
     "type": "postop",
     "sourceOrganization": "Mountain Orthopaedics",
     "sourceType": "clinic",
@@ -2530,7 +2530,7 @@ const protocols = [
   {
     "url": "https://s43932.pcdn.co/wp-content/uploads/sites/206/2024/12/POSTERIOR-CRUCIATE-LIGAMENT-RECONSTRUCTION-.pdf",
     "category": "Knee",
-    "name": "PCL Reconstruction \u2014 PCL Reconstruction",
+    "name": "PCL Reconstruction",
     "type": "postop",
     "sourceOrganization": "Mountain Orthopaedics",
     "sourceType": "clinic",
@@ -2546,7 +2546,7 @@ const protocols = [
   {
     "url": "https://s43932.pcdn.co/wp-content/uploads/sites/206/2024/12/Posterolateral-Corner-Reconstruction.pdf",
     "category": "Knee",
-    "name": "Posterolateral Corner Reconstruction \u2014 Posterolateral Corner Reconstruction",
+    "name": "Posterolateral Corner Reconstruction",
     "type": "postop",
     "sourceOrganization": "Mountain Orthopaedics",
     "sourceType": "clinic",
@@ -2578,7 +2578,7 @@ const protocols = [
   {
     "url": "https://s43932.pcdn.co/wp-content/uploads/sites/206/2024/12/LATERAL-RENTINACULAR-RELEASE.pdf",
     "category": "Knee",
-    "name": "Lateral Retinacular Release \u2014 Lateral Retinacular Release",
+    "name": "Lateral Retinacular Release",
     "type": "postop",
     "sourceOrganization": "Mountain Orthopaedics",
     "sourceType": "clinic",
@@ -2594,7 +2594,7 @@ const protocols = [
   {
     "url": "https://s43932.pcdn.co/wp-content/uploads/sites/206/2024/12/Posterior-Tibial-Tendon-Reconstruction.pdf",
     "category": "Ankle/Foot",
-    "name": "Posterior Tibial Tendon Reconstruction \u2014 Posterior Tibial Tendon Reconstruction",
+    "name": "Posterior Tibial Tendon Reconstruction",
     "type": "postop",
     "sourceOrganization": "Mountain Orthopaedics",
     "sourceType": "clinic",

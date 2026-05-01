@@ -35,6 +35,16 @@ def normalize(value):
     return (value or '').strip()
 
 
+def dedupe_name(category, surgery_type):
+    """Strip redundant category prefix from surgery_type before combining."""
+    if not surgery_type or not category:
+        return surgery_type
+    if surgery_type.lower().startswith(category.lower()):
+        remainder = surgery_type[len(category):].strip().lstrip('—–- :').strip()
+        return remainder if remainder else None  # None = identical, just show category
+    return surgery_type
+
+
 def extract_wb_initial(wb_text):
     if not wb_text:
         return ''
@@ -70,7 +80,11 @@ for index, record in enumerate(records, start=2):
     category = normalize(record.get('Body Region Display')) or normalize(record.get('Body Region')) or 'Other'
     surgery_category = normalize(record.get('Surgery Category'))
     surgery_type = normalize(record.get('Surgery Type'))
-    name = f"{surgery_category} — {surgery_type}" if surgery_category and surgery_type else surgery_type or surgery_category or 'Untitled Protocol'
+    cleaned_type = dedupe_name(surgery_category, surgery_type)
+    if surgery_category and cleaned_type:
+        name = f"{surgery_category} — {cleaned_type}"
+    else:
+        name = surgery_category or surgery_type or 'Untitled Protocol'
 
     source_org = normalize(record.get('Source Organization'))
     wb_status = normalize(record.get('WB Status'))
