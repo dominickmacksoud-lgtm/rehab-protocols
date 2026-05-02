@@ -22,19 +22,11 @@
 
   <main>
     <section class="hero">
-      <div class="container hero-grid">
+      <div class="container">
         <div class="hero-copy">
           <p class="eyebrow">Evidence-informed reference</p>
           <h2>Find rehab protocols by body region and treatment phase.</h2>
           <p>Search protocols for postop, nonoperative, and return-to-sport progressions tailored to each body part.</p>
-        </div>
-        <div class="hero-search">
-          <label for="protocol-search" class="sr-only">Search protocols</label>
-          <div class="search-input-container">
-            <input id="protocol-search" type="search" placeholder="Search protocols by keyword" />
-            <button id="clear-search" onclick="clearSearch()" style="display: none;">✕</button>
-          </div>
-          <div id="search-help">Try "ACL", "rotator cuff", "NWB", or surgeon name. Press "/" to focus.</div>
         </div>
       </div>
     </section>
@@ -53,6 +45,14 @@
         <button class="category-card" onclick="filterByCategory('Elbow', this)">Elbow</button>
         <button class="category-card" onclick="filterByCategory('Wrist/Hand', this)">Wrist/Hand</button>
         <button class="category-card" onclick="filterByCategory('Other', this)">Other</button>
+      </div>
+      <div class="hero-search" style="margin-top: 1.5rem;">
+        <label for="protocol-search" class="sr-only">Search protocols</label>
+        <div class="search-input-container">
+          <input id="protocol-search" type="search" placeholder="Search protocols by keyword" />
+          <button id="clear-search" onclick="clearSearch()" style="display: none;">✕</button>
+        </div>
+        <div id="search-help">Try "ACL", "rotator cuff", "NWB", or surgeon name. Press "/" to focus.</div>
       </div>
     </section>
 
