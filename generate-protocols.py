@@ -198,5 +198,5 @@ for index, record in enumerate(records, start=2):
         'isPdf': url.lower().endswith('.pdf'),
     })
 
-OUT_PATH.write_text(f'const protocols = {json.dumps(protocols, indent=2)};\n', encoding='utf-8')
+OUT_PATH.write_text(f'const protocols = {json.dumps(protocols, separators=(",", ":"))};\n', encoding='utf-8')
 print(f"  Generated {len(protocols)} protocols -> {OUT_PATH.name}")
