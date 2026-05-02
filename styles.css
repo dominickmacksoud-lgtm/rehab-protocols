@@ -102,9 +102,7 @@ img { max-width: 100%; }
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 .category-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  display: block;
   padding: 1.1rem 1rem;
   border-radius: 16px;
   border: none;
@@ -118,7 +116,6 @@ img { max-width: 100%; }
   cursor: pointer;
   transition: transform 0.2s, background 0.2s;
 }
-.cat-icon { font-size: 1.5rem; line-height: 1; }
 .category-card:hover, .category-card:focus-visible {
   background: #d7f0ea;
   transform: translateY(-2px);
