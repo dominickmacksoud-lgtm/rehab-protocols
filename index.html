@@ -21,32 +21,21 @@
   </div>
 
   <main>
-    <section class="hero">
-      <div class="container">
-        <div class="hero-copy">
-          <p class="eyebrow">Evidence-informed reference</p>
-          <h2>Find rehab protocols by body region and treatment phase.</h2>
-          <p>Search protocols for postop, nonoperative, and return-to-sport progressions tailored to each body part.</p>
-        </div>
-      </div>
-    </section>
-
     <section class="category-section container">
       <div class="section-heading">
         <h3>Browse by body part</h3>
-        <p>Quick access to focused protocol collections.</p>
       </div>
       <div class="category-grid">
-        <button class="category-card" onclick="filterByCategory('Shoulder', this)">Shoulder</button>
-        <button class="category-card" onclick="filterByCategory('Knee', this)">Knee</button>
-        <button class="category-card" onclick="filterByCategory('Hip', this)">Hip</button>
-        <button class="category-card" onclick="filterByCategory('Spine', this)">Spine</button>
-        <button class="category-card" onclick="filterByCategory('Ankle/Foot', this)">Ankle/Foot</button>
-        <button class="category-card" onclick="filterByCategory('Elbow', this)">Elbow</button>
-        <button class="category-card" onclick="filterByCategory('Wrist/Hand', this)">Wrist/Hand</button>
-        <button class="category-card" onclick="filterByCategory('Other', this)">Other</button>
+        <button class="category-card" onclick="filterByCategory('Shoulder', this)"><span class="cat-icon" aria-hidden="true">💪</span><span>Shoulder</span></button>
+        <button class="category-card" onclick="filterByCategory('Knee', this)"><span class="cat-icon" aria-hidden="true">🦵</span><span>Knee</span></button>
+        <button class="category-card" onclick="filterByCategory('Hip', this)"><span class="cat-icon" aria-hidden="true">🏃</span><span>Hip</span></button>
+        <button class="category-card" onclick="filterByCategory('Spine', this)"><span class="cat-icon" aria-hidden="true">🧘</span><span>Spine</span></button>
+        <button class="category-card" onclick="filterByCategory('Ankle/Foot', this)"><span class="cat-icon" aria-hidden="true">🦶</span><span>Ankle/Foot</span></button>
+        <button class="category-card" onclick="filterByCategory('Elbow', this)"><span class="cat-icon" aria-hidden="true">🤜</span><span>Elbow</span></button>
+        <button class="category-card" onclick="filterByCategory('Wrist/Hand', this)"><span class="cat-icon" aria-hidden="true">✋</span><span>Wrist/Hand</span></button>
+        <button class="category-card" onclick="filterByCategory('Other', this)"><span class="cat-icon" aria-hidden="true">➕</span><span>Other</span></button>
       </div>
-      <div class="hero-search" style="margin-top: 1.5rem;">
+      <div class="search-wrapper">
         <label for="protocol-search" class="sr-only">Search protocols</label>
         <div class="search-input-container">
           <input id="protocol-search" type="search" placeholder="Search protocols by keyword" />
@@ -89,18 +78,21 @@
           <button class="filter-btn wb-PWB" data-filter="wb" onclick="setWbFilter('PWB',this)">PWB</button>
           <button class="filter-btn wb-FWB" data-filter="wb" onclick="setWbFilter('FWB',this)">FWB</button>
         </div>
-        <div class="filter-group">
-          <span class="filter-label">Per page</span>
-          <select id="page-size-select" class="page-size-select" onchange="setPageSize(this.value)">
-            <option value="10" selected>10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
-        <div class="view-toggle">
-          <button id="grid-view-btn" class="view-toggle-btn active" onclick="setView('grid')" title="Grid view">⊞</button>
-          <button id="list-view-btn" class="view-toggle-btn" onclick="setView('list')" title="List view">≡</button>
+        <button id="clear-filters-btn" class="clear-filters-btn" style="display:none;" onclick="clearAllFilters()">✕ Clear filters</button>
+        <div class="display-controls">
+          <div class="filter-group">
+            <span class="filter-label">Per page</span>
+            <select id="page-size-select" class="page-size-select" onchange="setPageSize(this.value)">
+              <option value="10" selected>10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+          <div class="view-toggle">
+            <button id="grid-view-btn" class="view-toggle-btn active" onclick="setView('grid')" title="Grid view">⊞</button>
+            <button id="list-view-btn" class="view-toggle-btn" onclick="setView('list')" title="List view">≡</button>
+          </div>
         </div>
       </div>
     </section>
@@ -304,8 +296,8 @@
       if (currentWb) parts.push(currentWb);
       const ctx = parts.length ? ' — ' + parts.join(', ') : '';
       const showing = total === 0 ? '0' : `${start + 1}–${end}`;
-      document.getElementById('results-summary').textContent =
-        `Showing ${showing} of ${total} protocol${total !== 1 ? 's' : ''}${ctx}.`;
+      document.getElementById('results-summary').innerHTML =
+        `Showing ${showing} of <strong>${total}</strong> protocol${total !== 1 ? 's' : ''}${ctx}.`;
 
       renderPagination(totalPages);
     }
@@ -386,6 +378,26 @@
     }
 
     // ── Filter controls ───────────────────────────────────────────────────
+    function updateClearFiltersBtn() {
+      const active = currentCategory || currentType || currentWb || currentQuery;
+      document.getElementById('clear-filters-btn').style.display = active ? 'inline-flex' : 'none';
+    }
+
+    function clearAllFilters() {
+      currentCategory = '';
+      currentType = '';
+      currentWb = '';
+      currentQuery = '';
+      currentPage = 1;
+      document.getElementById('protocol-search').value = '';
+      toggleClearBtn('');
+      document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('[data-filter="type"]').forEach((b, i) => b.classList.toggle('active', i === 0));
+      document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => b.classList.toggle('active', i === 0));
+      updateClearFiltersBtn();
+      renderAll();
+    }
+
     function filterByCategory(category, el) {
       const already = currentCategory === category;
       document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
@@ -395,6 +407,7 @@
       currentPage = 1;
       document.getElementById('protocol-search').value = '';
       toggleClearBtn('');
+      updateClearFiltersBtn();
       renderAll();
     }
 
@@ -403,6 +416,7 @@
       btn.classList.add('active');
       currentType = type;
       currentPage = 1;
+      updateClearFiltersBtn();
       renderAll();
     }
 
@@ -411,6 +425,7 @@
       btn.classList.add('active');
       currentWb = wb;
       currentPage = 1;
+      updateClearFiltersBtn();
       renderAll();
     }
 
@@ -426,6 +441,7 @@
       currentQuery = query;
       currentCategory = '';
       currentPage = 1;
+      updateClearFiltersBtn();
       renderAll();
     }
 
