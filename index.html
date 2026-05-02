@@ -89,6 +89,14 @@
           <button class="filter-btn wb-PWB" data-filter="wb" onclick="setWbFilter('PWB',this)">PWB</button>
           <button class="filter-btn wb-FWB" data-filter="wb" onclick="setWbFilter('FWB',this)">FWB</button>
         </div>
+        <div class="filter-group">
+          <span class="filter-label">Per page</span>
+          <select id="page-size-select" class="page-size-select" onchange="setPageSize(this.value)">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="0">All</option>
+          </select>
+        </div>
         <div class="view-toggle">
           <button id="grid-view-btn" class="view-toggle-btn active" onclick="setView('grid')" title="Grid view">⊞</button>
           <button id="list-view-btn" class="view-toggle-btn" onclick="setView('list')" title="List view">≡</button>
@@ -99,6 +107,7 @@
     <section class="results-section container">
       <div id="results-summary" class="results-summary"></div>
       <div id="protocol-results" class="protocol-grid"></div>
+      <div id="pagination-controls"></div>
     </section>
   </main>
 
@@ -146,6 +155,8 @@
     let currentType = '';
     let currentWb = '';
     let currentView = 'grid';
+    let currentPage = 1;
+    let pageSize = 25;
 
     const TYPE_LABELS = { postop: 'POST-OP', nonop: 'NON-OP', education: 'EDUCATION' };
     const SOURCE_LABELS = { academic: 'Academic', hospital: 'Hospital', surgeon: 'Surgeon', clinic: 'Clinic' };
@@ -267,12 +278,20 @@
     // ── Rendering ─────────────────────────────────────────────────────────
     function displayProtocols(filtered) {
       const container = document.getElementById('protocol-results');
+      const total = filtered.length;
+      const effectiveSize = pageSize === 0 ? total : pageSize;
+      const totalPages = effectiveSize > 0 ? Math.ceil(total / effectiveSize) : 1;
+      if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+      const start = (currentPage - 1) * effectiveSize;
+      const end = pageSize === 0 ? total : Math.min(start + effectiveSize, total);
+      const page = filtered.slice(start, end);
+
       if (currentView === 'list') {
         container.className = 'protocol-list-view';
-        container.innerHTML = filtered.map(({ p, idx }) => listItemHTML(p, idx)).join('');
+        container.innerHTML = page.map(({ p, idx }) => listItemHTML(p, idx)).join('');
       } else {
         container.className = 'protocol-grid';
-        container.innerHTML = filtered.map(({ p, idx }, ri) => cardHTML(p, idx, ri)).join('');
+        container.innerHTML = page.map(({ p, idx }, ri) => cardHTML(p, idx, ri)).join('');
       }
 
       const parts = [];
@@ -281,8 +300,39 @@
       if (currentType) parts.push(TYPE_LABELS[currentType]);
       if (currentWb) parts.push(currentWb);
       const ctx = parts.length ? ' — ' + parts.join(', ') : '';
+      const showing = total === 0 ? '0' : `${start + 1}–${end}`;
       document.getElementById('results-summary').textContent =
-        `Found ${filtered.length} protocol${filtered.length !== 1 ? 's' : ''}${ctx}.`;
+        `Showing ${showing} of ${total} protocol${total !== 1 ? 's' : ''}${ctx}.`;
+
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      const el = document.getElementById('pagination-controls');
+      if (totalPages <= 1) { el.innerHTML = ''; return; }
+      const prev = `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
+      const next = `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
+      let pages = '';
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          pages += `<button class="page-btn${i === currentPage ? ' active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          pages += `<span class="page-ellipsis">…</span>`;
+        }
+      }
+      el.innerHTML = `<div class="pagination">${prev}${pages}${next}</div>`;
+    }
+
+    function goToPage(n) {
+      currentPage = n;
+      displayProtocols(getFiltered());
+      document.querySelector('.results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function setPageSize(val) {
+      pageSize = parseInt(val);
+      currentPage = 1;
+      displayProtocols(getFiltered());
     }
 
     function urlsToCards(urls, maxCount) {
@@ -333,6 +383,7 @@
       currentCategory = already ? '' : category;
       if (!already) el.classList.add('selected');
       currentQuery = '';
+      currentPage = 1;
       document.getElementById('protocol-search').value = '';
       toggleClearBtn('');
       renderAll();
@@ -342,6 +393,7 @@
       document.querySelectorAll('[data-filter="type"]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentType = type;
+      currentPage = 1;
       renderAll();
     }
 
@@ -349,6 +401,7 @@
       document.querySelectorAll('[data-filter="wb"]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentWb = wb;
+      currentPage = 1;
       renderAll();
     }
 
@@ -363,6 +416,7 @@
       document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
       currentQuery = query;
       currentCategory = '';
+      currentPage = 1;
       renderAll();
     }
 
