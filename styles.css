@@ -97,7 +97,7 @@ img { max-width: 100%; }
 .section-heading p  { margin: 0; color: #4b6574; }
 
 /* ── Category section ────────────────────────────────────────────────────── */
-.category-section { padding: 2rem 0 1.5rem; }
+.category-section { padding: 2rem 0 0; }
 
 .category-grid {
   display: grid;
@@ -236,7 +236,7 @@ img { max-width: 100%; }
 .view-toggle-btn.active { background: #1a3a5c; color: white; border-color: #1a3a5c; }
 
 /* ── Results ─────────────────────────────────────────────────────────────── */
-.results-section { padding: 1.25rem 0 2rem; }
+.results-section { padding: 0.75rem 0 2rem; }
 .results-summary { margin: 0 0 1rem; color: #4b6574; font-size: 0.95rem; }
 
 /* ── Protocol grid ───────────────────────────────────────────────────────── */
