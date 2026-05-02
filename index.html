@@ -35,15 +35,19 @@
         <button class="category-card" onclick="filterByCategory('Wrist/Hand', this)">Wrist/Hand</button>
         <button class="category-card" onclick="filterByCategory('Other', this)">Other</button>
       </div>
-      <div class="search-wrapper">
-        <label for="protocol-search" class="sr-only">Search protocols</label>
-        <div class="search-input-container">
-          <input id="protocol-search" type="search" placeholder="Search protocols by keyword" />
-          <button id="clear-search" onclick="clearSearch()" style="display: none;">✕</button>
-        </div>
-        <div id="search-help">Try "ACL", "rotator cuff", "NWB", or surgeon name. Press "/" to focus.</div>
-      </div>
     </section>
+
+    <div class="search-sticky-bar">
+      <div class="container">
+        <div class="search-wrapper">
+          <label for="protocol-search" class="sr-only">Search protocols</label>
+          <div class="search-input-container">
+            <input id="protocol-search" type="search" placeholder='Search protocols — try "ACL", "NWB", or surgeon name. Press "/" to focus.' />
+            <button id="clear-search" onclick="clearSearch()" style="display: none;">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <section id="favorites-section" class="quick-section container" style="display:none;">
       <div class="quick-section-header">
