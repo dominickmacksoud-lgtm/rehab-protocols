@@ -1,15 +1,36 @@
 # Protocols Workflow
 
-This workspace now includes the source-of-truth CSV file and a script to regenerate `protocols.js`.
+This workspace includes the source-of-truth CSV file, a PDF text extractor, and a generator script.
 
 ## Files
 
 - `protocols-import.csv` — master protocol metadata source (source of truth)
+- `extract_pdf_text.py` — downloads PDF URLs and extracts text to `pdf_extracts.txt` for Claude
 - `generate-protocols.py` — Python script that converts the CSV into `protocols.js`
+
+## Adding new protocols (PDF sources)
+
+This is the recommended workflow for adding protocols from PDF links:
+
+1. Paste the PDF URLs into the `URLS` list at the top of `extract_pdf_text.py`.
+2. Run the extractor:
+
+```powershell
+cd C:\Users\iprom\Documents\my-pt-website
+python extract_pdf_text.py
+```
+
+3. Paste the contents of the generated `pdf_extracts.txt` file into Claude.
+4. Claude extracts all 13 fields and writes an append script — no PDF image rendering needed.
+5. Run the append script, then regenerate (see below).
+
+> **Why this matters:** Having Claude fetch and render PDFs as images uses ~4–8× more tokens than
+> processing the same content as plain text. With this approach, 20+ protocols can be added in a
+> single Claude exchange with no batch-size limits.
 
 ## How to regenerate `protocols.js`
 
-1. Update `protocols-import.csv` with new protocol rows.
+1. Update `protocols-import.csv` with new protocol rows (via Claude's append script).
 2. Run the generator:
 
 ```powershell
