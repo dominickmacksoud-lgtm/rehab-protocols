@@ -74,8 +74,8 @@ const guidelines = [
   },
   {
     "condition": "Hamstring Strain Injury in Athletes",
-    "bodyRegion": "other",
-    "bodyRegionDisplay": "Other",
+    "bodyRegion": "hip",
+    "bodyRegionDisplay": "Hip, Knee",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2022",
     "url": "https://www.orthopt.org/uploads/content_files/files/Hamstring_Strain_Injury_in_Athletes_2022.pdf",

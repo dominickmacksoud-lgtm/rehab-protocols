@@ -157,6 +157,12 @@
       return s.length > n ? s.slice(0, n) + '…' : s;
     }
 
+    function regionBadges(displayStr) {
+      return displayStr.split(',').map(s =>
+        `<span class="badge-region">${escHtml(s.trim())}</span>`
+      ).join('');
+    }
+
     /* ── Org filter buttons (built from data) ── */
     function renderOrgButtons() {
       const orgs = [...new Set(guidelines.map(g => g.issuingOrg))].sort();
@@ -177,7 +183,7 @@
           g.issuingOrg.toLowerCase().includes(q) ||
           g.bodyRegionDisplay.toLowerCase().includes(q) ||
           g.keyRecommendations.toLowerCase().includes(q);
-        const matchCat = !currentCategory || g.bodyRegionDisplay === currentCategory;
+        const matchCat = !currentCategory || g.bodyRegionDisplay.split(',').map(s => s.trim()).includes(currentCategory);
         const matchOrg = !currentOrg || g.issuingOrg === currentOrg;
         return matchQuery && matchCat && matchOrg;
       });
@@ -192,7 +198,7 @@
           <div class="card-top">
             <h4>${escHtml(g.condition)}</h4>
             <div class="card-badges">
-              <span class="badge-region">${escHtml(g.bodyRegionDisplay)}</span>
+              ${regionBadges(g.bodyRegionDisplay)}
             </div>
           </div>
           <div class="card-source">
@@ -318,7 +324,7 @@
         <div class="modal-header">
           <h2 id="modal-title">${escHtml(g.condition)}</h2>
           <div class="modal-source">
-            <span class="badge-region">${escHtml(g.bodyRegionDisplay)}</span>
+            ${regionBadges(g.bodyRegionDisplay)}
           </div>
         </div>
         <div class="modal-body" style="margin-top:1rem;">
