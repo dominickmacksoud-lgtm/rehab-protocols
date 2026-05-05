@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:rehabprotocols.com)",
+      "WebFetch(domain:www.orthoassociates.com)",
+      "WebFetch(domain:octanecdn.com)"
+    ]
+  }
+}

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clinical Practice Guidelines — Rehab Protocols</title>
+  <meta name="description" content="Evidence-based clinical practice guidelines from APTA, AAOS, JOSPT, and other professional bodies. Free reference tool for physical therapists." />
+  <link rel="canonical" href="https://rehabprotocols.com/guidelines/" />
+  <meta name="robots" content="index, follow" />
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .site-nav { margin-top: 0.6rem; }
+    .site-nav-link {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.15s;
+    }
+    .site-nav-link:hover { color: #fff; }
+
+    .page-intro {
+      font-size: 1rem;
+      color: #4b6574;
+      margin-top: 0.35rem;
+      line-height: 1.5;
+    }
+
+    .badge-region {
+      background: #e6f4f1;
+      color: #1a5c4a;
+      border: 1px solid #b7dfd9;
+      font-size: 0.71rem;
+      padding: 0.2em 0.65em;
+      border-radius: 999px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: inline-block;
+    }
+
+    .card-rec {
+      font-size: 0.87rem;
+      color: #334e68;
+      line-height: 1.55;
+      margin-top: 0.1rem;
+    }
+
+    .modal-row-rec {
+      font-size: 0.95rem;
+      color: #1a3a5c;
+      line-height: 1.65;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <h1>Rehab Protocols</h1>
+        <p>Clinical reference tools for physical therapists.</p>
+      </div>
+      <nav class="site-nav">
+        <a href="/" class="site-nav-link">← Rehab Protocols</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="clinical-banner">
+    <div class="container"><strong>Clinical Reference Only:</strong> Guidelines are cataloged from third-party professional bodies and provided for reference. Always consult the original source and apply clinical judgment.</div>
+  </div>
+
+  <main>
+
+    <section class="category-section container">
+      <div class="section-heading">
+        <h3>Clinical Practice Guidelines</h3>
+        <p class="page-intro">Evidence-based recommendations from leading professional bodies — APTA, AAOS, JOSPT, and more.</p>
+      </div>
+      <div class="category-grid">
+        <button class="category-card" onclick="filterByCategory('Shoulder', this)">Shoulder</button>
+        <button class="category-card" onclick="filterByCategory('Knee', this)">Knee</button>
+        <button class="category-card" onclick="filterByCategory('Hip', this)">Hip</button>
+        <button class="category-card" onclick="filterByCategory('Spine', this)">Spine</button>
+        <button class="category-card" onclick="filterByCategory('Ankle/Foot', this)">Ankle/Foot</button>
+        <button class="category-card" onclick="filterByCategory('Elbow', this)">Elbow</button>
+        <button class="category-card" onclick="filterByCategory('Wrist/Hand', this)">Wrist/Hand</button>
+        <button class="category-card" onclick="filterByCategory('Other', this)">Other</button>
+      </div>
+    </section>
+
+    <div class="search-sticky-bar">
+      <div class="container">
+        <div class="search-wrapper">
+          <label for="guideline-search" class="sr-only">Search guidelines</label>
+          <div class="search-input-container">
+            <input id="guideline-search" type="search" placeholder='Search guidelines — try "Knee OA", "APTA", or a condition. Press "/" to focus.' />
+            <button id="clear-search" onclick="clearSearch()" style="display: none;">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="filter-section container" style="margin-top: 1.25rem;">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">Organization:</span>
+          <div id="org-filters" class="filter-btns" style="display:inline-flex;flex-wrap:wrap;gap:0.4rem;"></div>
+        </div>
+        <div class="filter-group" style="margin-left:auto;">
+          <select id="page-size-select" onchange="setPageSize(this.value)" aria-label="Results per page">
+            <option value="10">10 / page</option>
+            <option value="25">25 / page</option>
+            <option value="50">50 / page</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-section container" style="margin-top: 1.25rem;">
+      <div class="results-header" style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;">
+        <span id="results-summary" style="color:#4b6574;font-size:0.92rem;"></span>
+        <button id="clear-filters-btn" class="filter-btn" onclick="clearAllFilters()" style="display:none;margin-left:auto;">Clear filters ✕</button>
+      </div>
+      <div id="top-pagination"></div>
+      <div id="guideline-results" class="protocol-grid"></div>
+      <div id="bottom-pagination"></div>
+    </section>
+
+  </main>
+
+  <!-- Guideline detail modal -->
+  <div id="guideline-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" style="display:none;" onclick="handleOverlayClick(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>This site is intended for licensed physical therapy professionals. All guidelines link to external sources. Always use clinical judgment. <a href="/terms-of-use" class="footer-terms-link">Terms of Use</a></p>
+    </div>
+  </footer>
+
+  <script src="../guidelines.js"></script>
+  <script>
+    /* ── State ── */
+    let currentQuery    = '';
+    let currentCategory = '';
+    let currentOrg      = '';
+    let currentPage     = 1;
+    let pageSize        = 10;
+
+    /* ── Helpers ── */
+    function escHtml(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function truncate(s, n) {
+      return s.length > n ? s.slice(0, n) + '…' : s;
+    }
+
+    /* ── Org filter buttons (built from data) ── */
+    function renderOrgButtons() {
+      const orgs = [...new Set(guidelines.map(g => g.issuingOrg))].sort();
+      const container = document.getElementById('org-filters');
+      const allBtn = `<button class="filter-btn active" onclick="setOrgFilter('', this)">All</button>`;
+      const orgBtns = orgs.map(o =>
+        `<button class="filter-btn" onclick="setOrgFilter('${escHtml(o)}', this)">${escHtml(o)}</button>`
+      ).join('');
+      container.innerHTML = allBtn + orgBtns;
+    }
+
+    /* ── Filtering ── */
+    function getFiltered() {
+      const q = currentQuery.toLowerCase();
+      return guidelines.map((g, idx) => ({ g, idx })).filter(({ g }) => {
+        const matchQuery = !q ||
+          g.condition.toLowerCase().includes(q) ||
+          g.issuingOrg.toLowerCase().includes(q) ||
+          g.bodyRegionDisplay.toLowerCase().includes(q) ||
+          g.keyRecommendations.toLowerCase().includes(q);
+        const matchCat = !currentCategory || g.bodyRegionDisplay === currentCategory;
+        const matchOrg = !currentOrg || g.issuingOrg === currentOrg;
+        return matchQuery && matchCat && matchOrg;
+      });
+    }
+
+    /* ── Card rendering ── */
+    function cardHTML(g, animIdx) {
+      const rec = truncate(g.keyRecommendations, 140);
+      const year = g.publicationDate ? ` · ${escHtml(g.publicationDate)}` : '';
+      return `
+        <div class="protocol-card" style="animation-delay:${animIdx * 0.04}s" onclick="openModal(${guidelines.indexOf(g)})">
+          <div class="card-top">
+            <h4>${escHtml(g.condition)}</h4>
+            <div class="card-badges">
+              <span class="badge-region">${escHtml(g.bodyRegionDisplay)}</span>
+            </div>
+          </div>
+          <div class="card-source">
+            <strong>${escHtml(g.issuingOrg)}</strong><span class="pub-year">${year}</span>
+          </div>
+          ${rec ? `<div class="card-detail card-rec"><span>${escHtml(rec)}</span></div>` : ''}
+          <div class="card-footer">
+            <a href="${escHtml(g.url)}" target="_blank" rel="noopener" class="view-btn"
+               onclick="event.stopPropagation()">View Guideline →</a>
+          </div>
+        </div>`;
+    }
+
+    /* ── Display ── */
+    function displayGuidelines(filtered) {
+      const total   = filtered.length;
+      const pages   = Math.max(1, Math.ceil(total / pageSize));
+      currentPage   = Math.min(currentPage, pages);
+      const start   = (currentPage - 1) * pageSize;
+      const visible = filtered.slice(start, start + pageSize);
+
+      // Summary
+      const parts = [];
+      if (currentCategory) parts.push(currentCategory);
+      if (currentOrg) parts.push(currentOrg);
+      const filterDesc = parts.length ? ` — ${parts.join(', ')}` : '';
+      const end = Math.min(start + pageSize, total);
+      document.getElementById('results-summary').textContent =
+        total === 0
+          ? 'No guidelines match your search.'
+          : `Showing ${start + 1}–${end} of ${total} guideline${total !== 1 ? 's' : ''}${filterDesc}`;
+
+      document.getElementById('clear-filters-btn').style.display =
+        (currentQuery || currentCategory || currentOrg) ? '' : 'none';
+
+      // Cards
+      document.getElementById('guideline-results').innerHTML =
+        visible.length === 0
+          ? '<p style="color:#4b6574;padding:2rem 0;">No guidelines found. Try a different search or filter.</p>'
+          : visible.map(({ g }, i) => cardHTML(g, i)).join('');
+
+      renderPagination(pages);
+    }
+
+    /* ── Pagination ── */
+    function renderPagination(totalPages) {
+      const html = totalPages <= 1 ? '' : paginationHTML(totalPages);
+      document.getElementById('top-pagination').innerHTML = html;
+      document.getElementById('bottom-pagination').innerHTML = html;
+      // Re-bind clicks (we render twice so use event delegation via onclick attributes)
+    }
+
+    function paginationHTML(totalPages) {
+      const prev = `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹ Prev</button>`;
+      const next = `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next ›</button>`;
+      const info = `<span class="page-info">Page ${currentPage} of ${totalPages}</span>`;
+      return `<nav class="pagination top-pagination" aria-label="Results pages">${prev}${info}${next}</nav>`;
+    }
+
+    function goToPage(n) {
+      const filtered = getFiltered();
+      const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      currentPage = Math.max(1, Math.min(n, pages));
+      displayGuidelines(filtered);
+      document.querySelector('.results-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ── Filter setters ── */
+    function filterByCategory(cat, btn) {
+      currentCategory = currentCategory === cat ? '' : cat;
+      currentPage = 1;
+      document.querySelectorAll('.category-card').forEach(b => b.classList.remove('selected'));
+      if (currentCategory) btn.classList.add('selected');
+      renderAll();
+    }
+
+    function setOrgFilter(org, btn) {
+      currentOrg = org;
+      currentPage = 1;
+      document.querySelectorAll('#org-filters .filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderAll();
+    }
+
+    function setPageSize(val) {
+      pageSize = parseInt(val, 10);
+      currentPage = 1;
+      renderAll();
+    }
+
+    function clearSearch() {
+      document.getElementById('guideline-search').value = '';
+      currentQuery = '';
+      currentPage = 1;
+      document.getElementById('clear-search').style.display = 'none';
+      renderAll();
+    }
+
+    function clearAllFilters() {
+      currentQuery = '';
+      currentCategory = '';
+      currentOrg = '';
+      currentPage = 1;
+      document.getElementById('guideline-search').value = '';
+      document.getElementById('clear-search').style.display = 'none';
+      document.querySelectorAll('.category-card').forEach(b => b.classList.remove('selected'));
+      document.querySelectorAll('#org-filters .filter-btn').forEach(b => b.classList.remove('active'));
+      const allBtn = document.querySelector('#org-filters .filter-btn');
+      if (allBtn) allBtn.classList.add('active');
+      renderAll();
+    }
+
+    function renderAll() {
+      displayGuidelines(getFiltered());
+    }
+
+    /* ── Modal ── */
+    function openModal(idx) {
+      const g = guidelines[idx];
+      if (!g) return;
+      const content = document.getElementById('modal-content');
+      content.innerHTML = `
+        <div class="modal-header">
+          <h2 id="modal-title">${escHtml(g.condition)}</h2>
+          <div class="modal-source">
+            <span class="badge-region">${escHtml(g.bodyRegionDisplay)}</span>
+          </div>
+        </div>
+        <div class="modal-body" style="margin-top:1rem;">
+          <div class="modal-row">
+            <span class="modal-label">Organization</span>
+            <span>${escHtml(g.issuingOrg)}</span>
+          </div>
+          ${g.publicationDate ? `
+          <div class="modal-row">
+            <span class="modal-label">Published</span>
+            <span>${escHtml(g.publicationDate)}</span>
+          </div>` : ''}
+          ${g.keyRecommendations ? `
+          <div class="modal-row">
+            <span class="modal-label">Key Recommendations</span>
+            <span class="modal-row-rec">${escHtml(g.keyRecommendations)}</span>
+          </div>` : ''}
+          ${g.notes ? `
+          <div class="modal-row">
+            <span class="modal-label">Notes</span>
+            <span>${escHtml(g.notes)}</span>
+          </div>` : ''}
+        </div>
+        <div class="modal-actions" style="margin-top:1.5rem;">
+          <a href="${escHtml(g.url)}" target="_blank" rel="noopener" class="view-btn">View Guideline →</a>
+        </div>`;
+      document.getElementById('guideline-modal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('guideline-modal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('guideline-modal')) closeModal();
+    }
+
+    /* ── Search input ── */
+    document.getElementById('guideline-search').addEventListener('input', function () {
+      currentQuery = this.value.trim();
+      currentPage = 1;
+      document.getElementById('clear-search').style.display = currentQuery ? '' : 'none';
+      renderAll();
+    });
+
+    /* ── Keyboard shortcuts ── */
+    let slashJustFocused = false;
+    document.addEventListener('keydown', function (e) {
+      const search = document.getElementById('guideline-search');
+      if (e.key === 'Escape') { closeModal(); return; }
+      if (e.key === '/' && document.activeElement !== search) {
+        e.preventDefault();
+        slashJustFocused = true;
+        search.focus();
+        return;
+      }
+    });
+    document.getElementById('guideline-search').addEventListener('keydown', function (e) {
+      if (e.key === '/' && slashJustFocused) {
+        e.preventDefault();
+        slashJustFocused = false;
+      } else {
+        slashJustFocused = false;
+      }
+    });
+
+    /* ── Init ── */
+    renderOrgButtons();
+    renderAll();
+  </script>
+</body>
+</html>
