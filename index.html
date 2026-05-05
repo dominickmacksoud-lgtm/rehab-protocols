@@ -542,7 +542,13 @@
     renderAll();
     renderFavorites();
 
+    let slashJustFocused = false;
+
     document.getElementById('protocol-search').addEventListener('input', e => {
+      if (slashJustFocused) {
+        slashJustFocused = false;
+        if (e.target.value === '/') { e.target.value = ''; return; }
+      }
       filterProtocols(e.target.value);
       toggleClearBtn(e.target.value);
     });
@@ -552,6 +558,7 @@
       const searchInput = document.getElementById('protocol-search');
       if (e.key === '/' && e.target.tagName !== 'INPUT' && document.activeElement !== searchInput) {
         e.preventDefault();
+        slashJustFocused = true;
         searchInput.focus();
       }
     });

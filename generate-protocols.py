@@ -124,8 +124,6 @@ def infer_type(record):
     if any(k in surgery_type for k in ['educat', 'patient', 'home']) or \
        any(k in surgery_category for k in ['educat', 'patient', 'home']):
         return 'education'
-    if any(k in surgery_category for k in ['service', 'clinic', 'practice', 'team', 'provider']):
-        return 'service'
     return 'postop'
 
 
