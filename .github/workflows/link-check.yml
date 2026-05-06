@@ -124,11 +124,15 @@ jobs:
       - name: Create or update broken-link issue
         if: steps.report.outputs.has_problems == 'true'
         uses: actions/github-script@v7
+        env:
+          ISSUE_BODY: ${{ steps.report.outputs.issue_body }}
+          ISSUE_NUMBER: ${{ steps.find_issue.outputs.result }}
         with:
           script: |
             const title = `🔗 Broken Protocol Links Detected — ${{ steps.report.outputs.run_date }}`;
-            const body  = `${{ steps.report.outputs.issue_body }}`;
-            const issueNumber = ${{ steps.find_issue.outputs.result || 'null' }};
+            const body  = process.env.ISSUE_BODY;
+            const numStr = process.env.ISSUE_NUMBER;
+            const issueNumber = (numStr && numStr !== 'null') ? parseInt(numStr) : null;
 
             if (issueNumber) {
               await github.rest.issues.update({
