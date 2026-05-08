@@ -36,11 +36,19 @@ Known expected generator warnings: rows 32/34 (MGH ACL BPTB vs Hamstring), rows 
 
 `guidelines-import.csv` → `python generate-guidelines.py` → `guidelines.js`
 
-CSV has 8 columns: Condition, Body Region, Body Region Display, Issuing Organization, Publication Date, Guideline URL, Key Recommendations, Notes
+CSV has 9 columns: Condition, Body Region, Body Region Display, Issuing Organization, Publication Date, Cataloged Date, Guideline URL, Key Recommendations, Notes
 
 After editing the CSV, run `python generate-guidelines.py` and commit both files. Never edit `guidelines.js` manually.
 
 The guidelines page lives at `guidelines/index.html` and references `../styles.css` and `../guidelines.js`.
+
+## Guideline Ingestion
+
+- When given a URL or PDF, use `pdfplumber` via Bash for extraction **first** — do not attempt WebFetch on PDFs.
+- Before adding any guidelines, enumerate every CPG found with its proposed body-region tag and wait for confirmation before editing the CSV.
+- Do not silently filter or exclude guidelines based on assumptions about scope — list all candidates and let the user decide.
+- After CSV additions, show a summary of what was added before committing.
+- Run the generator and verify no unexpected errors before committing.
 
 ## Session Handoff
 

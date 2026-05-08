@@ -8,6 +8,7 @@ const guidelines = [
     "bodyRegionDisplay": "Wrist/Hand",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2026",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/Hand_Pain_CTS_jospt.2026.0301_new.pdf",
     "keyRecommendations": "Use Phalen test, Tinel sign, and carpal compression (Durkan) test for diagnosis; Semmes-Weinstein monofilaments for sensory threshold. Recommend neutral wrist orthosis worn at night for mild-moderate CTS (nonsurgical management or awaiting surgery). Manual therapy to cervical spine and upper extremity may provide short-term pain and function improvement. Avoid iontophoresis/phonophoresis with corticosteroids. Kinesiology taping, therapeutic exercise (orthotic/stretching), and laser therapy may offer short-term benefit for mild-moderate CTS.",
     "notes": "2026 revision of JOSPT CPG; published J Orthop Sports Phys Ther 2026;56(4):CPG1-CPG79. Doi: 10.2519/jospt.2026.0301. From APTA Orthopedics and APTA Hand and Upper Extremity Academies."
@@ -18,6 +19,7 @@ const guidelines = [
     "bodyRegionDisplay": "Hip",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2025",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/koc_et_al_2025_hip_pain_and_mobility_deficits_hip_osteoarthritis_revision_2025%281%29.pdf",
     "keyRecommendations": "Manual therapy (joint mobilization, long-axis hip distraction) strongly recommended for mild-moderate hip OA to increase ROM, decrease pain, and improve function. Individualized exercise program (including aquatic therapy) 1-5x/week for 5-16 weeks strongly recommended. Dry needling to iliopsoas, rectus femoris, TFL, gluteus medius/minimus for short-term pain and function improvements. Patient education on activity modification, exercise, and weight reduction. Functional, gait, and balance training including assistive device instruction. Do not use bracing as first-line treatment.",
     "notes": "2025 revision (third CPG; updates 2009 and 2017 versions). Published J Orthop Sports Phys Ther 2025;55(11):CPG1-CPG31. doi:10.2519/jospt.2025.0301. From APTA Orthopedics and APTA Academy of Sports Physical Therapy. Next review 2030."
@@ -28,6 +30,7 @@ const guidelines = [
     "bodyRegionDisplay": "Ankle/Foot",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2024",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/Achilles_Pain_revision_2024.pdf",
     "keyRecommendations": "Tendon loading exercise (loads as high as tolerated) is first-line treatment to improve function and decrease pain; exercise ≥3x/week at maximum tolerated intensity. Provide patient education/counseling (pain science or pathoanatomic focus) combined with loading exercise — in-person or via telehealth. Advise against complete rest; continue activities within pain tolerance. Manual therapy (mobilization of muscles, joints, connective tissue) for those with mobility deficits. Intramuscular dry needling to calf for muscle pain/stiffness, especially in acute cases. Heel lifts may temporarily reduce dorsiflexion loading. No recommendation for orthoses (contradictory evidence). Elastic or rigid taping may reduce pain or decrease tendon strain. Do not use low-level laser therapy or therapeutic ultrasound alone.",
     "notes": "2024 revision (third CPG; updates 2018 and 2010 versions). Published J Orthop Sports Phys Ther 2024;54(12):CPG1-CPG32. Epub 27 November 2024. doi:10.2519/jospt.2024.0302. From APTA Orthopedics (AOPT). Focused on midportion Achilles tendinopathy only; insertional Achilles tendinopathy excluded. ESWT considered outside PT scope for this update."
@@ -38,6 +41,7 @@ const guidelines = [
     "bodyRegionDisplay": "Wrist/Hand",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2024",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/mehta_et_al_2024_distal_radius_fracture_rehabilitation.pdf",
     "keyRecommendations": "Initiate early therapy (hand/wrist/shoulder AROM + light daily activity) within 3 weeks of surgical repair to improve short- and long-term pain, AROM, grip strength, and function. Begin submaximal progressive strengthening (towel/putty squeezing, light gripping) at 2 weeks post-op or during week 2 of casting for stable uncomplicated fractures. Supervised therapy ≥1x/week + HEP for patients ≥60 years or those with complications/comorbidities. PT/OT should be primary instructors of home exercise programs. Manual therapy (mobilization with movement, accessory mobs, oscillations, sustained stretching) for short-term improvements in pain, AROM, and function. Therapeutic exercise (PROM, AROM, tendon gliding, motor control, progressive resistance including shoulder girdle) timed to fracture stability level. Graded motor imagery as part of multimodal strategy. Edema control (manual lymph drainage, compression, elevation, exercises) for short-term hand swelling. Physical agents (laser, pulsed EM field, warm whirlpool, hot/cold packs) as part of multimodal management. Dynamic/static progressive orthoses for persistent wrist stiffness subgroups. Administer PRWE or DASH/MHQ at initial assessment and follow-up time points.",
     "notes": "Published J Orthop Sports Phys Ther 2024;54(9):CPG1-CPG78. doi:10.2519/jospt.2024.0301. From APTA Orthopedics (AOPT) and Academy of Hand and Upper Extremity Physical Therapy (AHUEPT). Covers both operative and nonoperative DRF management."
@@ -48,6 +52,7 @@ const guidelines = [
     "bodyRegionDisplay": "Ankle/Foot",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2023",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/Heel_Pain_Plantar_Fasciitis_revision_2023_1_.pdf",
     "keyRecommendations": "Manual therapy directed at lower extremity joints and soft tissue to decrease pain and improve function. Plantar fascia-specific and gastrocnemius/soleus stretching for short- and long-term pain and function improvement. Foot taping (rigid or elastic) combined with other PT treatments for short-term pain and function. Night splints (1-3 month program) for those with consistent first-step morning pain. Do not use orthoses as an isolated treatment; may combine with other treatments. Dry needling to MTrPs in gastrocnemius, soleus, and plantar foot muscles for short- and long-term pain reduction and function improvement. Therapeutic exercise including resistance training for foot and ankle musculature. Low-level laser therapy as part of a rehab program for short-term pain reduction. Do not use ultrasound to enhance stretching benefits. Electrotherapeutic modalities (iontophoresis, interferential current) as second-line only; prefer manual therapy, stretching, and orthoses first.",
     "notes": "2023 revision. Published J Orthop Sports Phys Ther 2023;53(12):CPG1-CPG39. doi:10.2519/jospt.2023.0303. From APTA Orthopedics (AOPT) and American Academy of Sports Physical Therapy."
@@ -58,6 +63,7 @@ const guidelines = [
     "bodyRegionDisplay": "Hip",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2023",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/Hip_Pain_and_Movement_Dysfunction_revision_2023.pdf",
     "keyRecommendations": "Multimodal intervention strongly recommended: activity modification combined with hip-specific strengthening (iliopsoas, gluteus medius/maximus, hip IR/ER rotators), trunk musculature, and general lower extremity exercise, plus manual therapy, postural/movement correction, stretching, and balance exercises. Assess hip ROM and strength (IR, ER, flexion, extension, abduction, adduction) at baseline and follow-up. Include functional performance tests (single-leg squat, SEBT, hop distance, single-leg sit-to-stand) at baseline and follow-up. Movement pattern training to optimize lower extremity mechanics during ADLs. Joint mobilization for capsular restrictions; soft tissue mobilization for muscle/fascia restrictions. Neuromuscular re-education for movement coordination impairments. Patient education and counseling for modifying aggravating factors and pain management. Use iHOT, HAGOS, and/or HOS outcome measures at baseline and follow-up. No recommendation for bracing as stand-alone treatment (conflicting evidence).",
     "notes": "2023 revision. Published J Orthop Sports Phys Ther 2023;53(7):CPG1-CPG70. doi:10.2519/jospt.2023.0302. From APTA Orthopedics (AOPT) and American Academy of Sports Physical Therapy. Focuses on nonarthritic hip conditions including FAIS and labral injuries; excludes hip OA."
@@ -68,6 +74,7 @@ const guidelines = [
     "bodyRegionDisplay": "Knee",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2023",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/jospt.2023.0301.pdf",
     "keyRecommendations": "Exercise-based knee injury prevention programs strongly recommended for all athletes; specific programs include 11+, FIFA 11, HarmoKnee, Knäkontroll, PEP, and Sportsmetrics. Programs for women should incorporate multiple components: proximal control, strength, and plyometric exercises. Train multiple times/week with sessions >20 min and total volume >30 min/week. Start in pre-season and continue through regular season; high compliance is essential, especially in women. Implement in all young athletes ages 12-25 in high-risk sports, not only those identified as high-risk by screening. Soccer players (men and women) should use prevention programs. Neuromuscular training in late ACL rehab for secondary prevention. Balance alone is insufficient as the sole program component.",
     "notes": "Published J Orthop Sports Phys Ther 2023;53(1):CPG1-CPG34. doi:10.2519/jospt.2023.0301. From APTA Orthopedics (AOPT) and American Academy of Sports Physical Therapy. Focuses on primary and secondary ACL injury prevention, not post-operative rehabilitation."
@@ -78,6 +85,7 @@ const guidelines = [
     "bodyRegionDisplay": "Hip, Knee",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2022",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/Hamstring_Strain_Injury_in_Athletes_2022.pdf",
     "keyRecommendations": "Diagnose HSI when sudden onset posterior thigh pain is reproduced with hamstring stretch/activation, plus palpation tenderness and loss of function. Quantify knee flexor strength with handheld or isokinetic dynamometer; assess hamstring length by knee extension deficit with hip at 90° flexion. Use hamstring strength, pain level, days to pain-free walking, and tenderness area to estimate return-to-play (RTP) time. Nordic hamstring exercise should be included in prevention programs alongside warm-up, stretching, stability training, and high-speed running. Eccentric training (added to stretching, strengthening, stabilization, and progressive running) to improve RTP time. Progressive agility and trunk stabilization to reduce reinjury rate. Use caution with RTP if eccentric training was not completed. Neural tissue mobilization and therapeutic modalities may be used early for pain and swelling control. Use Functional Assessment Scale for Acute Hamstring Injuries (FASH) for outcome measurement.",
     "notes": "Published J Orthop Sports Phys Ther 2022;52(3):CPG1-CPG44. doi:10.2519/jospt.2022.0301. From APTA Orthopedics (AOPT) and American Academy of Sports Physical Therapy."
@@ -88,6 +96,7 @@ const guidelines = [
     "bodyRegionDisplay": "Elbow",
     "issuingOrg": "APTA Orthopedics",
     "publicationDate": "2022",
+    "catalogedDate": "2026-05-04",
     "url": "https://www.orthopt.org/uploads/content_files/files/lucado_et_al_2022_lateral_elbow_pain_and_muscle_function_impairments.pdf",
     "keyRecommendations": "Use PRTEE and/or DASH for outcome assessment at baseline and follow-up; assess elbow/wrist ROM, pressure pain threshold, and grip strength. Isometric, concentric, and/or eccentric resisted wrist extensor exercises for subacute/chronic lateral elbow tendinopathy (LET). Combine wrist extension strengthening with manual therapy in a multimodal approach. Local elbow joint manipulation/mobilization to reduce pain and increase pain-free grip strength. Dry needling (tendon or trigger point) for pain and functional deficits. Rigid taping for immediate/short-term pain relief and improved pain-free muscle function. Cervical, thoracic, or wrist manipulation/mobilization as adjunct when regional impairments are identified. Soft tissue mobilization and IASTM combined with exercise for chronic LET. Shoulder/scapular stabilizer exercises when impairments are identified. Kinesiology tape as part of a multimodal program. Forearm counterforce or wrist orthosis during activity for immediate pain/strength improvement; no recommendation for intermediate/long-term orthosis use (conflicting evidence).",
     "notes": "Published J Orthop Sports Phys Ther 2022;52(12):CPG1-CPG111. doi:10.2519/jospt.2022.0302. From APTA Orthopedics (AOPT) and Academy of Hand and Upper Extremity Physical Therapy (AHUEPT)."
