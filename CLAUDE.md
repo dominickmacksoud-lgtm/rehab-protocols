@@ -27,9 +27,8 @@ Known expected generator warnings: rows 32/34 (MGH ACL BPTB vs Hamstring), rows 
 ## Protocol Ingestion
 
 - When given a URL or PDF, use `pdfplumber` via Bash for extraction **first** — do not attempt WebFetch on PDFs.
-- Before adding any protocols, enumerate every protocol found with its proposed body-region tag and wait for confirmation before editing the CSV.
-- Do not silently filter or exclude protocols based on assumptions about scope — list all candidates and let the user decide.
-- After bulk CSV additions, show a summary table grouped by body region before committing.
+- Go straight to extraction → CSV append → generate → commit → push. No enumeration or confirmation step needed.
+- Do not silently filter or exclude protocols — add all candidates found in the source.
 - Run the generator and verify no unexpected errors before committing.
 
 ## Guidelines Pipeline
@@ -45,9 +44,8 @@ The guidelines page lives at `guidelines/index.html` and references `../styles.c
 ## Guideline Ingestion
 
 - When given a URL or PDF, use `pdfplumber` via Bash for extraction **first** — do not attempt WebFetch on PDFs.
-- Before adding any guidelines, enumerate every CPG found with its proposed body-region tag and wait for confirmation before editing the CSV.
-- Do not silently filter or exclude guidelines based on assumptions about scope — list all candidates and let the user decide.
-- After CSV additions, show a summary of what was added before committing.
+- Go straight to extraction → CSV append → generate → commit → push. No enumeration or confirmation step needed.
+- Do not silently filter or exclude guidelines — add all candidates found in the source.
 - Run the generator and verify no unexpected errors before committing.
 
 ## Session Handoff
