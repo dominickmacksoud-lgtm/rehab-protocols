@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request a Protocol | Rehab Protocols</title>
+  <meta name="description" content="Request a rehabilitation protocol to be added to RehabProtocols.com. Don't see the protocol you need? Let us know." />
+  <link rel="canonical" href="https://rehabprotocols.com/requests/" />
+  <meta name="robots" content="index, follow" />
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .page-content { max-width: 760px; margin: 0 auto; padding: 3rem 0 4rem; }
+    .page-content h1 { font-size: clamp(1.75rem, 3vw, 2.5rem); margin: 0 0 0.5rem; }
+    .page-content .page-subtitle { color: #4b6574; font-size: 0.95rem; margin: 0 0 2.5rem; line-height: 1.6; }
+    .page-back { display: inline-block; margin-bottom: 1.5rem; color: #2a9d8f; font-weight: 600; text-decoration: none; font-size: 0.9rem; }
+    .page-back:hover { color: #1a3a5c; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: #1a3a5c; margin-bottom: 0.3rem; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid #b8d7d0;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #1a3a5c;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: 2px solid #2a9d8f;
+      outline-offset: 2px;
+      border-color: #2a9d8f;
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-group .optional { color: #4b6574; font-weight: 400; font-size: 0.82rem; margin-left: 0.3rem; }
+
+    .submit-btn {
+      background: #2a9d8f;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 0.7rem 2.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .submit-btn:hover { background: #238276; }
+
+    .success-banner {
+      display: none;
+      background: #e6f4f1;
+      border: 1px solid #b7dfd9;
+      color: #1a5c4a;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    hr { border: none; border-top: 1px solid #e1e8ed; margin: 2rem 0; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <h1>Rehab Protocols</h1>
+        <p>Clinical reference tools for physical therapists.</p>
+      </div>
+      <nav class="site-nav">
+        <a href="/" class="site-nav-link">Rehab Protocols</a>
+        <a href="/guidelines/" class="site-nav-link">Clinical Practice Guidelines</a>
+        <a href="/requests/" class="site-nav-link active">Request a Protocol</a>
+        <a href="/contact/" class="site-nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="clinical-banner">
+    <div class="container"><strong>Clinical Reference Only:</strong> Protocols are cataloged from third-party sources and provided for reference only. Treating clinicians must verify current accuracy and follow the operative report and surgeon's specific instructions.</div>
+  </div>
+
+  <main>
+    <div class="container">
+      <div class="page-content">
+        <a href="/" class="page-back">← Back to Rehab Protocols</a>
+        <h1>Request a Protocol</h1>
+        <p class="page-subtitle">Don't see the protocol you're looking for? Submit a request below and we'll prioritize sourcing it. Requests with a known source are fulfilled fastest.</p>
+
+        <div class="success-banner" id="success-banner">
+          <strong>Request received!</strong> Thanks — we'll work on sourcing this protocol and may reach out if we have questions.
+        </div>
+
+        <form action="https://formspree.io/f/REQUEST_FORM_ID" method="POST">
+          <input type="hidden" name="_next" value="https://rehabprotocols.com/requests/?thanks=1" />
+
+          <div class="form-group">
+            <label for="condition">Condition or Procedure <span style="color:#c0392b;">*</span></label>
+            <input type="text" id="condition" name="condition" required placeholder="e.g. SLAP repair, Achilles tendon rupture, Distal biceps repair" />
+          </div>
+
+          <div class="form-group">
+            <label for="region">Body Region <span style="color:#c0392b;">*</span></label>
+            <select id="region" name="body_region" required>
+              <option value="" disabled selected>Select a body region…</option>
+              <option value="Shoulder">Shoulder</option>
+              <option value="Knee">Knee</option>
+              <option value="Hip">Hip</option>
+              <option value="Spine">Spine</option>
+              <option value="Ankle/Foot">Ankle / Foot</option>
+              <option value="Elbow">Elbow</option>
+              <option value="Wrist/Hand">Wrist / Hand</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="source">Known Source <span class="optional">(optional)</span></label>
+            <input type="text" id="source" name="known_source" placeholder="e.g. Hospital for Special Surgery, Dr. James Andrews" />
+          </div>
+
+          <div class="form-group">
+            <label for="notes">Additional Notes <span class="optional">(optional)</span></label>
+            <textarea id="notes" name="notes" placeholder="Any other context — specific technique, patient population, institution, or a link to the protocol if you have one"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Your Email <span class="optional">(optional — for notification when added)</span></label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="name">Your Name <span class="optional">(optional)</span></label>
+            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name" />
+          </div>
+
+          <button type="submit" class="submit-btn">Submit Request</button>
+        </form>
+
+        <hr />
+        <p style="font-size:0.85rem; color:#4b6574;">All protocol requests are reviewed manually. We prioritize requests with a known source and high clinical utility. There is no guarantee a requested protocol will be added.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>This site is intended for licensed physical therapy professionals. All protocols link to external sources. Always use clinical judgment. <a href="/terms-of-use" class="footer-terms-link">Terms of Use</a></p>
+    </div>
+  </footer>
+
+  <script>
+    if (location.search.includes('thanks=1')) {
+      document.getElementById('success-banner').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

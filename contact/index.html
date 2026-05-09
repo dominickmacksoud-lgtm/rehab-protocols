@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact | Rehab Protocols</title>
+  <meta name="description" content="Contact RehabProtocols.com — questions about the site, content corrections, protocol removal requests, or collaboration inquiries." />
+  <link rel="canonical" href="https://rehabprotocols.com/contact/" />
+  <meta name="robots" content="index, follow" />
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .page-content { max-width: 760px; margin: 0 auto; padding: 3rem 0 4rem; }
+    .page-content h1 { font-size: clamp(1.75rem, 3vw, 2.5rem); margin: 0 0 0.5rem; }
+    .page-content .page-subtitle { color: #4b6574; font-size: 0.95rem; margin: 0 0 2.5rem; line-height: 1.6; }
+    .page-back { display: inline-block; margin-bottom: 1.5rem; color: #2a9d8f; font-weight: 600; text-decoration: none; font-size: 0.9rem; }
+    .page-back:hover { color: #1a3a5c; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: #1a3a5c; margin-bottom: 0.3rem; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid #b8d7d0;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #1a3a5c;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: 2px solid #2a9d8f;
+      outline-offset: 2px;
+      border-color: #2a9d8f;
+    }
+    .form-group textarea { resize: vertical; min-height: 130px; }
+    .form-group .optional { color: #4b6574; font-weight: 400; font-size: 0.82rem; margin-left: 0.3rem; }
+
+    .submit-btn {
+      background: #2a9d8f;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 0.7rem 2.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .submit-btn:hover { background: #238276; }
+
+    .success-banner {
+      display: none;
+      background: #e6f4f1;
+      border: 1px solid #b7dfd9;
+      color: #1a5c4a;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    hr { border: none; border-top: 1px solid #e1e8ed; margin: 2rem 0; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <h1>Rehab Protocols</h1>
+        <p>Clinical reference tools for physical therapists.</p>
+      </div>
+      <nav class="site-nav">
+        <a href="/" class="site-nav-link">Rehab Protocols</a>
+        <a href="/guidelines/" class="site-nav-link">Clinical Practice Guidelines</a>
+        <a href="/requests/" class="site-nav-link">Request a Protocol</a>
+        <a href="/contact/" class="site-nav-link active">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="clinical-banner">
+    <div class="container"><strong>Clinical Reference Only:</strong> Protocols are cataloged from third-party sources and provided for reference only. Treating clinicians must verify current accuracy and follow the operative report and surgeon's specific instructions.</div>
+  </div>
+
+  <main>
+    <div class="container">
+      <div class="page-content">
+        <a href="/" class="page-back">← Back to Rehab Protocols</a>
+        <h1>Contact</h1>
+        <p class="page-subtitle">Questions about the site, content corrections, protocol removal requests, or collaboration inquiries — use the form below.</p>
+
+        <div class="success-banner" id="success-banner">
+          <strong>Message sent!</strong> Thanks for reaching out. We'll get back to you as soon as possible.
+        </div>
+
+        <form action="https://formspree.io/f/CONTACT_FORM_ID" method="POST">
+          <input type="hidden" name="_next" value="https://rehabprotocols.com/contact/?thanks=1" />
+
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required placeholder="Your name" autocomplete="name" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="your@email.com" autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="topic">Topic</label>
+            <select id="topic" name="topic" required>
+              <option value="" disabled selected>Select a topic…</option>
+              <option value="General inquiry">General inquiry</option>
+              <option value="Content correction or error">Content correction or error</option>
+              <option value="Protocol removal request">Protocol removal request</option>
+              <option value="Collaboration">Collaboration</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required placeholder="How can we help?"></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+
+        <hr />
+        <p style="font-size:0.85rem; color:#4b6574;">If you are the author or rights holder of a protocol featured on this site and have concerns about its inclusion, please select <em>Protocol removal request</em> above.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>This site is intended for licensed physical therapy professionals. All protocols link to external sources. Always use clinical judgment. <a href="/terms-of-use" class="footer-terms-link">Terms of Use</a></p>
+    </div>
+  </footer>
+
+  <script>
+    if (location.search.includes('thanks=1')) {
+      document.getElementById('success-banner').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
