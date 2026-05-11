@@ -149,7 +149,7 @@
         <div class="filter-group" style="margin-left:auto;">
           <select id="page-size-select" onchange="setPageSize(this.value)" aria-label="Results per page">
             <option value="10">10 / page</option>
-            <option value="25">25 / page</option>
+            <option value="25" selected>25 / page</option>
             <option value="50">50 / page</option>
           </select>
         </div>
@@ -189,7 +189,7 @@
     let currentCategory = '';
     let currentOrg      = '';
     let currentPage     = 1;
-    let pageSize        = 10;
+    let pageSize        = 25;
 
     /* ── Helpers ── */
     function escHtml(s) {
