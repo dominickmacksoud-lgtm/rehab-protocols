@@ -24,7 +24,14 @@
   <meta name="twitter:title" content="Rehab Protocols — Rehabilitation Protocol Library for Physical Therapists" />
   <meta name="twitter:description" content="A growing library of post-op and non-operative rehabilitation protocols from academic medical centers, hospitals, and orthopedic surgeons. Free clinical reference tool for physical therapists." />
   <meta property="og:image" content="https://rehabprotocols.com/og-image.png" />
+  <meta property="og:site_name" content="Rehab Protocols" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
   <meta name="twitter:image" content="https://rehabprotocols.com/og-image.png" />
+  <meta name="twitter:image:alt" content="Rehab Protocols — Clinical Reference for Physical Therapists" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="styles.css" />
   <script type="application/ld+json">
   {
@@ -39,7 +46,7 @@
     "mainEntity": {
       "@type": "ItemList",
       "name": "Rehabilitation Protocol Library",
-      "numberOfItems": 287,
+      "numberOfItems": 301,
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Shoulder Rehabilitation Protocols", "url": "https://rehabprotocols.com/?category=Shoulder" },
         { "@type": "ListItem", "position": 2, "name": "Knee Rehabilitation Protocols", "url": "https://rehabprotocols.com/?category=Knee" },
@@ -156,7 +163,7 @@
 
     <section class="results-section container">
       <div class="results-header">
-        <div id="results-summary" class="results-summary"></div>
+        <div id="results-summary" class="results-summary" aria-live="polite" aria-atomic="true"></div>
         <div id="pagination-top"></div>
       </div>
       <div id="protocol-results" class="protocol-grid"></div>
@@ -197,11 +204,11 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p>This site is intended for licensed physical therapy professionals. All protocols link to external sources. Always use clinical judgment. <a href="/terms-of-use" class="footer-terms-link">Terms of Use</a></p>
+      <p>This site is intended for licensed physical therapy professionals. All protocols link to external sources. Always use clinical judgment. <a href="/terms-of-use/" class="footer-terms-link">Terms of Use</a> · <a href="/privacy/" class="footer-terms-link">Privacy Policy</a></p>
     </div>
   </footer>
 
-  <script src="protocols.js"></script>
+  <script defer src="protocols.js"></script>
   <script>
     let currentQuery = '';
     let currentCategory = '';
@@ -210,6 +217,8 @@
     let currentView = 'grid';
     let currentPage = 1;
     let pageSize = 25;
+    let lastFocusedElement = null;
+    let searchDebounceTimer;
 
     const TYPE_LABELS = { postop: 'POST-OP', nonop: 'NON-OP', education: 'EDUCATION' };
     const SOURCE_LABELS = { academic: 'Academic', hospital: 'Hospital', surgeon: 'Surgeon', clinic: 'Clinic' };
@@ -224,9 +233,10 @@
       try { return JSON.parse(localStorage.getItem('rp_recent') || '[]'); } catch { return []; }
     }
     function trackView(idx) {
-      const url = protocols[idx].url;
-      const recent = getRecents().filter(u => u !== url);
-      recent.unshift(url);
+      const p = protocols[idx];
+      gtag('event', 'view_protocol', { protocol_name: p.name, category: p.category, source_org: p.sourceOrganization });
+      const recent = getRecents().filter(u => u !== p.url);
+      recent.unshift(p.url);
       localStorage.setItem('rp_recent', JSON.stringify(recent.slice(0, 10)));
       renderRecents();
     }
@@ -234,9 +244,11 @@
     function isFav(url) { return getFavorites().includes(url); }
 
     function toggleFavorite(idx) {
-      const url = protocols[idx].url;
+      const p = protocols[idx];
       const favs = getFavorites();
-      saveFavorites(favs.includes(url) ? favs.filter(u => u !== url) : [url, ...favs]);
+      const adding = !favs.includes(p.url);
+      saveFavorites(adding ? [p.url, ...favs] : favs.filter(u => u !== p.url));
+      gtag('event', 'toggle_favorite', { protocol_name: p.name, action: adding ? 'add' : 'remove' });
       renderAll();
       renderFavorites();
     }
@@ -372,7 +384,7 @@
       let pages = '';
       for (let i = 1; i <= totalPages; i++) {
         if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-          pages += `<button class="page-btn page-num${i === currentPage ? ' active' : ''}" onclick="goToPage(${i})" aria-label="Page ${i}">${i}</button>`;
+          pages += `<button class="page-btn page-num${i === currentPage ? ' active' : ''}" onclick="goToPage(${i})" aria-label="Page ${i}"${i === currentPage ? ' aria-current="page"' : ''}>${i}</button>`;
         } else if (i === currentPage - 3 || i === currentPage + 3) {
           pages += `<span class="page-ellipsis">…</span>`;
         }
@@ -448,40 +460,45 @@
       currentPage = 1;
       document.getElementById('protocol-search').value = '';
       toggleClearBtn('');
-      document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
-      document.querySelectorAll('[data-filter="type"]').forEach((b, i) => b.classList.toggle('active', i === 0));
-      document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => b.classList.toggle('active', i === 0));
+      document.querySelectorAll('.category-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
+      document.querySelectorAll('[data-filter="type"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
+      document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
       updateClearFiltersBtn();
       renderAll();
     }
 
     function filterByCategory(category, el) {
       const already = currentCategory === category;
-      document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('.category-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
       currentCategory = already ? '' : category;
-      if (!already) el.classList.add('selected');
-      currentQuery = '';
+      if (!already) {
+        el.classList.add('selected');
+        el.setAttribute('aria-pressed', 'true');
+        gtag('event', 'filter_category', { category });
+      }
       currentPage = 1;
-      document.getElementById('protocol-search').value = '';
-      toggleClearBtn('');
       updateClearFiltersBtn();
       renderAll();
     }
 
     function setTypeFilter(type, btn) {
-      document.querySelectorAll('[data-filter="type"]').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('[data-filter="type"]').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       currentType = type;
       currentPage = 1;
+      if (type) gtag('event', 'filter_type', { filter_value: type });
       updateClearFiltersBtn();
       renderAll();
     }
 
     function setWbFilter(wb, btn) {
-      document.querySelectorAll('[data-filter="wb"]').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('[data-filter="wb"]').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       currentWb = wb;
       currentPage = 1;
+      if (wb) gtag('event', 'filter_wb_status', { filter_value: wb });
       updateClearFiltersBtn();
       renderAll();
     }
@@ -494,9 +511,7 @@
     }
 
     function filterProtocols(query) {
-      document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
       currentQuery = query;
-      currentCategory = '';
       currentPage = 1;
       updateClearFiltersBtn();
       renderAll();
@@ -522,6 +537,7 @@
 
     // ── Modal ─────────────────────────────────────────────────────────────
     function openModal(idx) {
+      lastFocusedElement = document.activeElement;
       const p = protocols[idx];
       const tLabel = TYPE_LABELS[p.type] || p.type.toUpperCase();
       const sLabel = SOURCE_LABELS[p.sourceType] || '';
@@ -560,6 +576,7 @@
 
       document.getElementById('protocol-modal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
+      setTimeout(() => document.querySelector('.modal-close-btn')?.focus(), 50);
     }
 
     function toggleFavoriteFromModal(idx) {
@@ -574,36 +591,12 @@
     function closeModal() {
       document.getElementById('protocol-modal').style.display = 'none';
       document.body.style.overflow = '';
+      if (lastFocusedElement) { lastFocusedElement.focus(); lastFocusedElement = null; }
     }
 
     function handleModalClick(e) {
       if (e.target === document.getElementById('protocol-modal')) closeModal();
     }
-
-    // ── Init ──────────────────────────────────────────────────────────────
-    renderAll();
-    renderFavorites();
-
-    let slashJustFocused = false;
-
-    document.getElementById('protocol-search').addEventListener('input', e => {
-      if (slashJustFocused) {
-        slashJustFocused = false;
-        if (e.target.value === '/') { e.target.value = ''; return; }
-      }
-      filterProtocols(e.target.value);
-      toggleClearBtn(e.target.value);
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { closeModal(); return; }
-      const searchInput = document.getElementById('protocol-search');
-      if (e.key === '/' && e.target.tagName !== 'INPUT' && document.activeElement !== searchInput) {
-        e.preventDefault();
-        slashJustFocused = true;
-        searchInput.focus();
-      }
-    });
 
     // ── Disclaimer ────────────────────────────────────────────────────────
     function hasDisclaimerAck() {
@@ -620,32 +613,66 @@
       document.body.style.overflow = '';
     }
 
-    const disclaimerModal = document.getElementById('disclaimer-modal');
-    const disclaimerCheckbox = document.getElementById('disclaimer-checkbox');
-    const disclaimerBtn = document.getElementById('disclaimer-btn');
+    // ── Init (deferred protocols.js runs before DOMContentLoaded fires) ───
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('[data-filter="type"]').forEach((b, i) => b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'));
+      document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'));
+      document.querySelectorAll('.category-card').forEach(c => c.setAttribute('aria-pressed', 'false'));
 
-    disclaimerCheckbox.addEventListener('change', function() {
-      disclaimerBtn.disabled = !this.checked;
-    });
+      renderAll();
+      renderFavorites();
 
-    // Focus trap inside disclaimer modal
-    disclaimerModal.addEventListener('keydown', function(e) {
-      if (e.key !== 'Tab') return;
-      const focusable = Array.from(this.querySelectorAll('a[href], button:not([disabled]), input[type="checkbox"]'));
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault(); last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault(); first.focus();
+      let slashJustFocused = false;
+
+      document.getElementById('protocol-search').addEventListener('input', e => {
+        if (slashJustFocused) {
+          slashJustFocused = false;
+          if (e.target.value === '/') { e.target.value = ''; return; }
+        }
+        const val = e.target.value;
+        toggleClearBtn(val);
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+          filterProtocols(val);
+          if (val.length >= 2) gtag('event', 'search', { search_term: val });
+        }, 300);
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { closeModal(); return; }
+        const searchInput = document.getElementById('protocol-search');
+        if (e.key === '/' && e.target.tagName !== 'INPUT' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          slashJustFocused = true;
+          searchInput.focus();
+        }
+      });
+
+      const disclaimerCheckbox = document.getElementById('disclaimer-checkbox');
+      const disclaimerBtn = document.getElementById('disclaimer-btn');
+
+      disclaimerCheckbox.addEventListener('change', function() {
+        disclaimerBtn.disabled = !this.checked;
+      });
+
+      document.getElementById('disclaimer-modal').addEventListener('keydown', function(e) {
+        if (e.key !== 'Tab') return;
+        const focusable = Array.from(this.querySelectorAll('a[href], button:not([disabled]), input[type="checkbox"]'));
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        }
+      });
+
+      if (!hasDisclaimerAck()) {
+        document.getElementById('disclaimer-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => disclaimerCheckbox.focus(), 100);
       }
     });
-
-    if (!hasDisclaimerAck()) {
-      disclaimerModal.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => disclaimerCheckbox.focus(), 100);
-    }
   </script>
 </body>
 </html>

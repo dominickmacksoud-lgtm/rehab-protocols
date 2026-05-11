@@ -47,9 +47,9 @@ def main():
                 continue
 
             if url in seen_urls:
-                abort(
+                warn(
                     f"Duplicate URL on rows {seen_urls[url]} and {i}: {url}\n"
-                    "If this is intentional, remove the duplicate row."
+                    "  Intentional duplicates (e.g. one CPG covering multiple conditions) are allowed."
                 )
             seen_urls[url] = i
 
