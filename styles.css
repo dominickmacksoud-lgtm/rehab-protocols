@@ -1,11 +1,11 @@
 :root {
-  --color-primary: var(--color-primary);
-  --color-primary-dark: var(--color-primary-dark);
-  --color-secondary: var(--color-secondary);
-  --color-text: var(--color-text);
-  --color-muted: var(--color-muted);
-  --color-border: var(--color-border);
-  --color-bg: var(--color-bg);
+  --color-primary: #2a9d8f;
+  --color-primary-dark: #21867a;
+  --color-secondary: #1a3a5c;
+  --color-text: #334e68;
+  --color-muted: #4b6574;
+  --color-border: #e1e8ed;
+  --color-bg: #f7fafb;
   --radius: 8px;
   --shadow: 0 2px 8px rgba(0,0,0,0.08);
   color-scheme: light;
