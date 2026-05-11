@@ -465,12 +465,8 @@
       });
 
       searchEl.addEventListener('keydown', function (e) {
-        if (e.key === '/' && slashJustFocused) {
-          e.preventDefault();
-          slashJustFocused = false;
-        } else {
-          slashJustFocused = false;
-        }
+        if (e.key === '/' && slashJustFocused) e.preventDefault();
+        slashJustFocused = false;
       });
     });
   </script>
