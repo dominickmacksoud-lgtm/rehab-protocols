@@ -15,6 +15,17 @@
   <meta name="description" content="Contact RehabProtocols.com — questions about the site, content corrections, protocol removal requests, or collaboration inquiries." />
   <link rel="canonical" href="https://rehabprotocols.com/contact/" />
   <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://rehabprotocols.com/contact/" />
+  <meta property="og:title" content="Contact | Rehab Protocols" />
+  <meta property="og:description" content="Contact RehabProtocols.com — questions about the site, content corrections, protocol removal requests, or collaboration inquiries." />
+  <meta property="og:image" content="https://rehabprotocols.com/og-image.png" />
+  <meta property="og:site_name" content="Rehab Protocols" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Contact | Rehab Protocols" />
+  <meta name="twitter:description" content="Contact RehabProtocols.com — questions about the site, content corrections, protocol removal requests, or collaboration inquiries." />
+  <meta name="twitter:image" content="https://rehabprotocols.com/og-image.png" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="../styles.css" />
   <style>
     .page-content { max-width: 760px; margin: 0 auto; padding: 3rem 0 4rem; }
@@ -156,6 +167,7 @@
   <script>
     if (location.search.includes('thanks=1')) {
       document.getElementById('success-banner').style.display = 'block';
+      gtag('event', 'form_submit', { form_name: 'contact' });
     }
   </script>
 </body>

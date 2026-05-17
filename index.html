@@ -36,6 +36,16 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Rehab Protocols",
+    "url": "https://rehabprotocols.com/",
+    "description": "A growing library of rehabilitation protocols and clinical practice guidelines for physical therapists.",
+    "publisher": { "@type": "Organization", "name": "RehabProtocols.com", "url": "https://rehabprotocols.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "Rehab Protocols — Post-Op & Rehabilitation Protocol Library",
     "description": "A growing library of post-op and non-operative rehabilitation protocols from academic medical centers, hospitals, and orthopedic surgeons. Free clinical reference tool for physical therapists.",
@@ -46,7 +56,7 @@
     "mainEntity": {
       "@type": "ItemList",
       "name": "Rehabilitation Protocol Library",
-      "numberOfItems": 491,
+      "numberOfItems": 551,
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Shoulder Rehabilitation Protocols", "url": "https://rehabprotocols.com/?category=Shoulder" },
         { "@type": "ListItem", "position": 2, "name": "Knee Rehabilitation Protocols", "url": "https://rehabprotocols.com/?category=Knee" },
@@ -539,6 +549,7 @@
     function openModal(idx) {
       lastFocusedElement = document.activeElement;
       const p = protocols[idx];
+      gtag('event', 'open_modal', { protocol_name: p.name, category: p.category, source_org: p.sourceOrganization });
       const tLabel = TYPE_LABELS[p.type] || p.type.toUpperCase();
       const sLabel = SOURCE_LABELS[p.sourceType] || '';
       const wb = wbBadge(p.wbInitial);
@@ -609,6 +620,7 @@
     }
     function acknowledgeDisclaimer() {
       setDisclaimerAck();
+      gtag('event', 'acknowledge_disclaimer');
       document.getElementById('disclaimer-modal').style.display = 'none';
       document.body.style.overflow = '';
     }
