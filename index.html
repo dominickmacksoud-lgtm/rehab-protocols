@@ -107,14 +107,6 @@
       </div>
     </section>
 
-    <section id="favorites-section" class="quick-section container" style="display:none;">
-      <div class="quick-section-header">
-        <h3>Favorites</h3>
-        <button id="fav-toggle" class="quick-section-toggle" onclick="toggleSectionCollapse('favorites-cards','fav-toggle')">▾</button>
-      </div>
-      <div id="favorites-cards" class="quick-cards"></div>
-    </section>
-
     <div class="search-sticky-bar">
       <div class="container">
         <div class="search-wrapper">
@@ -144,6 +136,9 @@
           <button class="filter-btn wb-WBAT" data-filter="wb" onclick="setWbFilter('WBAT',this)">WBAT</button>
           <button class="filter-btn wb-PWB" data-filter="wb" onclick="setWbFilter('PWB',this)">PWB</button>
           <button class="filter-btn wb-FWB" data-filter="wb" onclick="setWbFilter('FWB',this)">FWB</button>
+        </div>
+        <div class="filter-group">
+          <button id="fav-filter-btn" class="filter-btn" data-filter="fav" onclick="toggleFavoritesFilter(this)" aria-pressed="false">♥ Favorites</button>
         </div>
         <button id="clear-filters-btn" class="clear-filters-btn" style="display:none;" onclick="clearAllFilters()">✕ Clear filters</button>
         <div class="display-controls">
@@ -221,6 +216,7 @@
     let currentPage = 1;
     let pageSize = 25;
     let lastFocusedElement = null;
+    let favoritesSnapshot = null;
     let searchDebounceTimer;
 
     const TYPE_LABELS = { postop: 'POST-OP', nonop: 'NON-OP', education: 'EDUCATION' };
@@ -246,7 +242,6 @@
       saveFavorites(adding ? [p.url, ...favs] : favs.filter(u => u !== p.url));
       gtag('event', 'toggle_favorite', { protocol_name: p.name, action: adding ? 'add' : 'remove' });
       renderAll();
-      renderFavorites();
     }
 
     // ── Badge helpers ─────────────────────────────────────────────────────
@@ -314,6 +309,7 @@
     // ── Filtering ─────────────────────────────────────────────────────────
     function getFiltered() {
       return protocols.reduce((acc, p, idx) => {
+        if (favoritesSnapshot !== null && !favoritesSnapshot.has(p.url)) return acc;
         if (currentCategory && p.category !== currentCategory) return acc;
         if (currentType && p.type !== currentType) return acc;
         if (currentWb && p.wbInitial !== currentWb) return acc;
@@ -355,6 +351,7 @@
       }
 
       const parts = [];
+      if (favoritesSnapshot !== null) parts.push('Favorites');
       if (currentQuery) parts.push(`matching "${currentQuery}"`);
       else if (currentCategory) parts.push(`in ${currentCategory}`);
       if (currentType) parts.push(TYPE_LABELS[currentType]);
@@ -401,30 +398,30 @@
       displayProtocols(getFiltered());
     }
 
-    function urlsToCards(urls, maxCount) {
-      return urls
-        .map(url => { const idx = protocols.findIndex(p => p.url === url); return idx >= 0 ? { p: protocols[idx], idx } : null; })
-        .filter(Boolean)
-        .slice(0, maxCount);
-    }
-
-    function renderFavorites() {
-      const section = document.getElementById('favorites-section');
-      const items = urlsToCards(getFavorites(), 20);
-      section.style.display = items.length ? 'block' : 'none';
-      if (items.length) {
-        document.getElementById('favorites-cards').innerHTML = items.map(({ p, idx }, ri) => cardHTML(p, idx, ri)).join('');
-      }
-    }
-
     function renderAll() {
       displayProtocols(getFiltered());
     }
 
     // ── Filter controls ───────────────────────────────────────────────────
     function updateClearFiltersBtn() {
-      const active = currentCategory || currentType || currentWb || currentQuery;
+      const active = currentCategory || currentType || currentWb || currentQuery || favoritesSnapshot !== null;
       document.getElementById('clear-filters-btn').style.display = active ? 'inline-flex' : 'none';
+    }
+
+    function toggleFavoritesFilter(btn) {
+      if (favoritesSnapshot !== null) {
+        favoritesSnapshot = null;
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      } else {
+        favoritesSnapshot = new Set(getFavorites());
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        gtag('event', 'filter_favorites');
+      }
+      currentPage = 1;
+      updateClearFiltersBtn();
+      renderAll();
     }
 
     function clearAllFilters() {
@@ -433,11 +430,15 @@
       currentWb = '';
       currentQuery = '';
       currentPage = 1;
+      favoritesSnapshot = null;
       document.getElementById('protocol-search').value = '';
       toggleClearBtn('');
       document.querySelectorAll('.category-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
       document.querySelectorAll('[data-filter="type"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
       document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
+      const favBtn = document.getElementById('fav-filter-btn');
+      favBtn.classList.remove('active');
+      favBtn.setAttribute('aria-pressed', 'false');
       updateClearFiltersBtn();
       renderAll();
     }
@@ -597,7 +598,6 @@
       document.querySelectorAll('.category-card').forEach(c => c.setAttribute('aria-pressed', 'false'));
 
       renderAll();
-      renderFavorites();
 
       let slashJustFocused = false;
 

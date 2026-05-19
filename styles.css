@@ -146,30 +146,6 @@ body {
 }
 .category-card.selected { background: var(--color-primary); color: white; }
 
-/* ── Quick sections (Favorites) ─────────────────────────────────────────── */
-.quick-section { padding: 1.5rem 0 0; }
-.quick-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-}
-.quick-section-header h3 { margin: 0; font-size: 1.3rem; }
-.quick-section-toggle {
-  background: none;
-  border: none;
-  color: var(--color-muted);
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-family: inherit;
-}
-.quick-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-  gap: 1rem;
-}
 
 /* ── Filter bar ──────────────────────────────────────────────────────────── */
 .filter-bar {
