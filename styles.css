@@ -760,22 +760,47 @@ body {
 
 /* ── Theme toggle button ─────────────────────────────────────────────────── */
 .theme-toggle-btn {
-  background: none;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.35);
   border-radius: 999px;
-  color: rgba(255,255,255,0.7);
-  font-size: 0.95rem;
   cursor: pointer;
-  padding: 0.3rem 0.65rem;
-  font-family: inherit;
-  transition: all 0.15s;
+  padding: 0;
   margin-left: auto;
-  line-height: 1.2;
+  width: 60px;
+  height: 28px;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s;
 }
 .theme-toggle-btn:hover {
-  color: #fff;
+  background: rgba(255,255,255,0.25);
   border-color: rgba(255,255,255,0.6);
-  background: rgba(255,255,255,0.1);
+}
+.toggle-sun,
+.toggle-moon {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  user-select: none;
+}
+.toggle-thumb {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: left 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+[data-theme="dark"] .toggle-thumb {
+  left: 35px;
 }
 
 /* ── Dark mode ───────────────────────────────────────────────────────────── */

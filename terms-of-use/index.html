@@ -39,7 +39,11 @@
         <p>Clinical reference tools for physical therapists.</p>
       </div>
       <nav class="site-nav">
-        <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+        <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">
+          <span class="toggle-sun">☀️</span>
+          <span class="toggle-moon">🌙</span>
+          <span class="toggle-thumb"></span>
+        </button>
       </nav>
     </div>
   </header>
@@ -125,10 +129,7 @@
       const isDark = html.getAttribute('data-theme') === 'dark';
       html.setAttribute('data-theme', isDark ? 'light' : 'dark');
       localStorage.setItem('rp_theme', isDark ? 'light' : 'dark');
-      document.getElementById('theme-toggle').textContent = isDark ? '🌙' : '☀️';
     }
-    document.getElementById('theme-toggle').textContent =
-      document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
   </script>
   <footer class="site-footer">
     <div class="container">
