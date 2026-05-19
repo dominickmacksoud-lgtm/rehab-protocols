@@ -33,6 +33,7 @@
   <meta name="twitter:image:alt" content="Rehab Protocols — Clinical Reference for Physical Therapists" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="styles.css" />
+  <script>(function(){var s=localStorage.getItem('rp_theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||(s===null&&d))document.documentElement.setAttribute('data-theme','dark');})();</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -82,6 +83,7 @@
         <a href="/guidelines/" class="site-nav-link">Clinical Practice Guidelines</a>
         <a href="/requests/" class="site-nav-link">Request a Protocol</a>
         <a href="/contact/" class="site-nav-link">Contact</a>
+        <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
       </nav>
     </div>
   </header>
@@ -565,6 +567,14 @@
       btn.innerHTML = `${fav ? '♥' : '♡'} ${fav ? 'Saved' : 'Save'}`;
     }
 
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      localStorage.setItem('rp_theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-toggle').textContent = isDark ? '🌙' : '☀️';
+    }
+
     function closeModal() {
       document.getElementById('protocol-modal').style.display = 'none';
       document.body.style.overflow = '';
@@ -598,6 +608,9 @@
       document.querySelectorAll('.category-card').forEach(c => c.setAttribute('aria-pressed', 'false'));
 
       renderAll();
+
+      document.getElementById('theme-toggle').textContent =
+        document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
 
       let slashJustFocused = false;
 

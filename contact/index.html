@@ -27,6 +27,7 @@
   <meta name="twitter:image" content="https://rehabprotocols.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="../styles.css" />
+  <script>(function(){var s=localStorage.getItem('rp_theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||(s===null&&d))document.documentElement.setAttribute('data-theme','dark');})();</script>
   <style>
     .page-content { max-width: 760px; margin: 0 auto; padding: 3rem 0 4rem; }
     .page-content h1 { font-size: clamp(1.75rem, 3vw, 2.5rem); margin: 0 0 0.5rem; }
@@ -100,6 +101,7 @@
         <a href="/guidelines/" class="site-nav-link">Clinical Practice Guidelines</a>
         <a href="/requests/" class="site-nav-link">Request a Protocol</a>
         <a href="/contact/" class="site-nav-link active">Contact</a>
+        <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
       </nav>
     </div>
   </header>
@@ -169,6 +171,15 @@
       document.getElementById('success-banner').style.display = 'block';
       gtag('event', 'form_submit', { form_name: 'contact' });
     }
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      localStorage.setItem('rp_theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-toggle').textContent = isDark ? '🌙' : '☀️';
+    }
+    document.getElementById('theme-toggle').textContent =
+      document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
   </script>
 </body>
 </html>

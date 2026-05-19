@@ -757,3 +757,115 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Theme toggle button ─────────────────────────────────────────────────── */
+.theme-toggle-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 999px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.3rem 0.65rem;
+  font-family: inherit;
+  transition: all 0.15s;
+  margin-left: auto;
+  line-height: 1.2;
+}
+.theme-toggle-btn:hover {
+  color: #fff;
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.1);
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-primary: #2dd4bf;
+  --color-primary-dark: #2a9d8f;
+  --color-secondary: #e2e8f0;
+  --color-text: #cbd5e1;
+  --color-muted: #94a3b8;
+  --color-border: #334155;
+  --color-bg: #0f172a;
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Header stays dark; active nav link needs dark text on white pill */
+[data-theme="dark"] .site-header { background: #0d1829; }
+[data-theme="dark"] .site-header .site-nav-link.active { color: #1a3a5c; }
+
+/* Search */
+[data-theme="dark"] .search-sticky-bar { border-bottom-color: #1e293b; }
+[data-theme="dark"] .search-wrapper input { background: #1e293b; border-color: #334155; }
+
+/* Category cards */
+[data-theme="dark"] .category-card { background: #1a3a35; }
+[data-theme="dark"] .category-card:hover,
+[data-theme="dark"] .category-card:focus-visible { background: #1e4840; }
+
+/* Filter bar */
+[data-theme="dark"] .filter-bar { background: #0a1929; border-color: #334155; }
+[data-theme="dark"] .filter-btn { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .filter-btn:hover { background: #1a3a35; }
+[data-theme="dark"] .view-toggle-btn { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .view-toggle-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #0f172a; }
+[data-theme="dark"] .page-size-select { background: #1e293b; border-color: #334155; }
+
+/* Clear filters */
+[data-theme="dark"] .clear-filters-btn { background: #3b1515; border-color: #7f1d1d; color: #fca5a5; }
+[data-theme="dark"] .clear-filters-btn:hover { background: #4c1c1c; border-color: #e53e3e; }
+
+/* Cards */
+[data-theme="dark"] .protocol-card,
+[data-theme="dark"] .protocol-list-item { background: #1e293b; }
+[data-theme="dark"] .card-footer { border-top-color: #334155; }
+
+/* Fav button */
+[data-theme="dark"] .fav-btn { color: #4b6580; }
+[data-theme="dark"] .fav-btn:hover { background: #3b1515; }
+[data-theme="dark"] .modal-actions .fav-btn.is-fav { border-color: #7f1d1d; background: #3b1515; }
+
+/* Type badges */
+[data-theme="dark"] .badge-postop    { background: #1e3a5c; color: #90cdf4; }
+[data-theme="dark"] .badge-nonop     { background: #0f3028; color: #6ee7b7; }
+[data-theme="dark"] .badge-education { background: #2d1a40; color: #d8b4fe; }
+[data-theme="dark"] .badge-service   { background: #3a2010; color: #fbbf24; }
+
+/* WB badges */
+[data-theme="dark"] .wb-NWB  { background: #3b1515; color: #fca5a5; border-color: #7f1d1d; }
+[data-theme="dark"] .wb-TDWB { background: #3b2010; color: #fdba74; border-color: #7c2d12; }
+[data-theme="dark"] .wb-PWB  { background: #3b3010; color: #fde68a; border-color: #713f12; }
+[data-theme="dark"] .wb-WBAT { background: #3b2010; color: #fdba74; border-color: #7c2d12; }
+[data-theme="dark"] .wb-FWB  { background: #0f2d1e; color: #86efac; border-color: #14532d; }
+
+/* Format badges */
+[data-theme="dark"] .fmt-pdf { background: #3b2c05; color: #fde68a; }
+[data-theme="dark"] .fmt-web { background: #0a2a30; color: #67e8f9; }
+
+/* Source labels */
+[data-theme="dark"] .src-academic { background: #1e3a5c; color: #90cdf4; }
+[data-theme="dark"] .src-hospital { background: #0f3028; color: #6ee7b7; }
+[data-theme="dark"] .src-surgeon  { background: #2d1a40; color: #d8b4fe; }
+[data-theme="dark"] .src-clinic   { background: #3a2010; color: #fbbf24; }
+
+/* Clinical banner */
+[data-theme="dark"] .clinical-banner { background: #1c1505; border-bottom-color: #92400e; color: #fde68a; }
+
+/* Modals */
+[data-theme="dark"] .disclaimer-box,
+[data-theme="dark"] .modal-box { background: #1e293b; }
+[data-theme="dark"] .modal-close-btn { background: #334155; }
+[data-theme="dark"] .modal-row { border-bottom-color: #334155; }
+[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+[data-theme="dark"] .disclaimer-overlay { background: rgba(0,0,0,0.75); }
+
+/* Footer */
+[data-theme="dark"] .site-footer { background: #0a1120; }
+
+/* Pagination */
+[data-theme="dark"] .page-btn { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .page-num { background: transparent; border-color: transparent; }
+[data-theme="dark"] .page-btn:hover:not([disabled]) { background: #1a3a35; border-color: var(--color-primary); }
+[data-theme="dark"] #pagination-bottom { border-top-color: #334155; }
+[data-theme="dark"] .page-ellipsis { color: #4b6580; }
