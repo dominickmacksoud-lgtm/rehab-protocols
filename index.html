@@ -127,13 +127,6 @@
       <div id="favorites-cards" class="quick-cards"></div>
     </section>
 
-    <section id="recents-section" class="quick-section container" style="display:none;">
-      <div class="quick-section-header">
-        <h3>Recently Viewed</h3>
-        <button id="recents-toggle" class="quick-section-toggle" onclick="toggleSectionCollapse('recents-cards','recents-toggle')">▾</button>
-      </div>
-      <div id="recents-cards" class="quick-cards"></div>
-    </section>
 
     <section class="container">
       <div class="filter-bar">
@@ -239,16 +232,9 @@
     }
     function saveFavorites(f) { localStorage.setItem('rp_favorites', JSON.stringify(f)); }
 
-    function getRecents() {
-      try { return JSON.parse(localStorage.getItem('rp_recent') || '[]'); } catch { return []; }
-    }
     function trackView(idx) {
       const p = protocols[idx];
       gtag('event', 'view_protocol', { protocol_name: p.name, category: p.category, source_org: p.sourceOrganization });
-      const recent = getRecents().filter(u => u !== p.url);
-      recent.unshift(p.url);
-      localStorage.setItem('rp_recent', JSON.stringify(recent.slice(0, 10)));
-      renderRecents();
     }
 
     function isFav(url) { return getFavorites().includes(url); }
@@ -431,29 +417,8 @@
       }
     }
 
-    function removeFromRecent(idx) {
-      const url = protocols[idx].url;
-      localStorage.setItem('rp_recent', JSON.stringify(getRecents().filter(u => u !== url)));
-      renderRecents();
-    }
-
-    function renderRecents() {
-      const section = document.getElementById('recents-section');
-      const items = urlsToCards(getRecents(), 5);
-      section.style.display = items.length ? 'block' : 'none';
-      if (items.length) {
-        document.getElementById('recents-cards').innerHTML = items.map(({ p, idx }, ri) =>
-          `<div class="removable-card">
-            ${cardHTML(p, idx, ri)}
-            <button class="remove-recent-btn" onclick="removeFromRecent(${idx})" title="Remove from recently viewed">×</button>
-          </div>`
-        ).join('');
-      }
-    }
-
     function renderAll() {
       displayProtocols(getFiltered());
-      renderRecents();
     }
 
     // ── Filter controls ───────────────────────────────────────────────────
