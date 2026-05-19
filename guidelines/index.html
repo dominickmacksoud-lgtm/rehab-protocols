@@ -296,7 +296,7 @@
       // Cards
       document.getElementById('guideline-results').innerHTML =
         visible.length === 0
-          ? '<p style="color:#4b6574;padding:2rem 0;">No guidelines found. Try a different search or filter.</p>'
+          ? '<p style="color:var(--color-muted);padding:2rem 0;">No guidelines found. Try a different search or filter.</p>'
           : visible.map(({ g }, i) => cardHTML(g, i)).join('');
 
       renderPagination(pages);

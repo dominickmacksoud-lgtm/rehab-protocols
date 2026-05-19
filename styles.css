@@ -869,3 +869,20 @@ body {
 [data-theme="dark"] .page-btn:hover:not([disabled]) { background: #1a3a35; border-color: var(--color-primary); }
 [data-theme="dark"] #pagination-bottom { border-top-color: #334155; }
 [data-theme="dark"] .page-ellipsis { color: #4b6580; }
+
+/* Guidelines page — page-specific inline style overrides */
+[data-theme="dark"] .page-intro { color: #94a3b8; }
+[data-theme="dark"] .badge-region { background: #0f3028; color: #6ee7b7; border-color: #14532d; }
+[data-theme="dark"] .card-rec { color: #94a3b8; }
+[data-theme="dark"] .modal-row-rec { color: #e2e8f0; }
+[data-theme="dark"] #results-summary { color: #94a3b8 !important; }
+
+/* Requests page — page-specific inline style overrides */
+[data-theme="dark"] .page-subtitle { color: #94a3b8; }
+[data-theme="dark"] .form-group label { color: #e2e8f0; }
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea { color: #e2e8f0; background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .form-group .optional { color: #94a3b8; }
+[data-theme="dark"] .success-banner { background: #0f3028; border-color: #14532d; color: #6ee7b7; }
+[data-theme="dark"] .page-content hr { border-top-color: #334155; }
