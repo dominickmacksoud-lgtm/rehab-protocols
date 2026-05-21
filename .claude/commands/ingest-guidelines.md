@@ -29,6 +29,6 @@ Given one or more URLs (PDF or web page), add new clinical practice guidelines t
 
 4. Append rows to `guidelines-import.csv` using Python `csv.DictWriter` (preserves quoting and encoding).
 
-5. Run `python generate-guidelines.py` and verify no unexpected errors.
+5. Run `python generate-guidelines.py` and verify no unexpected errors. If the generator prints any ERROR lines or exits non-zero, fix the offending CSV row and re-run before proceeding. Do not commit until the generator exits cleanly.
 
 6. Commit both `guidelines-import.csv` and `guidelines.js` with a descriptive message, then push.

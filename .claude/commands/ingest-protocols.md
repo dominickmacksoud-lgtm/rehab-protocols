@@ -29,6 +29,6 @@ Given one or more URLs (PDF or web page), add new rehab protocols to the CSV.
 
 4. Append rows to `protocols-import.csv` using Python `csv.DictWriter` (preserves quoting and encoding).
 
-5. Run `python generate-protocols.py` and verify no unexpected errors.
+5. Run `python generate-protocols.py` and verify no unexpected errors. If the generator prints any ERROR lines or exits non-zero, fix the offending CSV row and re-run before proceeding. Do not commit until the generator exits cleanly.
 
 6. Commit both `protocols-import.csv` and `protocols.js` with a descriptive message, then push.
