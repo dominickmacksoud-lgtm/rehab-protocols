@@ -6,13 +6,13 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Entire app — search, filters, cards, modals, favorites, recently viewed, disclaimer |
+| `index.html` | Entire app — search, filters, cards, modals, favorites, disclaimer |
 | `styles.css` | All styling |
 | `protocols-import.csv` | Master data (source of truth — never edit protocols.js manually) |
 | `protocols.js` | Auto-generated output |
 | `generate-protocols.py` | Only generator — do not delete |
 | `terms-of-use/index.html` | Legal terms page at /terms-of-use/ |
-| `PROTOCOLS-WORKFLOW.md` | Documents the CSV→Python workflow |
+| `check-links.py` | Link health checker — verifies all URLs in both CSVs via HTTP HEAD/GET |
 
 ## Data Pipeline
 
@@ -22,7 +22,7 @@ CSV has 13 columns: Body Region, Body Region Display, Surgery Category, Surgery 
 
 After editing CSV, always run `python generate-protocols.py` and commit both files.
 
-Known expected generator warnings: rows 32/34 (MGH ACL BPTB vs Hamstring), rows 91/92/93 (Lahey THA variants).
+Known expected generator warnings: MGH ACL protocol (one PDF covers BPTB, Hamstring, and Allograft variants — same URL, different Surgery Types), and Lahey Hospital THA variants (one PDF covers multiple approaches). These are intentional shared-URL entries.
 
 ## Protocol Ingestion
 

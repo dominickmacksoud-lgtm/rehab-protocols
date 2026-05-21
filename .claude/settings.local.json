@@ -1,9 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:rehabprotocols.com)",
-      "WebFetch(domain:www.orthoassociates.com)",
-      "WebFetch(domain:octanecdn.com)"
+      "Bash",
+      "PowerShell",
+      "Edit",
+      "Write",
+      "Read",
+      "WebFetch"
     ]
   }
 }
