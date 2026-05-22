@@ -1,5 +1,6 @@
 import csv
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -198,3 +199,11 @@ for index, record in enumerate(records, start=2):
 
 OUT_PATH.write_text(f'const protocols = {json.dumps(protocols, separators=(",", ":"))};\n', encoding='utf-8')
 print(f"  Generated {len(protocols)} protocols -> {OUT_PATH.name}")
+
+# Keep JSON-LD numberOfItems in sync with actual protocol count
+INDEX_PATH = ROOT / 'index.html'
+index_html = INDEX_PATH.read_text(encoding='utf-8')
+updated_html = re.sub(r'"numberOfItems":\s*\d+', f'"numberOfItems": {len(protocols)}', index_html)
+if updated_html != index_html:
+    INDEX_PATH.write_text(updated_html, encoding='utf-8')
+    print(f"  Updated numberOfItems -> {len(protocols)} in index.html")
