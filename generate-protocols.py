@@ -242,3 +242,36 @@ SD_PATH.write_text(
     encoding='utf-8',
 )
 print(f"  Generated structured-data.js ({len(graph)} MedicalWebPage items)")
+
+
+# ── Auto-sync region counts on landing pages ──────────────────────────────────
+
+from collections import Counter
+region_counts = Counter(p['category'] for p in protocols)
+
+LANDING_PAGES = {
+    'Shoulder':   ROOT / 'shoulder'   / 'index.html',
+    'Knee':       ROOT / 'knee'       / 'index.html',
+    'Hip':        ROOT / 'hip'        / 'index.html',
+    'Spine':      ROOT / 'spine'      / 'index.html',
+    'Ankle/Foot': ROOT / 'ankle-foot' / 'index.html',
+    'Elbow':      ROOT / 'elbow'      / 'index.html',
+    'Wrist/Hand': ROOT / 'wrist-hand' / 'index.html',
+}
+
+for region, path in LANDING_PAGES.items():
+    if not path.exists():
+        continue
+    count = region_counts.get(region, 0)
+    html = path.read_text(encoding='utf-8')
+    updated = re.sub(r'(<span id="region-count">)\d+(</span>)', rf'\g<1>{count}\2', html)
+    if updated != html:
+        path.write_text(updated, encoding='utf-8')
+        print(f"  Updated region-count -> {count} in {path.parent.name}/index.html")
+
+# Also sync homepage intro count
+index_html2 = INDEX_PATH.read_text(encoding='utf-8')
+updated_home = re.sub(r'(<span id="protocol-count">)\d+(</span>)', rf'\g<1>{len(protocols)}\2', index_html2)
+if updated_home != index_html2:
+    INDEX_PATH.write_text(updated_home, encoding='utf-8')
+    print(f"  Updated protocol-count -> {len(protocols)} in index.html")
