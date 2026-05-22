@@ -207,3 +207,38 @@ updated_html = re.sub(r'"numberOfItems":\s*\d+', f'"numberOfItems": {len(protoco
 if updated_html != index_html:
     INDEX_PATH.write_text(updated_html, encoding='utf-8')
     print(f"  Updated numberOfItems -> {len(protocols)} in index.html")
+
+
+# ── Per-protocol MedicalWebPage structured data ───────────────────────────────
+
+def build_sd_item(p, record):
+    item = {
+        "@type": "MedicalWebPage",
+        "name": p['name'],
+        "url": p['url'],
+        "inLanguage": "en-US",
+        "audience": {"@type": "Audience", "audienceType": "Physical Therapists"},
+    }
+    surgery_category = normalize(record.get('Surgery Category'))
+    if surgery_category:
+        item["about"] = {"@type": "MedicalCondition", "name": surgery_category}
+    if p['sourceOrganization']:
+        item["publisher"] = {"@type": "Organization", "name": p['sourceOrganization']}
+    surgeons = p['surgeons']
+    if surgeons and 'clinical team' not in surgeons.lower():
+        item["author"] = {"@type": "Person", "name": surgeons}
+    if p['publicationDate']:
+        item["datePublished"] = p['publicationDate']
+    return item
+
+graph = [build_sd_item(p, rec) for p, rec in zip(protocols, records)]
+payload_json = json.dumps({"@context": "https://schema.org", "@graph": graph}, separators=(",", ":"), ensure_ascii=False)
+SD_PATH = ROOT / 'structured-data.js'
+SD_PATH.write_text(
+    f'(function(){{var e=document.createElement("script");'
+    f'e.type="application/ld+json";'
+    f'e.text={json.dumps(payload_json)};'
+    f'document.head.appendChild(e);}})();\n',
+    encoding='utf-8',
+)
+print(f"  Generated structured-data.js ({len(graph)} MedicalWebPage items)")
