@@ -665,6 +665,12 @@ body {
     width: calc(100% + 2rem);
   }
   .view-toggle { margin-left: 0; }
+  .site-header .site-nav {
+    flex-wrap: wrap;
+  }
+  .site-header .theme-toggle-btn {
+    margin-left: auto;
+  }
 }
 
 @media (max-width: 560px) {
