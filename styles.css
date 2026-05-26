@@ -667,9 +667,10 @@ body {
   .view-toggle { margin-left: 0; }
   .site-header .site-nav {
     flex-wrap: wrap;
+    gap: 0.3rem;
   }
-  .site-header .theme-toggle-btn {
-    margin-left: auto;
+  .site-header .site-nav-link {
+    white-space: nowrap;
   }
 }
 
