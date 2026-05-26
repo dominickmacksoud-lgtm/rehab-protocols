@@ -275,3 +275,11 @@ updated_home = re.sub(r'(<span id="protocol-count">)\d+(</span>)', rf'\g<1>{len(
 if updated_home != index_html2:
     INDEX_PATH.write_text(updated_home, encoding='utf-8')
     print(f"  Updated protocol-count -> {len(protocols)} in index.html")
+
+# Sync about page protocol count
+ABOUT_PATH = ROOT / 'about' / 'index.html'
+about_html = ABOUT_PATH.read_text(encoding='utf-8')
+updated_about = re.sub(r'(<span class="stat-number" id="about-protocol-count">)\d+(</span>)', rf'\g<1>{len(protocols)}\2', about_html)
+if updated_about != about_html:
+    ABOUT_PATH.write_text(updated_about, encoding='utf-8')
+    print(f"  Updated about-protocol-count -> {len(protocols)} in about/index.html")

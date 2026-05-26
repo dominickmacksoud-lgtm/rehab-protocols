@@ -115,5 +115,12 @@ def main():
     )
     print(f"OK: generated guidelines-structured-data.js ({len(graph)} MedicalGuideline items)")
 
+    about_path = ROOT / 'about' / 'index.html'
+    about_html = about_path.read_text(encoding='utf-8')
+    updated_about = re.sub(r'(<span class="stat-number" id="about-guideline-count">)\d+(</span>)', rf'\g<1>{len(rows)}\2', about_html)
+    if updated_about != about_html:
+        about_path.write_text(updated_about, encoding='utf-8')
+        print(f"OK: updated about-guideline-count -> {len(rows)} in about/index.html")
+
 if __name__ == "__main__":
     main()
