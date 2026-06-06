@@ -194,7 +194,7 @@ for index, record in enumerate(records, start=2):
         'keyRestrictions': normalize(record.get('Key Restrictions')),
         'timelinePhases': normalize(record.get('Timeline / Phases')),
         'notes': normalize(record.get('Notes')),
-        'isPdf': url.lower().endswith('.pdf'),
+        'isPdf': url.lower().split('?')[0].endswith('.pdf'),
     })
 
 OUT_PATH.write_text(f'const protocols = {json.dumps(protocols, separators=(",", ":"))};\n', encoding='utf-8')
