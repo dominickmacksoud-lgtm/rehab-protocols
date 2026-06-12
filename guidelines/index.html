@@ -239,14 +239,19 @@
     }
 
     /* ── Filtering ── */
+    function searchHaystack(g) {
+      if (!g._haystack) {
+        g._haystack = [g.condition, g.issuingOrg, g.bodyRegionDisplay, g.keyRecommendations]
+          .map(f => f || '').join(' ').toLowerCase();
+      }
+      return g._haystack;
+    }
+
     function getFiltered() {
-      const q = currentQuery.toLowerCase();
+      // Every word of the query must appear somewhere in the guideline (any field)
+      const tokens = currentQuery ? currentQuery.toLowerCase().split(/\s+/).filter(Boolean) : [];
       return guidelines.map((g, idx) => ({ g, idx })).filter(({ g }) => {
-        const matchQuery = !q ||
-          g.condition.toLowerCase().includes(q) ||
-          g.issuingOrg.toLowerCase().includes(q) ||
-          g.bodyRegionDisplay.toLowerCase().includes(q) ||
-          g.keyRecommendations.toLowerCase().includes(q);
+        const matchQuery = !tokens.length || tokens.every(t => searchHaystack(g).includes(t));
         const matchCat = !currentCategory || g.bodyRegionDisplay.split(',').map(s => s.trim()).includes(currentCategory);
         const matchOrg = !currentOrg || g.issuingOrg === currentOrg;
         return matchQuery && matchCat && matchOrg;

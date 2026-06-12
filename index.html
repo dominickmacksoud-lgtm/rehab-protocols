@@ -319,7 +319,20 @@
     }
 
     // ── Filtering ─────────────────────────────────────────────────────────
+    function searchHaystack(p) {
+      if (!p._haystack) {
+        p._haystack = [
+          p.name, p.category, p.type, p.sourceOrganization, p.surgeons,
+          p.wbStatus, p.keyRestrictions, p.timelinePhases, p.notes
+        ].map(f => f || '').join(' ').toLowerCase();
+      }
+      return p._haystack;
+    }
+
     function getFiltered() {
+      // Every word of the query must appear somewhere in the protocol
+      // (any field), so "ACL allograft" matches "ACL Reconstruction — Allograft".
+      const tokens = currentQuery ? currentQuery.toLowerCase().split(/\s+/).filter(Boolean) : [];
       return protocols.reduce((acc, p, idx) => {
         if (favoritesSnapshot !== null && !favoritesSnapshot.has(p.url)) return acc;
         if (currentCategory === 'Other') {
@@ -327,19 +340,9 @@
         } else if (currentCategory && p.category !== currentCategory) return acc;
         if (currentType && p.type !== currentType) return acc;
         if (currentWb && p.wbInitial !== currentWb) return acc;
-        if (currentQuery) {
-          const q = currentQuery.toLowerCase();
-          const hit =
-            p.name.toLowerCase().includes(q) ||
-            p.category.toLowerCase().includes(q) ||
-            p.type.toLowerCase().includes(q) ||
-            (p.sourceOrganization || '').toLowerCase().includes(q) ||
-            (p.surgeons || '').toLowerCase().includes(q) ||
-            (p.wbStatus || '').toLowerCase().includes(q) ||
-            (p.keyRestrictions || '').toLowerCase().includes(q) ||
-            (p.timelinePhases || '').toLowerCase().includes(q) ||
-            (p.notes || '').toLowerCase().includes(q);
-          if (!hit) return acc;
+        if (tokens.length) {
+          const haystack = searchHaystack(p);
+          if (!tokens.every(t => haystack.includes(t))) return acc;
         }
         acc.push({ p, idx });
         return acc;
