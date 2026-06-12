@@ -80,8 +80,10 @@ def main():
     ROOT = Path(__file__).parent
     guidelines_html_path = ROOT / 'guidelines' / 'index.html'
     guidelines_html = guidelines_html_path.read_text(encoding='utf-8')
-    updated = re.sub(r'"numberOfItems":\s*\d+', f'"numberOfItems": {len(rows)}', guidelines_html)
-    if updated != guidelines_html:
+    updated, n_subs = re.subn(r'"numberOfItems":\s*\d+', f'"numberOfItems": {len(rows)}', guidelines_html)
+    if n_subs == 0:
+        print("WARNING: numberOfItems pattern matched nothing in guidelines/index.html — count NOT synced")
+    elif updated != guidelines_html:
         guidelines_html_path.write_text(updated, encoding='utf-8')
         print(f"OK: updated numberOfItems -> {len(rows)} in guidelines/index.html")
 
@@ -117,8 +119,10 @@ def main():
 
     about_path = ROOT / 'about' / 'index.html'
     about_html = about_path.read_text(encoding='utf-8')
-    updated_about = re.sub(r'(<span class="stat-number" id="about-guideline-count">)\d+(</span>)', rf'\g<1>{len(rows)}\2', about_html)
-    if updated_about != about_html:
+    updated_about, n_about = re.subn(r'(<span class="stat-number" id="about-guideline-count">)\d+(</span>)', rf'\g<1>{len(rows)}\2', about_html)
+    if n_about == 0:
+        print("WARNING: about-guideline-count pattern matched nothing in about/index.html — count NOT synced")
+    elif updated_about != about_html:
         about_path.write_text(updated_about, encoding='utf-8')
         print(f"OK: updated about-guideline-count -> {len(rows)} in about/index.html")
 

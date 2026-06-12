@@ -70,7 +70,6 @@
     }
   }
   </script>
-  <script src="/structured-data.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -220,6 +219,7 @@
 
   <script defer src="protocols.js"></script>
   <script>
+    const MAIN_CATEGORIES = ['Shoulder', 'Knee', 'Hip', 'Spine', 'Ankle/Foot', 'Elbow', 'Wrist/Hand'];
     let currentQuery = '';
     let currentCategory = '';
     let currentType = '';
@@ -322,7 +322,9 @@
     function getFiltered() {
       return protocols.reduce((acc, p, idx) => {
         if (favoritesSnapshot !== null && !favoritesSnapshot.has(p.url)) return acc;
-        if (currentCategory && p.category !== currentCategory) return acc;
+        if (currentCategory === 'Other') {
+          if (MAIN_CATEGORIES.includes(p.category)) return acc;
+        } else if (currentCategory && p.category !== currentCategory) return acc;
         if (currentType && p.type !== currentType) return acc;
         if (currentWb && p.wbInitial !== currentWb) return acc;
         if (currentQuery) {
@@ -610,6 +612,30 @@
       document.body.style.overflow = '';
     }
 
+    // ── Per-protocol structured data (built from protocols.js — replaces the
+    //    old generated structured-data.js, which duplicated the same data) ───
+    function injectStructuredData() {
+      const graph = protocols.map(p => {
+        const item = {
+          "@type": "MedicalWebPage",
+          "name": p.name,
+          "url": p.url,
+          "inLanguage": "en-US",
+          "audience": { "@type": "Audience", "audienceType": "Physical Therapists" }
+        };
+        const condition = p.name.split(' — ')[0];
+        if (condition) item.about = { "@type": "MedicalCondition", "name": condition };
+        if (p.sourceOrganization) item.publisher = { "@type": "Organization", "name": p.sourceOrganization };
+        if (p.surgeons && !p.surgeons.toLowerCase().includes('clinical team')) item.author = { "@type": "Person", "name": p.surgeons };
+        if (p.publicationDate) item.datePublished = p.publicationDate;
+        return item;
+      });
+      const s = document.createElement('script');
+      s.type = 'application/ld+json';
+      s.text = JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
+      document.head.appendChild(s);
+    }
+
     // ── Init (deferred protocols.js runs before DOMContentLoaded fires) ───
     document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('[data-filter="type"]').forEach((b, i) => b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'));
@@ -617,6 +643,9 @@
       document.querySelectorAll('.category-card').forEach(c => c.setAttribute('aria-pressed', 'false'));
 
       renderAll();
+
+      if ('requestIdleCallback' in window) requestIdleCallback(injectStructuredData);
+      else setTimeout(injectStructuredData, 0);
 
       let slashJustFocused = false;
 

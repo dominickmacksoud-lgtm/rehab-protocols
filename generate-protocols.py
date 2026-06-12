@@ -200,48 +200,26 @@ for index, record in enumerate(records, start=2):
 OUT_PATH.write_text(f'const protocols = {json.dumps(protocols, separators=(",", ":"))};\n', encoding='utf-8')
 print(f"  Generated {len(protocols)} protocols -> {OUT_PATH.name}")
 
-# Keep JSON-LD numberOfItems in sync with actual protocol count
+# ── Sync hardcoded counts in HTML pages ───────────────────────────────────────
+# Per-protocol MedicalWebPage structured data is built client-side in
+# index.html from protocols.js (no separate structured-data.js anymore).
+
+def sync_count(path, pattern, replacement, label):
+    """Patch a count in an HTML file; warn loudly if the pattern stops matching."""
+    html = path.read_text(encoding='utf-8')
+    updated, n = re.subn(pattern, replacement, html)
+    if n == 0:
+        print(f"  WARNING: {label}: pattern matched nothing in {path.relative_to(ROOT)} — count NOT synced")
+    elif updated != html:
+        path.write_text(updated, encoding='utf-8')
+        print(f"  Updated {label} in {path.relative_to(ROOT)}")
+
+total = len(protocols)
 INDEX_PATH = ROOT / 'index.html'
-index_html = INDEX_PATH.read_text(encoding='utf-8')
-updated_html = re.sub(r'"numberOfItems":\s*\d+', f'"numberOfItems": {len(protocols)}', index_html)
-if updated_html != index_html:
-    INDEX_PATH.write_text(updated_html, encoding='utf-8')
-    print(f"  Updated numberOfItems -> {len(protocols)} in index.html")
 
-
-# ── Per-protocol MedicalWebPage structured data ───────────────────────────────
-
-def build_sd_item(p, record):
-    item = {
-        "@type": "MedicalWebPage",
-        "name": p['name'],
-        "url": p['url'],
-        "inLanguage": "en-US",
-        "audience": {"@type": "Audience", "audienceType": "Physical Therapists"},
-    }
-    surgery_category = normalize(record.get('Surgery Category'))
-    if surgery_category:
-        item["about"] = {"@type": "MedicalCondition", "name": surgery_category}
-    if p['sourceOrganization']:
-        item["publisher"] = {"@type": "Organization", "name": p['sourceOrganization']}
-    surgeons = p['surgeons']
-    if surgeons and 'clinical team' not in surgeons.lower():
-        item["author"] = {"@type": "Person", "name": surgeons}
-    if p['publicationDate']:
-        item["datePublished"] = p['publicationDate']
-    return item
-
-graph = [build_sd_item(p, rec) for p, rec in zip(protocols, records)]
-payload_json = json.dumps({"@context": "https://schema.org", "@graph": graph}, separators=(",", ":"), ensure_ascii=False)
-SD_PATH = ROOT / 'structured-data.js'
-SD_PATH.write_text(
-    f'(function(){{var e=document.createElement("script");'
-    f'e.type="application/ld+json";'
-    f'e.text={json.dumps(payload_json)};'
-    f'document.head.appendChild(e);}})();\n',
-    encoding='utf-8',
-)
-print(f"  Generated structured-data.js ({len(graph)} MedicalWebPage items)")
+sync_count(INDEX_PATH, r'"numberOfItems":\s*\d+', f'"numberOfItems": {total}', f'numberOfItems -> {total}')
+sync_count(INDEX_PATH, r'(<span id="protocol-count">)\d+(</span>)', rf'\g<1>{total}\2', f'protocol-count -> {total}')
+sync_count(ROOT / 'about' / 'index.html', r'(<span class="stat-number" id="about-protocol-count">)\d+(</span>)', rf'\g<1>{total}\2', f'about-protocol-count -> {total}')
 
 
 # ── Auto-sync region counts on landing pages ──────────────────────────────────
@@ -259,27 +237,18 @@ LANDING_PAGES = {
     'Wrist/Hand': ROOT / 'wrist-hand' / 'index.html',
 }
 
+# Regions intentionally without a landing page — reachable via the homepage
+# 'Other' category button. A region in neither list gets a warning.
+NO_LANDING_PAGE = {'Leg', 'Multiple', 'Head'}
+
+for region in sorted(region_counts):
+    if region not in LANDING_PAGES and region not in NO_LANDING_PAGE:
+        print(f"  WARNING: region '{region}' ({region_counts[region]} protocols) is not in LANDING_PAGES or NO_LANDING_PAGE — check Body Region Display for typos")
+
 for region, path in LANDING_PAGES.items():
     if not path.exists():
+        print(f"  WARNING: landing page for '{region}' missing at {path.relative_to(ROOT)} — counts NOT synced")
         continue
     count = region_counts.get(region, 0)
-    html = path.read_text(encoding='utf-8')
-    updated = re.sub(r'(<span id="region-count">)\d+(</span>)', rf'\g<1>{count}\2', html)
-    if updated != html:
-        path.write_text(updated, encoding='utf-8')
-        print(f"  Updated region-count -> {count} in {path.parent.name}/index.html")
-
-# Also sync homepage intro count
-index_html2 = INDEX_PATH.read_text(encoding='utf-8')
-updated_home = re.sub(r'(<span id="protocol-count">)\d+(</span>)', rf'\g<1>{len(protocols)}\2', index_html2)
-if updated_home != index_html2:
-    INDEX_PATH.write_text(updated_home, encoding='utf-8')
-    print(f"  Updated protocol-count -> {len(protocols)} in index.html")
-
-# Sync about page protocol count
-ABOUT_PATH = ROOT / 'about' / 'index.html'
-about_html = ABOUT_PATH.read_text(encoding='utf-8')
-updated_about = re.sub(r'(<span class="stat-number" id="about-protocol-count">)\d+(</span>)', rf'\g<1>{len(protocols)}\2', about_html)
-if updated_about != about_html:
-    ABOUT_PATH.write_text(updated_about, encoding='utf-8')
-    print(f"  Updated about-protocol-count -> {len(protocols)} in about/index.html")
+    sync_count(path, r'(<span id="region-count">)\d+(</span>)', rf'\g<1>{count}\2', f'region-count -> {count}')
+    sync_count(path, r'(<meta name="description" content="Browse )\d+', rf'\g<1>{count}', f'meta description count -> {count}')

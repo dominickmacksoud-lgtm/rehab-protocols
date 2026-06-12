@@ -27,8 +27,10 @@ Known expected generator warnings: MGH ACL protocol (one PDF covers BPTB, Hamstr
 ## Protocol Ingestion
 
 - When given a URL or PDF, use `pdfplumber` via Bash for extraction **first** — do not attempt WebFetch on PDFs.
+- Completeness guard: if pdfplumber extracts under ~200 characters (image-only scan) or the protocol text ends mid-phase / is missing its later phases, do NOT add it to the CSV — report the rejected PDF and why instead. (Past incidents: image-only and incomplete PDFs reached production and needed removal commits.)
+- Body Region Display must be one of the canonical values: Shoulder, Knee, Hip, Spine, Ankle/Foot, Elbow, Wrist/Hand, Leg, Multiple, Head. The generator warns on any other value — fix the CSV rather than ignoring the warning (variant spellings fragment the category filter).
 - Go straight to extraction → CSV append → generate → commit → push. No enumeration or confirmation step needed.
-- Do not silently filter or exclude protocols — add all candidates found in the source.
+- Do not silently filter or exclude protocols (other than the completeness guard above) — add all candidates found in the source.
 - Run the generator and verify no unexpected errors before committing.
 
 ## Guidelines Pipeline
