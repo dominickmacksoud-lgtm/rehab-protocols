@@ -14,6 +14,10 @@ import csv
 import json
 import sys
 import time
+
+# Force UTF-8 output on Windows to handle non-ASCII characters in protocol names
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
 import urllib.request
 import urllib.error
 import urllib.parse
@@ -38,6 +42,14 @@ WARN     = "WARN"
 TIMEOUT_S = "TIMEOUT"
 ERROR    = "ERROR"
 REDIRECT = "REDIRECT"
+SKIPPED  = "SKIPPED"
+
+# Domains that block automated requests but are confirmed working in a browser.
+# URLs on these domains are skipped to avoid false positives.
+BOT_BLOCKED_DOMAINS = {
+    "www.lahey.org",   # blocks HEAD/GET from scripts; all links verified working
+    "www.somos.org",   # returns 429 to bots; links verified working
+}
 
 
 def load_urls():
@@ -166,13 +178,18 @@ def run(write_json=False):
     print(f"\nRehabProtocols.com link checker — {total} URLs to check\n")
 
     results = []
-    counts = {OK: 0, BROKEN: 0, WARN: 0, TIMEOUT_S: 0, ERROR: 0, REDIRECT: 0}
+    counts = {OK: 0, BROKEN: 0, WARN: 0, TIMEOUT_S: 0, ERROR: 0, REDIRECT: 0, SKIPPED: 0}
 
     for i, entry in enumerate(entries, 1):
         label = f"[{entry['source'].upper():<10}] {(entry['surgery_type'] or '?')[:40]:<40} | {entry['source_org'][:30]}"
         print(f"  [{i:>3}/{total}] {label:<85}", end=" ", flush=True)
 
-        result = check_url(entry["url"])
+        parsed_host = urllib.parse.urlparse(entry["url"]).netloc.lower()
+        if parsed_host in BOT_BLOCKED_DOMAINS:
+            result = {"status": SKIPPED, "code": None, "final_url": entry["url"],
+                      "note": "Bot-blocked domain — confirmed working in browser"}
+        else:
+            result = check_url(entry["url"])
         result.update(entry)
         results.append(result)
         counts[result["status"]] += 1
@@ -187,7 +204,7 @@ def run(write_json=False):
     print("\n" + "=" * 80)
     print(f"  {total} checked | {counts[OK]} OK | {counts[REDIRECT]} redirect | "
           f"{counts[BROKEN]} BROKEN | {counts[WARN]} warn(403) | "
-          f"{counts[TIMEOUT_S]} timeout | {counts[ERROR]} error")
+          f"{counts[TIMEOUT_S]} timeout | {counts[ERROR]} error | {counts[SKIPPED]} skipped")
     print("=" * 80)
 
     redirects = [r for r in results if r["status"] == REDIRECT]
@@ -224,6 +241,7 @@ def run(write_json=False):
             "redirects": redirects,
             "timeouts":  [r for r in results if r["status"] == TIMEOUT_S],
             "errors":    [r for r in results if r["status"] == ERROR],
+            "skipped":   [r for r in results if r["status"] == SKIPPED],
         }
         REPORT_JSON.write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(f"  JSON report written to {REPORT_JSON.name}\n")
