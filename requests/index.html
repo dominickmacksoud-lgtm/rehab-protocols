@@ -34,58 +34,26 @@
     .page-content .page-subtitle { color: #4b6574; font-size: 0.95rem; margin: 0 0 2.5rem; line-height: 1.6; }
     .page-back { display: inline-block; margin-bottom: 1.5rem; color: #2a9d8f; font-weight: 600; text-decoration: none; font-size: 0.9rem; }
     .page-back:hover { color: #1a3a5c; }
-
-    .form-group { margin-bottom: 1.25rem; }
-    .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: #1a3a5c; margin-bottom: 0.3rem; }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      border: 1px solid #b8d7d0;
-      border-radius: 10px;
-      padding: 0.75rem 1rem;
-      font-size: 0.95rem;
-      font-family: inherit;
-      color: #1a3a5c;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      transition: border-color 0.15s;
+    .request-cta {
+      background: #e6f4f1;
+      border: 1px solid #b7dfd9;
+      border-radius: 12px;
+      padding: 2rem 2.25rem;
+      margin-bottom: 2rem;
     }
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: 2px solid #2a9d8f;
-      outline-offset: 2px;
-      border-color: #2a9d8f;
-    }
-    .form-group textarea { resize: vertical; min-height: 100px; }
-    .form-group .optional { color: #4b6574; font-weight: 400; font-size: 0.82rem; margin-left: 0.3rem; }
-
-    .submit-btn {
+    .request-cta p { color: #1a3a5c; font-size: 0.95rem; line-height: 1.7; margin: 0 0 1.25rem; }
+    .request-cta .mailto-btn {
+      display: inline-block;
       background: #2a9d8f;
       color: #fff;
-      border: none;
       border-radius: 999px;
       padding: 0.7rem 2.25rem;
       font-size: 1rem;
       font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
+      text-decoration: none;
       transition: background 0.15s;
     }
-    .submit-btn:hover { background: #238276; }
-
-    .success-banner {
-      display: none;
-      background: #e6f4f1;
-      border: 1px solid #b7dfd9;
-      color: #1a5c4a;
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
+    .request-cta .mailto-btn:hover { background: #238276; }
     hr { border: none; border-top: 1px solid #e1e8ed; margin: 2rem 0; }
   </style>
 </head>
@@ -120,57 +88,12 @@
       <div class="page-content">
         <a href="/" class="page-back">← Back to Rehab Protocols</a>
         <h1>Request a Protocol</h1>
-        <p class="page-subtitle">Don't see the protocol you're looking for? Submit a request below and we'll prioritize sourcing it. Requests with a known source are fulfilled fastest.</p>
+        <p class="page-subtitle">Don't see the protocol you're looking for? Send us an email and we'll prioritize sourcing it. Requests with a known source are fulfilled fastest.</p>
 
-        <div class="success-banner" id="success-banner">
-          <strong>Request received!</strong> Thanks — we'll work on sourcing this protocol and may reach out if we have questions.
+        <div class="request-cta">
+          <p>Include the condition or procedure, body region, and any known source (hospital, surgeon, or institution). A direct link to the protocol PDF is even better.</p>
+          <a href="mailto:rehabprotocols@gmail.com?subject=Protocol%20Request" class="mailto-btn">Email a Request</a>
         </div>
-
-        <form action="https://formspree.io/f/xlgzppyv" method="POST">
-          <input type="hidden" name="_next" value="https://rehabprotocols.com/requests/?thanks=1" />
-
-          <div class="form-group">
-            <label for="condition">Condition or Procedure <span style="color:#c0392b;">*</span></label>
-            <input type="text" id="condition" name="condition" required placeholder="e.g. SLAP repair, Achilles tendon rupture, Distal biceps repair" />
-          </div>
-
-          <div class="form-group">
-            <label for="region">Body Region <span style="color:#c0392b;">*</span></label>
-            <select id="region" name="body_region" required>
-              <option value="" disabled selected>Select a body region…</option>
-              <option value="Shoulder">Shoulder</option>
-              <option value="Knee">Knee</option>
-              <option value="Hip">Hip</option>
-              <option value="Spine">Spine</option>
-              <option value="Ankle/Foot">Ankle / Foot</option>
-              <option value="Elbow">Elbow</option>
-              <option value="Wrist/Hand">Wrist / Hand</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="source">Known Source <span class="optional">(optional)</span></label>
-            <input type="text" id="source" name="known_source" placeholder="e.g. Hospital for Special Surgery, Dr. James Andrews" />
-          </div>
-
-          <div class="form-group">
-            <label for="notes">Additional Notes <span class="optional">(optional)</span></label>
-            <textarea id="notes" name="notes" placeholder="Any other context — specific technique, patient population, institution, or a link to the protocol if you have one"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="email">Your Email <span style="color:#c0392b;">*</span></label>
-            <input type="email" id="email" name="email" required placeholder="your@email.com" autocomplete="email" />
-          </div>
-
-          <div class="form-group">
-            <label for="name">Your Name <span class="optional">(optional)</span></label>
-            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name" />
-          </div>
-
-          <button type="submit" class="submit-btn">Submit Request</button>
-        </form>
 
         <hr />
         <p style="font-size:0.85rem; color:#4b6574;">All protocol requests are reviewed manually. We prioritize requests with a known source and high clinical utility. There is no guarantee a requested protocol will be added.</p>
@@ -185,10 +108,6 @@
   </footer>
 
   <script>
-    if (location.search.includes('thanks=1')) {
-      document.getElementById('success-banner').style.display = 'block';
-      gtag('event', 'form_submit', { form_name: 'protocol_request' });
-    }
     function toggleTheme() {
       const html = document.documentElement;
       const isDark = html.getAttribute('data-theme') === 'dark';
