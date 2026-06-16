@@ -11,50 +11,28 @@
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Request a Protocol | Rehab Protocols</title>
-  <meta name="description" content="Request a rehabilitation protocol to be added to RehabProtocols.com. Don't see the protocol you need? Email us and we'll prioritize sourcing it." />
-  <link rel="canonical" href="https://rehabprotocols.com/requests/" />
+  <title>HEP Builder | Rehab Protocols</title>
+  <meta name="description" content="A home exercise program builder for physical therapists — coming soon to Rehab Protocols Pro. Build programs from a clinical exercise library and send print-ready handouts." />
+  <link rel="canonical" href="https://rehabprotocols.com/hep/" />
   <meta name="robots" content="index, follow" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://rehabprotocols.com/requests/" />
-  <meta property="og:title" content="Request a Protocol | Rehab Protocols" />
-  <meta property="og:description" content="Request a rehabilitation protocol to be added to RehabProtocols.com. Don't see the protocol you need? Email us and we'll prioritize sourcing it." />
+  <meta property="og:url" content="https://rehabprotocols.com/hep/" />
+  <meta property="og:title" content="HEP Builder | Rehab Protocols" />
+  <meta property="og:description" content="A home exercise program builder for physical therapists — coming soon to Rehab Protocols Pro." />
   <meta property="og:image" content="https://rehabprotocols.com/og-image.png" />
   <meta property="og:site_name" content="Rehab Protocols" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Request a Protocol | Rehab Protocols" />
-  <meta name="twitter:description" content="Request a rehabilitation protocol to be added to RehabProtocols.com. Don't see the protocol you need? Email us and we'll prioritize sourcing it." />
+  <meta name="twitter:title" content="HEP Builder | Rehab Protocols" />
+  <meta name="twitter:description" content="A home exercise program builder for physical therapists — coming soon to Rehab Protocols Pro." />
   <meta name="twitter:image" content="https://rehabprotocols.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="../styles.css" />
   <script>(function(){var s=localStorage.getItem('rp_theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||(s===null&&d))document.documentElement.setAttribute('data-theme','dark');})();</script>
   <style>
-    .page-content { max-width: 760px; margin: 0 auto; padding: 3rem 0 4rem; }
-    .page-content h1 { font-size: clamp(1.75rem, 3vw, 2.5rem); margin: 0 0 0.5rem; }
-    .page-content .page-subtitle { color: #4b6574; font-size: 0.95rem; margin: 0 0 2.5rem; line-height: 1.6; }
-    .page-back { display: inline-block; margin-bottom: 1.5rem; color: #2a9d8f; font-weight: 600; text-decoration: none; font-size: 0.9rem; }
-    .page-back:hover { color: #1a3a5c; }
-    .request-cta {
-      background: #e6f4f1;
-      border: 1px solid #b7dfd9;
-      border-radius: 12px;
-      padding: 2rem 2.25rem;
-      margin-bottom: 2rem;
-    }
-    .request-cta p { color: #1a3a5c; font-size: 0.95rem; line-height: 1.7; margin: 0 0 1.25rem; }
-    .request-cta .mailto-btn {
-      display: inline-block;
-      background: #2a9d8f;
-      color: #fff;
-      border-radius: 999px;
-      padding: 0.7rem 2.25rem;
-      font-size: 1rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background 0.15s;
-    }
-    .request-cta .mailto-btn:hover { background: #238276; }
-    hr { border: none; border-top: 1px solid #e1e8ed; margin: 2rem 0; }
+    .scaffold-page { padding: 0 0 4rem; }
+    .page-back { display: inline-block; margin: 1.5rem 0 0; color: var(--color-primary); font-weight: 600; text-decoration: none; font-size: 0.9rem; }
+    .page-back:hover { color: var(--color-secondary); }
+    .part-of-pro { text-align: center; margin: 2rem 0 0; color: var(--color-muted); font-size: 0.95rem; }
   </style>
 </head>
 <body>
@@ -62,12 +40,12 @@
     <div class="container">
       <div class="brand">
         <h1>Rehab Protocols</h1>
-        <p>Clinical reference tools for physical therapists.</p>
+        <p>The largest free rehab protocol library for physical therapists.</p>
       </div>
       <nav class="site-nav">
         <a href="/" class="site-nav-link">Protocols</a>
         <a href="/guidelines/" class="site-nav-link">Guidelines</a>
-        <a href="/hep/" class="site-nav-link">HEP Builder <span class="nav-badge-pro">Pro</span></a>
+        <a href="/hep/" class="site-nav-link active">HEP Builder <span class="nav-badge-pro">Pro</span></a>
         <a href="/treatment-planner/" class="site-nav-link">Treatment Planner <span class="nav-badge-pro">Pro</span></a>
         <a href="/pricing/" class="site-nav-link">Pricing</a>
         <a href="/pricing/#waitlist" class="site-nav-link btn-nav-cta">Join Waitlist</a>
@@ -80,25 +58,34 @@
     </div>
   </header>
 
-  <div class="clinical-banner">
-    <div class="container"><strong>Clinical Reference Only:</strong> Protocols are cataloged from third-party sources and provided for reference only. Treating clinicians must verify current accuracy and follow the operative report and surgeon's specific instructions.</div>
-  </div>
-
   <main>
-    <div class="container">
-      <div class="page-content">
-        <a href="/" class="page-back">← Back to Rehab Protocols</a>
-        <h1>Request a Protocol</h1>
-        <p class="page-subtitle">Don't see the protocol you're looking for? Send us an email and we'll prioritize sourcing it. Requests with a known source are fulfilled fastest.</p>
+    <div class="container scaffold-page">
+      <a href="/" class="page-back">← Back to Rehab Protocols</a>
 
-        <div class="request-cta">
-          <p>Include the condition or procedure, body region, and any known source (hospital, surgeon, or institution). A direct link to the protocol PDF is even better.</p>
-          <a href="mailto:rehabprotocols@gmail.com?subject=Protocol%20Request" class="mailto-btn">Email a Request</a>
-        </div>
-
-        <hr />
-        <p style="font-size:0.85rem; color:#4b6574;">All protocol requests are reviewed manually. We prioritize requests with a known source and high clinical utility. There is no guarantee a requested protocol will be added.</p>
+      <div class="page-hero">
+        <h1>HEP Builder <span class="badge-pro">Coming soon</span></h1>
+        <p>Build home exercise programs in minutes — search a clinical exercise library, set your dosing, and hand your patient a clean, print-ready program. Coming soon as part of Rehab Protocols Pro.</p>
       </div>
+
+      <ul class="feature-list">
+        <li><strong>A real exercise library.</strong> Search by body region and category, then add exercises to a program with a click.</li>
+        <li><strong>Your dosing, your defaults.</strong> Set sets, reps, hold, and frequency — and save the defaults you reach for every day.</li>
+        <li><strong>Print-ready handouts.</strong> Generate a clean, patient-friendly program your patient can actually follow at home.</li>
+        <li><strong>Templates that travel.</strong> Save common programs and reuse them across patients.</li>
+      </ul>
+
+      <p class="part-of-pro">Part of <a href="/pricing/">Rehab Protocols Pro</a>.</p>
+
+      <section class="waitlist" id="waitlist">
+        <h2>Join the waitlist</h2>
+        <p>We'll email you the moment the HEP Builder is ready.</p>
+        <form class="waitlist-form" action="https://formspree.io/f/xqeonooe" method="POST">
+          <input type="hidden" name="interest" value="HEP Builder" />
+          <input type="email" name="email" placeholder="you@clinic.com" required aria-label="Email address" />
+          <button type="submit" class="btn btn-primary">Notify me</button>
+        </form>
+        <p class="waitlist-fineprint">No spam. We'll only email you about Pro.</p>
+      </section>
     </div>
   </main>
 
