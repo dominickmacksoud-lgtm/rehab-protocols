@@ -627,6 +627,7 @@ body {
 }
 .modal-actions .fav-btn:hover { border-color: #e53e3e; }
 .modal-actions .fav-btn.is-fav { border-color: #fed7d7; background: #fff5f5; }
+.modal-cta-btn { width: 100%; margin-top: 0.75rem; }
 
 @media (max-width: 560px) {
   .modal-box { padding: 1.25rem; }

@@ -76,7 +76,7 @@
     <div class="container">
       <div class="brand">
         <h1>Rehab Protocols</h1>
-        <p>The largest free rehab protocol library for physical therapists.</p>
+        <p>The largest free clinical library for physical therapists — protocols &amp; guidelines.</p>
       </div>
       <nav class="site-nav">
         <a href="/" class="site-nav-link active">Protocols</a>
@@ -273,6 +273,11 @@
     function trackView(idx) {
       const p = protocols[idx];
       gtag('event', 'view_protocol', { protocol_name: p.name, category: p.category, source_org: p.sourceOrganization });
+    }
+
+    function trackTreatmentPlanClick(idx) {
+      const p = protocols[idx];
+      gtag('event', 'select_treatment_planner', { protocol_name: p.name, category: p.category });
     }
 
     function isFav(url) { return getFavorites().includes(url); }
@@ -596,6 +601,7 @@
           </button>
           <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="trackView(${idx})">View Protocol →</a>
         </div>
+        <a href="/treatment-planner/" class="btn btn-outline modal-cta-btn" onclick="trackTreatmentPlanClick(${idx})">Generate AI Treatment Plan →</a>
       `;
 
       document.getElementById('protocol-modal').style.display = 'flex';
