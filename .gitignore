@@ -18,3 +18,6 @@ yarn-error.log*
 
 # Link checker run artifacts
 link-report.json
+
+# Python cache
+__pycache__/

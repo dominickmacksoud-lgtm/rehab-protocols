@@ -12,7 +12,7 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 | `protocols.js` | Auto-generated output |
 | `generate-protocols.py` | Only generator — do not delete |
 | `terms-of-use/index.html` | Legal terms page at /terms-of-use/ |
-| `check-links.py` | Link health checker — verifies all URLs in both CSVs via HTTP HEAD/GET |
+| `check-links.py` | Link health checker — verifies every URL in both CSVs (see below) |
 
 ## Data Pipeline
 
@@ -49,6 +49,38 @@ The guidelines page lives at `guidelines/index.html` and references `../styles.c
 - Go straight to extraction → CSV append → generate → commit → push. No enumeration or confirmation step needed.
 - Do not silently filter or exclude guidelines — add all candidates found in the source.
 - Run the generator and verify no unexpected errors before committing.
+
+## Link Checking
+
+`python check-links.py` verifies every URL in both CSVs. ~900 URLs, ~2.5 min.
+
+```
+python check-links.py                    # everything
+python check-links.py --filter lahey     # one org/domain (fast fix-verify loop)
+python check-links.py --failed           # only what failed last run
+```
+
+Exit codes: `0` clean, `1` broken links found, `2` script error. Results land in
+`link-report.json` (gitignored), which also powers `--failed` and the
+"newly broken since last run" diff.
+
+Statuses worth knowing:
+- **BROKEN** — real HTTP failure. Fix the CSV.
+- **WRONG_TYPE** — a `.pdf` URL returned 200 but served an HTML page whose text
+  matches a dead-page marker. Also fix the CSV; the old checker reported these as OK.
+- **WARN** — 403 bot walls, rate limits, and download interstitials (e.g. PMC's
+  "Preparing to download" page). Verify in a browser; usually fine. Does not fail the run.
+
+Three things here are deliberate and should not be "cleaned up":
+1. **stdlib urllib, not requests/httpx.** `requests` cannot be imported from the repo
+   root at all — the site has a real page at `requests/index.html` that shadows the
+   package. httpx was tried and reverted: ~105 URLs answer 200 to urllib but 403 to
+   httpx. Do not swap the transport without re-running a full check and comparing 403s.
+2. **Legacy TLS renegotiation is enabled.** lahey.org (33 URLs) runs an old TLS stack
+   that OpenSSL 3 rejects outright. These were previously blanket-skipped as
+   "bot-blocked", which was a misdiagnosis.
+3. **No domain skip list.** Every URL gets checked. Use `--skip <domain>` for a
+   temporary, explicit exemption instead of hardcoding one.
 
 ## Session Handoff
 
