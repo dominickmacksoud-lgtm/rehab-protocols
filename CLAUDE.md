@@ -13,6 +13,7 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 | `generate-protocols.py` | Only generator — do not delete |
 | `terms-of-use/index.html` | Legal terms page at /terms-of-use/ |
 | `check-links.py` | Link health checker — verifies every URL in both CSVs (see below) |
+| `test-check-links.py` | Offline regression tests for the link checker — run after editing it |
 
 ## Data Pipeline
 
@@ -70,6 +71,11 @@ Statuses worth knowing:
   matches a dead-page marker. Also fix the CSV; the old checker reported these as OK.
 - **WARN** — 403 bot walls, rate limits, and download interstitials (e.g. PMC's
   "Preparing to download" page). Verify in a browser; usually fine. Does not fail the run.
+
+After changing `check-links.py`, run `python test-check-links.py` — 9 offline cases
+against a localhost server, ~2 seconds, no network. It pins the classification rules
+that are easy to break by accident (soft-404 vs. interstitial, HEAD-hostile fallback,
+mislabeled content types, permanent vs. temporary redirects).
 
 Three things here are deliberate and should not be "cleaned up":
 1. **stdlib urllib, not requests/httpx.** `requests` cannot be imported from the repo
