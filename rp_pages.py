@@ -73,8 +73,9 @@ def build_intro(display, records, idxs):
             if tok.isdigit() and len(tok) == 4:
                 years.append(int(tok))
     n = len(idxs)
+    # Keep the display name's own casing — lowercasing turns "ACL" into "acl".
     bits = [
-        f'{n} {display.lower()} rehabilitation protocol{"s" if n != 1 else ""} '
+        f'{n} {display} rehabilitation protocol{"s" if n != 1 else ""} '
         f'from {len(orgs)} institution{"s" if len(orgs) != 1 else ""}'
     ]
     if years:
@@ -99,7 +100,7 @@ def comparison_table(records, idxs, entries):
         restr = truncate(normalize(records[i].get('Key Restrictions')), 110)
         rows.append(
             '          <tr>\n'
-            f'            <th scope="row"><a href="{esc(entry["path"])}">{esc(entry["org"] or entry["name"])}</a></th>\n'
+            f'            <th scope="row"><a href="{esc(entry["path"])}">{esc(entry["label"])}</a></th>\n'
             f'            <td>{esc(wb) or "&mdash;"}</td>\n'
             f'            <td>{esc(restr) or "&mdash;"}</td>\n'
             '          </tr>'
@@ -196,10 +197,20 @@ def generate(records, protocols, resolved=None, rekey=None):
             org = normalize(records[i].get('Source Organization'))
             bits = [b for b in (normalize(records[i].get('Surgeon(s) / Author(s)')),
                                 normalize(records[i].get('Publication Date'))) if b]
+            # Within a hub the topic is constant, so the org alone often repeats
+            # (one institution publishing several graft variants). Append the
+            # variant so sibling links and table rows are distinguishable.
+            variant = rp_data.dedupe_name(
+                normalize(records[i].get('Surgery Category')),
+                normalize(records[i].get('Surgery Type')))
+            label = org or rp_data.protocol_name(records[i])
+            if variant and org and variant.lower() not in org.lower():
+                label = f'{org} — {variant}'
             entries.append({
                 'path': paths[i][0],
                 'name': rp_data.protocol_name(records[i]),
                 'org': org,
+                'label': truncate(label, 62),
                 'meta': truncate(' · '.join(bits), 70),
             })
 
@@ -247,7 +258,7 @@ def generate(records, protocols, resolved=None, rekey=None):
             if sibs:
                 links = '\n'.join(
                     f'      <a class="rp-sib" href="{esc(s["path"])}">'
-                    f'{esc(s["org"] or s["name"])}</a>' for s in sibs)
+                    f'{esc(s["label"])}</a>' for s in sibs)
                 sib_html = (
                     f'    <section class="rp-siblings">\n'
                     f'      <h2>Other {esc(meta["display"])} protocols</h2>\n'
@@ -278,13 +289,13 @@ def generate(records, protocols, resolved=None, rekey=None):
         # ── hub page ──
         hub_title = T.fit_title(f'{meta["display"]} Protocols — {len(idxs)} Compared')
         hub_desc = truncate(
-            f'Compare {len(idxs)} {meta["display"].lower()} rehabilitation protocols from '
+            f'Compare {len(idxs)} {meta["display"]} rehabilitation protocols from '
             f'leading orthopedic institutions — weight-bearing status, key restrictions, '
             f'and phase timelines, free.', 155)
         hub_jsonld = T.graph(
             T.organization(),
             T.breadcrumb(hub_trail),
-            T.item_list([(e['org'] or e['name'], e['path']) for e in entries],
+            T.item_list([(e['label'], e['path']) for e in entries],
                         name=f'{meta["display"]} protocols'),
         )
         related = ''
