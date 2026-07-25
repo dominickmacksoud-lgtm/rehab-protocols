@@ -51,6 +51,38 @@ def write_protocols_js(protocols):
     print(f'  Generated {len(protocols)} protocols -> {OUT_PATH.name}')
 
 
+def sync_home_jsonld(protocols):
+    """Emit the homepage WebSite + CollectionPage block.
+
+    Replaces markup that declared numberOfItems: 887 while listing 7 items, each
+    pointing at a `?category=` URL that nothing on the page parsed. The list now
+    points at the real region landing pages and its count is derived, so the two
+    cannot disagree.
+    """
+    import rp_templates as T
+
+    counts = rp_data.region_counts(protocols)
+    entries = [
+        (f'{region} Rehabilitation Protocols ({counts.get(region, 0)})', path)
+        for region, path in rp_data.REGION_PATHS.items()
+    ]
+    collection = {
+        '@type': 'CollectionPage',
+        'name': 'Rehab Protocols — Post-Op & Rehabilitation Protocol Library',
+        'url': f'{T.SITE}/',
+        'description': ('A library of post-op and non-operative rehabilitation protocols '
+                        'from academic medical centers, hospitals, and orthopedic surgeons.'),
+        'inLanguage': 'en-US',
+        'audience': {'@type': 'Audience',
+                     'audienceType': 'Licensed Physical Therapists and PT Students'},
+        'publisher': {'@id': T.ORG_ID},
+        'mainEntity': T.item_list(entries, name='Protocols by body region'),
+    }
+    block = (f'<script type="application/ld+json">'
+             f'{T.escj(T.graph(T.organization(), T.website(), collection))}</script>')
+    rp_data.splice(ROOT / 'index.html', 'HOME-JSONLD', block, label='homepage JSON-LD')
+
+
 def sync_counts(protocols):
     """Patch hardcoded counts in the hand-maintained HTML pages."""
     total = len(protocols)
@@ -96,20 +128,34 @@ def main():
                     help='carry a ledger slug across a changed primary key')
     args = ap.parse_args()
 
-    records, protocols = build(args)
+    records, _ = build(args)
 
     if args.emit_topics_skeleton:
         import rp_topics
         rp_topics.emit_skeleton(records)
         return 0
 
+    if args.skip_pages:
+        protocols = rp_data.build_protocols(records)
+        write_protocols_js(protocols)
+        sync_counts(protocols)
+        sync_home_jsonld(protocols)
+        return 0
+
+    # Resolve slugs first so protocols.js can carry each protocol's page path
+    # from the same resolution the static pages use.
+    import rp_pages
+    import rp_sitemap
+
+    resolved = rp_pages.resolve(records, rekey=args.rekey)
+    protocols = rp_data.build_protocols(records, paths=resolved['paths'])
+
     write_protocols_js(protocols)
     sync_counts(protocols)
+    sync_home_jsonld(protocols)
 
-    if not args.skip_pages:
-        # Imported lazily so --skip-pages stays usable if page generation is broken.
-        import rp_pages
-        rp_pages.generate(records, protocols, rekey=args.rekey)
+    rp_pages.generate(records, protocols, resolved=resolved)
+    rp_sitemap.generate(ledger=resolved['ledger'])
 
     return 0
 

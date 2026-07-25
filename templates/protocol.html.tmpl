@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  ${head}
+</head>
+<body>
+  ${header}
+
+  <main class="container rp-page">
+    <nav class="rp-breadcrumb" aria-label="Breadcrumb">${breadcrumb}</nav>
+
+    <article class="rp-detail">
+      <h1>${h1}</h1>
+      <p class="rp-detail-org">${org}${org_meta}</p>
+
+      <dl class="rp-facts">
+${facts}
+      </dl>
+
+      <div class="rp-cta-row">
+        <a href="${source_url}" class="rp-cta" target="_blank" rel="nofollow noopener noreferrer">View Original Protocol &rarr;</a>
+        <span class="rp-cta-note">Opens the source document on ${source_host}</span>
+      </div>
+    </article>
+
+${siblings}
+
+    <p class="rp-uplinks">
+      <a href="/protocols/${topic_slug}/">All ${topic_display} protocols</a>
+      <span aria-hidden="true">&middot;</span>
+      <a href="${region_path}">${region} protocols</a>
+      <span aria-hidden="true">&middot;</span>
+      <a href="/protocols/">Browse all topics</a>
+    </p>
+  </main>
+
+  ${footer}
+  ${disclaimer}
+</body>
+</html>

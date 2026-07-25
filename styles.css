@@ -34,8 +34,19 @@ body {
   color: #fff;
   padding: 2rem 0;
 }
-.brand h1 { margin: 0 0 0.5rem; font-size: clamp(2rem, 2.5vw, 3rem); }
-.brand p  { margin: 0; max-width: 38rem; color: rgba(255,255,255,0.92); }
+/* The site name is a link, not a heading: every page needs its own topical <h1>,
+   and a brand <h1> repeated site-wide gave all 17 pages two competing headings.
+   Styled to render identically to the old h1. */
+.brand .brand-name {
+  display: block;
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 2.5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: inherit;
+  text-decoration: none;
+}
+.brand .brand-tagline { margin: 0; max-width: 38rem; color: rgba(255,255,255,0.92); }
 
 .site-header .site-nav {
   display: flex;
@@ -114,6 +125,10 @@ body {
 
 /* ── Section headings ────────────────────────────────────────────────────── */
 .section-heading { margin-bottom: 1rem; }
+/* Covers h1/h2/h3 so the heading level can follow document structure without
+   changing how the section heading looks. */
+.section-heading h1,
+.section-heading h2,
 .section-heading h3 { margin: 0 0 0.5rem; font-size: 1.75rem; }
 .section-heading p  { margin: 0; color: var(--color-muted); }
 
@@ -518,6 +533,178 @@ body {
 .disclaimer-btn:hover:not([disabled]) { background: var(--color-primary-dark); }
 .disclaimer-btn:disabled { background: #b8d7d0; cursor: not-allowed; }
 
+/* ── Disclaimer bottom sheet ─────────────────────────────────────────────────
+   Non-blocking replacement for the full-screen gate: it never covers page
+   content and never locks scrolling, so it is not an intrusive interstitial.
+   Googlebot carries no cookies and sees this on every crawl of every page. */
+.disclaimer-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  background: #fff;
+  border-top: 2px solid var(--color-primary);
+  box-shadow: 0 -6px 24px rgba(0,0,0,0.14);
+}
+.disclaimer-sheet-inner {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 0.9rem 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.disclaimer-sheet-text {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  flex: 1;
+}
+.disclaimer-sheet-text strong { color: var(--color-secondary); }
+.disclaimer-sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex-shrink: 0;
+  width: 17rem;
+}
+.disclaimer-sheet .disclaimer-check-label { font-size: 0.8rem; }
+.disclaimer-sheet .disclaimer-btn { padding: 0.55rem; font-size: 0.9rem; }
+
+@media (max-width: 760px) {
+  .disclaimer-sheet-inner { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .disclaimer-sheet-actions { width: 100%; }
+  .disclaimer-sheet-text { max-height: 30vh; overflow-y: auto; }
+}
+
+/* ── Generated protocol pages (hubs, detail, topic index) ──────────────────── */
+.rp-page { padding: 1.75rem 0 3.5rem; }
+.rp-page h1 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  margin: 0 0 0.75rem;
+  color: var(--color-secondary);
+  line-height: 1.25;
+}
+.rp-page h2 {
+  font-size: 1.25rem;
+  margin: 2.25rem 0 0.85rem;
+  color: var(--color-secondary);
+}
+.rp-intro { color: var(--color-text); line-height: 1.7; max-width: 62rem; margin: 0 0 0.5rem; }
+
+.rp-breadcrumb { font-size: 0.82rem; color: var(--color-muted); margin-bottom: 1rem; }
+.rp-breadcrumb a { color: var(--color-primary); text-decoration: none; }
+.rp-breadcrumb a:hover { text-decoration: underline; }
+.rp-crumb-sep { margin: 0 0.1rem; color: var(--color-border); }
+
+.rp-detail-org { color: var(--color-muted); font-size: 0.92rem; margin: 0 0 1.5rem; }
+
+.rp-facts { margin: 0; display: grid; grid-template-columns: minmax(9rem, 12rem) 1fr; gap: 0.1rem 1.5rem; }
+.rp-facts dt {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--color-border);
+}
+.rp-facts dd {
+  margin: 0;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  line-height: 1.65;
+}
+
+.rp-cta-row { margin: 1.75rem 0 0; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.rp-cta {
+  display: inline-block;
+  padding: 0.65rem 1.4rem;
+  background: var(--color-primary);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.rp-cta:hover { background: var(--color-primary-dark); }
+.rp-cta-note { font-size: 0.8rem; color: var(--color-muted); }
+
+.rp-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem; }
+.rp-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+  text-decoration: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.rp-card:hover { border-color: var(--color-primary); box-shadow: var(--shadow); }
+.rp-card-name { display: block; font-weight: 600; color: var(--color-secondary); font-size: 0.93rem; line-height: 1.4; }
+.rp-card-org { font-size: 0.83rem; color: var(--color-muted); margin-top: 0.3rem; }
+.rp-card-meta { font-size: 0.76rem; color: var(--color-muted); margin-top: 0.2rem; }
+
+.rp-table-wrap { overflow-x: auto; border: 1px solid var(--color-border); border-radius: 12px; }
+.rp-compare { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 40rem; }
+.rp-compare th, .rp-compare td { text-align: left; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+.rp-compare thead th { background: var(--color-bg); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-muted); white-space: nowrap; }
+.rp-compare tbody th { font-weight: 600; color: var(--color-secondary); }
+.rp-compare tbody th a { color: var(--color-primary); text-decoration: none; }
+.rp-compare tbody th a:hover { text-decoration: underline; }
+.rp-compare tbody tr:last-child th, .rp-compare tbody tr:last-child td { border-bottom: none; }
+
+.rp-siblings { margin-top: 2.25rem; }
+.rp-sib {
+  display: inline-block;
+  margin: 0 0.4rem 0.5rem 0;
+  padding: 0.4rem 0.85rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+.rp-sib:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.rp-topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.5rem; }
+.rp-topic-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--color-secondary);
+  font-size: 0.88rem;
+}
+.rp-topic-link:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.rp-topic-count { font-size: 0.76rem; color: var(--color-muted); flex-shrink: 0; }
+
+/* Region landing pages drop these blocks straight into <main> with no
+   .container wrapper, so they need the gutters the old .lp-grid carried.
+   Excludes .rp-page, where <main> is already a .container. */
+main:not(.rp-page) > .rp-card-grid,
+main:not(.rp-page) > .rp-siblings {
+  max-width: 1200px;
+  margin: 1.5rem auto 3rem;
+  padding: 0 1rem;
+}
+main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
+
+/* Card titles link to the protocol's own page; inherit so the card looks unchanged. */
+.card-title-link { color: inherit; text-decoration: none; }
+.card-title-link:hover { text-decoration: underline; }
+
+.rp-uplinks { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border); font-size: 0.86rem; color: var(--color-muted); }
+.rp-uplinks a { color: var(--color-primary); text-decoration: none; }
+.rp-uplinks a:hover { text-decoration: underline; }
+
 .footer-terms-link { color: var(--color-primary); text-decoration: none; font-weight: 500; }
 .footer-terms-link:hover { text-decoration: underline; }
 
@@ -893,6 +1080,22 @@ body {
 [data-theme="dark"] .modal-row { border-bottom-color: #334155; }
 [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
 [data-theme="dark"] .disclaimer-overlay { background: rgba(0,0,0,0.75); }
+[data-theme="dark"] .disclaimer-sheet { background: #1e293b; box-shadow: 0 -6px 24px rgba(0,0,0,0.5); }
+
+/* Generated protocol pages */
+[data-theme="dark"] .rp-card { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .rp-card-name { color: #e2e8f0; }
+[data-theme="dark"] .rp-facts dt,
+[data-theme="dark"] .rp-facts dd { border-top-color: #334155; }
+[data-theme="dark"] .rp-table-wrap { border-color: #334155; }
+[data-theme="dark"] .rp-compare th,
+[data-theme="dark"] .rp-compare td { border-bottom-color: #334155; }
+[data-theme="dark"] .rp-compare thead th { background: #0f1b2d; }
+[data-theme="dark"] .rp-compare tbody th { color: #e2e8f0; }
+[data-theme="dark"] .rp-sib,
+[data-theme="dark"] .rp-topic-link { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+[data-theme="dark"] .rp-crumb-sep { color: #475569; }
+[data-theme="dark"] .rp-uplinks { border-top-color: #334155; }
 
 /* Footer */
 [data-theme="dark"] .site-footer { background: #0a1120; }

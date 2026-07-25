@@ -213,21 +213,25 @@ def protocol_name(record):
     return surgery_category or surgery_type or 'Untitled Protocol'
 
 
-def build_protocols(records):
+def build_protocols(records, paths=None):
     """Build the record list that becomes protocols.js.
 
     Field order and content must stay stable — protocols.js is consumed by
     index.html's search/filter/modal code.
+
+    paths: optional {row_index: (url_path, ...)} adding a 'path' field so homepage
+    cards can link to each protocol's own page. Sourced from the same slug
+    resolution the static pages use, so the two cannot disagree.
     """
     protocols = []
-    for record in records:
+    for i, record in enumerate(records):
         url = normalize(record.get('Protocol URL'))
         category = (normalize(record.get('Body Region Display'))
                     or normalize(record.get('Body Region')) or 'Other')
         source_org = normalize(record.get('Source Organization'))
         wb_status = normalize(record.get('WB Status'))
 
-        protocols.append({
+        entry = {
             'url': url,
             'category': category,
             'name': protocol_name(record),
@@ -242,7 +246,10 @@ def build_protocols(records):
             'timelinePhases': normalize(record.get('Timeline / Phases')),
             'notes': normalize(record.get('Notes')),
             'isPdf': url.lower().split('?')[0].endswith('.pdf'),
-        })
+        }
+        if paths and i in paths:
+            entry['path'] = paths[i][0]
+        protocols.append(entry)
     return protocols
 
 

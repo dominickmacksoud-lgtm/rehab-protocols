@@ -19,5 +19,8 @@ yarn-error.log*
 # Link checker run artifacts
 link-report.json
 
+# Sitemap lastmod cache — derived from git log, regenerated on demand
+.page-lastmod.json
+
 # Python cache
 __pycache__/

@@ -76,16 +76,39 @@ def main():
     OUTPUT.write_text(js, encoding="utf-8")
     print(f"OK: wrote {len(rows)} guidelines to {OUTPUT.name}")
 
-    # Keep JSON-LD numberOfItems in sync
+    # Emit the CollectionPage/ItemList block in full.
+    #
+    # This previously synced only "numberOfItems" via regex while the nine
+    # itemListElement entries stayed hand-written, so the markup claimed 36 items
+    # and listed 9 — all nine pointing at the same URL. Generating the whole
+    # block keeps the count and the items definitionally in agreement.
     ROOT = Path(__file__).parent
-    guidelines_html_path = ROOT / 'guidelines' / 'index.html'
-    guidelines_html = guidelines_html_path.read_text(encoding='utf-8')
-    updated, n_subs = re.subn(r'"numberOfItems":\s*\d+', f'"numberOfItems": {len(rows)}', guidelines_html)
-    if n_subs == 0:
-        print("WARNING: numberOfItems pattern matched nothing in guidelines/index.html — count NOT synced")
-    elif updated != guidelines_html:
-        guidelines_html_path.write_text(updated, encoding='utf-8')
-        print(f"OK: updated numberOfItems -> {len(rows)} in guidelines/index.html")
+    import rp_data
+    import rp_templates as T
+
+    def anchor(row):
+        slug = re.sub(r'[^a-z0-9]+', '-', (row['condition'] or '').lower()).strip('-')
+        return f"/guidelines/#{slug}" if slug else "/guidelines/"
+
+    collection = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Clinical Practice Guidelines — Rehab Protocols",
+        "description": ("Evidence-based clinical practice guidelines from APTA, AAOS, "
+                        "JOSPT, and other professional bodies. Free reference tool for "
+                        "physical therapists."),
+        "url": "https://rehabprotocols.com/guidelines/",
+        "inLanguage": "en-US",
+        "audience": {"@type": "Audience",
+                     "audienceType": "Licensed Physical Therapists and PT Students"},
+        "publisher": {"@id": T.ORG_ID},
+        "mainEntity": T.item_list(
+            [(f"{r['condition']} — {r['issuingOrg']}".strip(' —'), anchor(r)) for r in rows],
+            name="Clinical Practice Guidelines Library"),
+    }
+    block = f'<script type="application/ld+json">{T.escj(collection)}</script>'
+    rp_data.splice(ROOT / 'guidelines' / 'index.html', 'GUIDELINES-JSONLD', block,
+                   label=f'guidelines ItemList ({len(rows)} items)')
 
     # Per-guideline MedicalGuideline structured data
     def build_sd_item(row):
