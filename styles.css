@@ -35,7 +35,7 @@ body {
   padding: 2rem 0;
 }
 .brand h1 { margin: 0 0 0.5rem; font-size: clamp(2rem, 2.5vw, 3rem); }
-.brand p  { margin: 0; max-width: 34rem; color: rgba(255,255,255,0.92); }
+.brand p  { margin: 0; max-width: 38rem; color: rgba(255,255,255,0.92); }
 
 .site-header .site-nav {
   display: flex;
