@@ -1,0 +1,48 @@
+<!-- Clinical-use notice. Non-blocking by design: it does not cover page content
+       and does not lock scrolling, so it is not an intrusive interstitial.
+       Googlebot carries no cookies and therefore sees this on every crawl. -->
+  <div id="disclaimer-modal" class="disclaimer-sheet" style="display:none;" role="region" aria-label="Clinical use notice">
+    <div class="disclaimer-sheet-inner">
+      <div class="disclaimer-sheet-text">
+        <strong>For licensed healthcare professionals.</strong>
+        RehabProtocols.com catalogs protocols from third-party medical centers for clinical reference and education only &mdash; it is not intended for patients or the general public, and nothing here is medical advice or creates a clinician-patient relationship. Summaries may not reflect the current version of a source document; the operative surgeon's instructions and the original protocol always take precedence.
+        <a href="/terms-of-use/" target="_blank" rel="noopener" class="disclaimer-terms-link">Read full Terms of Use &rarr;</a>
+      </div>
+      <div class="disclaimer-sheet-actions">
+        <label class="disclaimer-check-label">
+          <input type="checkbox" id="disclaimer-checkbox" />
+          <span>I am a licensed healthcare professional and accept the Terms of Use.</span>
+        </label>
+        <button id="disclaimer-btn" class="disclaimer-btn" disabled onclick="acknowledgeDisclaimer()">Acknowledge</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function hasDisclaimerAck() {
+      return document.cookie.split(';').some(function(c){ return c.trim().indexOf('rp_disclaimer_ack=1') === 0; });
+    }
+    function acknowledgeDisclaimer() {
+      var d = new Date();
+      d.setFullYear(d.getFullYear() + 1);
+      document.cookie = 'rp_disclaimer_ack=1; path=/; SameSite=Lax; expires=' + d.toUTCString();
+      if (window.gtag) { gtag('event', 'acknowledge_disclaimer'); }
+      document.getElementById('disclaimer-modal').style.display = 'none';
+    }
+    function toggleTheme() {
+      var html = document.documentElement;
+      var isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      localStorage.setItem('rp_theme', isDark ? 'light' : 'dark');
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var box = document.getElementById('disclaimer-checkbox');
+      var btn = document.getElementById('disclaimer-btn');
+      if (box && btn) {
+        box.addEventListener('change', function () { btn.disabled = !this.checked; });
+      }
+      if (!hasDisclaimerAck()) {
+        document.getElementById('disclaimer-modal').style.display = 'block';
+      }
+    });
+  </script>

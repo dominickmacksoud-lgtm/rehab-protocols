@@ -11,6 +11,12 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 | `protocols-import.csv` | Master data (source of truth — never edit protocols.js manually) |
 | `protocols.js` | Auto-generated output |
 | `generate-protocols.py` | Only generator — do not delete |
+| `protocols/**` | Auto-generated static pages (887 protocol + 241 hub + 1 index) |
+| `protocol-slugs.csv` | **URL contract** — auto-managed, never hand-edit (see below) |
+| `topics.csv` | Hand-curated surgery-topic taxonomy |
+| `sitemap.xml` | Auto-generated — do not hand-edit |
+| `rp_*.py` | Generator modules imported by `generate-protocols.py` |
+| `rp_verify.py` | Read-only checker for pages, links, JSON-LD, ledger, sitemap |
 | `terms-of-use/index.html` | Legal terms page at /terms-of-use/ |
 | `check-links.py` | Link health checker — verifies every URL in both CSVs (see below) |
 | `test-check-links.py` | Offline regression tests for the link checker — run after editing it |
@@ -21,7 +27,66 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 
 CSV has 13 columns: Body Region, Body Region Display, Surgery Category, Surgery Type, Source Organization, Surgeon(s)/Author(s), Protocol URL, Publication Date, Cataloged Date, WB Status, Key Restrictions, Timeline/Phases, Notes
 
-After editing CSV, always run `python generate-protocols.py` and commit both files.
+After editing CSV, always run `python generate-protocols.py` and commit the changed
+files. One command still does everything; it now also writes `protocols/**`,
+`protocol-slugs.csv`, and `sitemap.xml`, so expect more files in `git status`.
+
+```
+python generate-protocols.py                    # everything
+python generate-protocols.py --skip-pages       # protocols.js only (fast)
+python generate-protocols.py --emit-topics-skeleton  # draft topics.csv
+python rp_verify.py                             # check the result
+```
+
+Then run `python rp_verify.py` before committing. It is read-only and takes a few
+seconds. Also confirm idempotency: run the generator twice and check that
+`git status --porcelain` is empty on the second run.
+
+### The slug ledger — `protocol-slugs.csv`
+
+This file is the site's URL contract. Every protocol page URL is pinned here and,
+once allocated, never changes. **Never hand-edit it, and never delete and
+regenerate it** — doing so can reassign hundreds of URLs at once, 404-ing pages
+that Google has already indexed.
+
+Identity is `sha1(Protocol URL + Surgery Type)`, which is a verified primary key
+across all rows. Row order deliberately plays no part: the CSV is hand-edited and
+periodically re-sorted, and a position-derived slug would change every URL below
+an inserted row. Reordering the CSV or inserting rows at the top is verified to
+move zero existing URLs.
+
+Removing a row from the CSV marks its ledger entry `retired` and reserves that
+slug forever, so a future protocol cannot inherit a dead URL.
+
+If you edit a Protocol URL or Surgery Type on an existing row, the key changes and
+the generator reports it as one retirement plus one new page — the old URL will
+404. It prints a `possible renames?` note when it sees that pattern. To carry the
+existing URL across, run `python generate-protocols.py --rekey OLDPID=NEWPID`.
+
+### Curating `topics.csv`
+
+Hand-maintained. Maps raw `Surgery Category` values onto the hub pages under
+`/protocols/<topic>/`. Columns: `topic_slug, display_name, h1, region, status,
+aliases, intro`.
+
+`status` is one of:
+- `hub` — indexable hub page (needs 3+ protocols)
+- `noindex` — rendered and crawlable but `noindex,follow`; used for thin topics
+- `merge:<slug>` — alias-only, rows resolve to `<slug>`
+- `exclude` — never a topic; rows fall through to their Surgery Type
+
+Catch-all categories (`Non-Operative`, `Surgical`, `Knee`, `Total Joint
+Replacement`) are `exclude` on purpose. Excluding them is what splits Total Joint
+Replacement into Total Hip and Total Knee, since nobody searches the merged term.
+Leave `intro` blank to get a synthesized factual paragraph, or write your own.
+
+### Region page sentinels
+
+The 7 region pages contain `<!-- RP:PROTOCOL-LIST:START/END -->` and
+`<!-- RP:TOPIC-LINKS:START/END -->` markers. The generator replaces only what is
+between them; the hand-written intro paragraph on each page sits outside and is
+never overwritten. If a sentinel goes missing the generator warns rather than
+failing silently.
 
 Known expected generator warnings: MGH ACL protocol (one PDF covers BPTB, Hamstring, and Allograft variants — same URL, different Surgery Types), and Lahey Hospital THA variants (one PDF covers multiple approaches). These are intentional shared-URL entries.
 
