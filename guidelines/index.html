@@ -177,9 +177,9 @@
         <span id="results-summary" style="color:#4b6574;font-size:0.92rem;" aria-live="polite" aria-atomic="true"></span>
         <button id="clear-filters-btn" class="filter-btn" onclick="clearAllFilters()" style="display:none;margin-left:auto;">Clear filters ✕</button>
       </div>
-      <div id="top-pagination"></div>
+      <div id="pagination-top"></div>
       <div id="guideline-results" class="protocol-grid"></div>
-      <div id="bottom-pagination"></div>
+      <div id="pagination-bottom"></div>
     </section>
 
   </main>
@@ -345,17 +345,25 @@
 
     /* ── Pagination ── */
     function renderPagination(totalPages) {
-      const html = totalPages <= 1 ? '' : paginationHTML(totalPages);
-      document.getElementById('top-pagination').innerHTML = html;
-      document.getElementById('bottom-pagination').innerHTML = html;
-      // Re-bind clicks (we render twice so use event delegation via onclick attributes)
-    }
+      const showTop = totalPages > 1;
+      const prev = `<button class="page-btn page-prev" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} aria-label="Previous page">&#8592; Prev</button>`;
+      const next = `<button class="page-btn page-next" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} aria-label="Next page">Next &#8594;</button>`;
 
-    function paginationHTML(totalPages) {
-      const prev = `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹ Prev</button>`;
-      const next = `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next ›</button>`;
-      const info = `<span class="page-info">Page ${currentPage} of ${totalPages}</span>`;
-      return `<nav class="pagination top-pagination" aria-label="Results pages">${prev}${info}${next}</nav>`;
+      document.getElementById('pagination-top').innerHTML = showTop
+        ? `<nav class="pagination-top-nav" aria-label="Results pages">${prev}<span class="page-info">Page ${currentPage} of ${totalPages}</span>${next}</nav>`
+        : '';
+
+      if (!showTop) { document.getElementById('pagination-bottom').innerHTML = ''; return; }
+      let pages = '';
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          pages += `<button class="page-btn page-num${i === currentPage ? ' active' : ''}" onclick="goToPage(${i})" aria-label="Page ${i}"${i === currentPage ? ' aria-current="page"' : ''}>${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          pages += `<span class="page-ellipsis">…</span>`;
+        }
+      }
+      document.getElementById('pagination-bottom').innerHTML =
+        `<nav class="pagination-bottom-nav" aria-label="Results pages"><div class="pagination-row">${prev}<div class="page-numbers">${pages}</div>${next}</div></nav>`;
     }
 
     function goToPage(n) {
