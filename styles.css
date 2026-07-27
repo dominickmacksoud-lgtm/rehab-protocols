@@ -1,6 +1,13 @@
 :root {
-  --color-primary: #2a9d8f;
-  --color-primary-dark: #21867a;
+  /* --color-primary carries two jobs with opposing contrast needs: link/icon
+     text on a light background, and a button fill behind --color-on-primary
+     ink. The old #2a9d8f failed WCAG AA at both (3.17:1 as text, 3.32:1 under
+     white). Darkened along the same hue so the brand reads unchanged. */
+  --color-primary: #1d7a6e;
+  --color-primary-dark: #17635a;
+  /* Ink for anything sitting on a --color-primary fill. Must be theme-aware:
+     the dark theme's bright teal cannot carry white text (1.86:1). */
+  --color-on-primary: #ffffff;
   --color-secondary: #1a3a5c;
   --color-text: #334e68;
   --color-muted: #4b6574;
@@ -120,7 +127,7 @@ body {
   border-radius: 50%;
   transition: background 0.2s;
 }
-#clear-search:hover { background: rgba(42,157,143,0.1); color: var(--color-secondary); }
+#clear-search:hover { background: rgba(29,122,110,0.1); color: var(--color-secondary); }
 
 
 /* ── Section headings ────────────────────────────────────────────────────── */
@@ -159,7 +166,7 @@ body {
   background: #d7f0ea;
   transform: translateY(-2px);
 }
-.category-card.selected { background: var(--color-primary); color: white; }
+.category-card.selected { background: var(--color-primary); color: var(--color-on-primary); }
 
 
 /* ── Filter bar ──────────────────────────────────────────────────────────── */
@@ -201,13 +208,18 @@ body {
   font-family: inherit;
 }
 .filter-btn:hover        { background: #d7f0ea; border-color: var(--color-primary); }
-.filter-btn.active       { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+.filter-btn.active       { background: var(--color-primary); color: var(--color-on-primary); border-color: var(--color-primary); }
 
 /* WB filter active colors */
-.filter-btn.wb-NWB.active  { background: #e53e3e; border-color: #e53e3e; }
-.filter-btn.wb-WBAT.active { background: #dd6b20; border-color: #dd6b20; }
-.filter-btn.wb-PWB.active  { background: #d69e2e; border-color: #d69e2e; }
-.filter-btn.wb-FWB.active  { background: #38a169; border-color: #38a169; }
+/* Fills matched to the badge ramp above so a status reads the same everywhere.
+   Ink is pinned rather than inherited from --color-on-primary: these four
+   backgrounds are fixed across themes, so a theme-dependent ink would invert
+   them in dark mode. The old fills carried white at 2.39:1 (PWB) to 4.13 (NWB);
+   these clear 5.47 or better. */
+.filter-btn.wb-NWB.active  { background: #c53030; border-color: #c53030; color: #fff; }
+.filter-btn.wb-WBAT.active { background: #3f6212; border-color: #3f6212; color: #fff; }
+.filter-btn.wb-PWB.active  { background: #8a5a00; border-color: #8a5a00; color: #fff; }
+.filter-btn.wb-FWB.active  { background: #276749; border-color: #276749; color: #fff; }
 
 /* ── Clear filters ───────────────────────────────────────────────────────── */
 .clear-filters-btn {
@@ -306,10 +318,15 @@ body {
 
 /* WB badges */
 .badge-wb { font-size: 0.71rem; font-weight: 700; }
+/* A monotonic red -> burnt orange -> amber -> olive -> green ramp, ordered by
+   how much load the patient is permitted. WBAT previously rendered in the exact
+   same orange as TDWB, so the two most easily confused statuses were visually
+   identical; WBAT now sits next to FWB, where its permissiveness belongs.
+   All five clear 4.5:1 — the old PWB (3.61) and WBAT (4.33) did not. */
 .wb-NWB  { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
-.wb-TDWB { background: #fffaf0; color: #c05621; border: 1px solid #feebc8; }
-.wb-PWB  { background: #fffff0; color: #b7791f; border: 1px solid #fefcbf; }
-.wb-WBAT { background: #fff8ed; color: #c05621; border: 1px solid #feebc8; }
+.wb-TDWB { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+.wb-PWB  { background: #fffbeb; color: #8a5a00; border: 1px solid #fde68a; }
+.wb-WBAT { background: #f7fee7; color: #3f6212; border: 1px solid #d9f99d; }
 .wb-FWB  { background: #f0fff4; color: #276749; border: 1px solid #c6f6d5; }
 
 /* Format badges */
@@ -381,7 +398,7 @@ body {
 .view-btn {
   display: inline-block;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-on-primary);
   border-radius: 8px;
   padding: 0.42rem 0.85rem;
   font-size: 0.87rem;
@@ -521,7 +538,7 @@ body {
   width: 100%;
   padding: 0.75rem;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-on-primary);
   border: none;
   border-radius: 10px;
   font-size: 1rem;
@@ -623,7 +640,7 @@ body {
   display: inline-block;
   padding: 0.65rem 1.4rem;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   text-decoration: none;
   border-radius: 999px;
   font-weight: 600;
@@ -926,7 +943,7 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 .page-num { min-width: 2rem; height: 2rem; padding: 0; border-color: transparent; background: transparent; }
 .page-prev, .page-next { padding: 0.35rem 0.8rem; font-weight: 600; }
 .page-btn:hover:not([disabled]) { background: #e8f4f8; border-color: var(--color-primary); color: var(--color-secondary); }
-.page-num.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); font-weight: 700; }
+.page-num.active { background: var(--color-primary); color: var(--color-on-primary); border-color: var(--color-primary); font-weight: 700; }
 .page-btn[disabled] { opacity: 0.3; cursor: default; }
 .page-ellipsis { display: inline-flex; align-items: center; min-width: 1.5rem; justify-content: center; color: #7a95a8; font-size: 0.88rem; user-select: none; }
 
@@ -1004,6 +1021,8 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
   color-scheme: dark;
   --color-primary: #2dd4bf;
   --color-primary-dark: #2a9d8f;
+  /* Bright teal needs dark ink, not white — white on #2dd4bf is 1.86:1. */
+  --color-on-primary: #0f172a;
   --color-secondary: #e2e8f0;
   --color-text: #cbd5e1;
   --color-muted: #94a3b8;
@@ -1030,7 +1049,7 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 [data-theme="dark"] .filter-btn { background: #1e293b; border-color: #334155; }
 [data-theme="dark"] .filter-btn:hover { background: #1a3a35; }
 [data-theme="dark"] .view-toggle-btn { background: #1e293b; border-color: #334155; }
-[data-theme="dark"] .view-toggle-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: #0f172a; }
+[data-theme="dark"] .view-toggle-btn.active { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
 [data-theme="dark"] .page-size-select { background: #1e293b; border-color: #334155; }
 
 /* Clear filters */
@@ -1054,10 +1073,11 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 [data-theme="dark"] .badge-service   { background: #3a2010; color: #fbbf24; }
 
 /* WB badges */
+/* Same ramp, same ordering — WBAT was identical to TDWB here too. */
 [data-theme="dark"] .wb-NWB  { background: #3b1515; color: #fca5a5; border-color: #7f1d1d; }
 [data-theme="dark"] .wb-TDWB { background: #3b2010; color: #fdba74; border-color: #7c2d12; }
 [data-theme="dark"] .wb-PWB  { background: #3b3010; color: #fde68a; border-color: #713f12; }
-[data-theme="dark"] .wb-WBAT { background: #3b2010; color: #fdba74; border-color: #7c2d12; }
+[data-theme="dark"] .wb-WBAT { background: #1a2e05; color: #bef264; border-color: #3f6212; }
 [data-theme="dark"] .wb-FWB  { background: #0f2d1e; color: #86efac; border-color: #14532d; }
 
 /* Format badges */
@@ -1136,7 +1156,7 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
   padding: 0.05rem 0.32rem;
   border-radius: 999px;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -1145,7 +1165,7 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 }
 .site-header .site-nav-link.btn-nav-cta {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   border-color: var(--color-primary);
   font-weight: 600;
 }
@@ -1172,12 +1192,12 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
-.btn-primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.btn-primary { background: var(--color-primary); color: var(--color-on-primary); border-color: var(--color-primary); }
 .btn-primary:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); }
 .btn-outline { background: transparent; color: var(--color-primary); border-color: var(--color-primary); }
-.btn-outline:hover { background: var(--color-primary); color: #fff; }
+.btn-outline:hover { background: var(--color-primary); color: var(--color-on-primary); }
 .btn-ghost { background: transparent; color: var(--color-primary); border-color: transparent; }
-.btn-ghost:hover { background: rgba(42,157,143,0.10); }
+.btn-ghost:hover { background: rgba(29,122,110,0.10); }
 .btn-lg { padding: 0.85rem 1.75rem; font-size: 1.05rem; }
 
 /* ── Standalone PRO badge (pricing + coming-soon) ────────────────────────────── */
@@ -1186,7 +1206,7 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -1286,7 +1306,7 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
   background: #fff;
   color: var(--color-text);
 }
-.waitlist-form input[type="email"]:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(42,157,143,0.18); }
+.waitlist-form input[type="email"]:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(29,122,110,0.18); }
 .waitlist-radios { display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; font-size: 0.9rem; color: var(--color-muted); }
 .waitlist-radios label { display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; }
 .waitlist-fineprint { font-size: 0.8rem; color: var(--color-muted); margin-top: 1rem; }

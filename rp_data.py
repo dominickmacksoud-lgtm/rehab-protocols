@@ -14,6 +14,7 @@ import csv
 import re
 import sys
 from collections import Counter
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -67,6 +68,35 @@ def setup_console():
 
 def normalize(value):
     return (value or '').strip()
+
+
+# Bookkeeping text meaning "the source document doesn't say" — not a value.
+# Deliberately scoped to the two attribution columns: 'N/A' in WB Status is real
+# clinical content on 80 upper-extremity rows and must survive untouched.
+PLACEHOLDER_COLUMNS = ('Surgeon(s) / Author(s)', 'Publication Date')
+
+# The trailing group covers the qualified forms the CSV actually carries —
+# 'Not listed (system-level guideline)', '(multi-surgeon practice)'. The
+# parenthetical explains the absence; it is not an author.
+_PLACEHOLDER_RE = re.compile(
+    r'^(not listed|not specified|not stated|not provided|unknown|none|n/?a)'
+    r'(\s*\([^)]*\))?$',
+    re.IGNORECASE)
+
+
+def field(record, column):
+    """Read a CSV column, collapsing attribution placeholders to ''.
+
+    An empty cell and the string 'Not listed' say the same thing, but only the
+    blank was treated as absent — so 'Not listed' shipped as a rendered
+    "Published" row, a byline suffix, and a schema.org Person named "Not
+    listed". Callers already skip '', so normalizing here fixes every surface at
+    once.
+    """
+    value = normalize(record.get(column))
+    if column in PLACEHOLDER_COLUMNS and _PLACEHOLDER_RE.match(value):
+        return ''
+    return value
 
 
 def load_records(path=CSV_PATH):
@@ -190,6 +220,73 @@ def extract_wb_initial(wb_text):
     if not positions:
         return ''
     return min(positions, key=positions.get)
+
+
+_MONTHS = {
+    'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+    'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+}
+
+_MONTH_ALT = '|'.join(_MONTHS)
+
+# Alternatives are ordered longest-first so that at a given start position the
+# fullest form wins: '2024-07-26' must not be consumed as '2024-07' or '2024'.
+_PUB_DATE_RE = re.compile(rf"""
+    (?P<ymd_y>\b(?:19|20)\d{{2}})-(?P<ymd_m>0[1-9]|1[0-2])-(?P<ymd_d>0[1-9]|[12]\d|3[01])\b
+  | (?P<ym_y>\b(?:19|20)\d{{2}})-(?P<ym_m>0[1-9]|1[0-2])\b
+  | (?P<mdy_m>{_MONTH_ALT})[a-z]*\.?\s+(?P<mdy_d>\d{{1,2}}),\s*(?P<mdy_y>(?:19|20)\d{{2}})\b
+  | (?P<my_m>{_MONTH_ALT})[a-z]*\.?\s+(?P<my_y>(?:19|20)\d{{2}})\b
+  | \b(?P<sdy_m>0?[1-9]|1[0-2])/(?P<sdy_d>0?[1-9]|[12]\d|3[01])/(?P<sdy_y>(?:19|20)\d{{2}})\b
+  | \b(?P<sy_m>0?[1-9]|1[0-2])/(?P<sy_y>(?:19|20)\d{{2}})\b
+  | (?P<y>\b(?:19|20)\d{{2}}\b)
+""", re.IGNORECASE | re.VERBOSE)
+
+
+def parse_pub_date(text):
+    """Parse a free-text Publication Date into an ISO-8601 date, or None.
+
+    schema.org datePublished must be a Date. 341 of 887 CSV rows carry no usable
+    date (197 blank, 144 the literal string 'Not listed'), so those rows have to
+    omit the key entirely — emitting "datePublished":"Not listed" is exactly what
+    Search Console flags as invalid structured data.
+
+    Takes the *leftmost* date in the string, which is the publication date in
+    every multi-date form present in the CSV:
+        'Approved March 2019; Review Date March 2022' -> '2019-03'
+        '2020 (updated from August 2019)'             -> '2020'
+        'Revised April 2021 (original April 2019)'    -> '2021-04'
+
+    Precision is preserved rather than padded: a year-only source stays '2015'
+    and never becomes '2015-01-01', because ISO 8601 reduced precision is valid
+    here and inventing a month would assert a fact the source does not support.
+    """
+    match = _PUB_DATE_RE.search(text or '')
+    if not match:
+        return None
+    g = match.groupdict()
+
+    if g['ymd_y']:
+        y, m, d = int(g['ymd_y']), int(g['ymd_m']), int(g['ymd_d'])
+    elif g['ym_y']:
+        return f"{int(g['ym_y']):04d}-{int(g['ym_m']):02d}"
+    elif g['mdy_y']:
+        y, m, d = int(g['mdy_y']), _MONTHS[g['mdy_m'][:3].lower()], int(g['mdy_d'])
+    elif g['my_y']:
+        return f"{int(g['my_y']):04d}-{_MONTHS[g['my_m'][:3].lower()]:02d}"
+    elif g['sdy_y']:
+        y, m, d = int(g['sdy_y']), int(g['sdy_m']), int(g['sdy_d'])
+    elif g['sy_y']:
+        return f"{int(g['sy_y']):04d}-{int(g['sy_m']):02d}"
+    else:
+        return g['y']
+
+    # The regex bounds day to 01-31, which still admits 2021-02-30. Drop to
+    # month precision rather than emit a date that does not exist.
+    try:
+        date(y, m, d)
+    except ValueError:
+        return f'{y:04d}-{m:02d}'
+    return f'{y:04d}-{m:02d}-{d:02d}'
 
 
 def classify_source(url, source_org):

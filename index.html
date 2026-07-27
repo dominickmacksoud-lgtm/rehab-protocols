@@ -12,7 +12,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Physical Therapy Protocols — Post-Op Rehab Protocol Library</title>
-  <meta name="description" content="A growing library of post-op and non-operative rehabilitation protocols from academic medical centers, hospitals, and orthopedic surgeons. Free clinical reference tool for physical therapists." />
+  <meta name="description" content="A free library of post-op and non-operative rehabilitation protocols from academic medical centers, hospitals, and orthopedic surgeons — for physical therapists." />
   <link rel="canonical" href="https://rehabprotocols.com/" />
   <meta name="robots" content="index, follow" />
   <meta name="google-site-verification" content="c3bTdXafzrxEzLlo9q8sMPpf3xqv4KW_db2zLIVpM1s" />
@@ -20,7 +20,7 @@
   <meta property="og:url" content="https://rehabprotocols.com/" />
   <meta property="og:title" content="Physical Therapy Protocols — Post-Op Rehab Protocol Library" />
   <meta property="og:description" content="A growing library of post-op and non-operative rehabilitation protocols from academic medical centers, hospitals, and orthopedic surgeons. Free clinical reference tool for physical therapists." />
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Physical Therapy Protocols — Post-Op Rehab Protocol Library" />
   <meta name="twitter:description" content="A growing library of post-op and non-operative rehabilitation protocols from academic medical centers, hospitals, and orthopedic surgeons. Free clinical reference tool for physical therapists." />
   <meta property="og:image" content="https://rehabprotocols.com/og-image.png" />
@@ -84,7 +84,12 @@
         <a class="category-card" href="/ankle-foot/" data-category="Ankle/Foot">Ankle/Foot</a>
         <a class="category-card" href="/elbow/" data-category="Elbow">Elbow</a>
         <a class="category-card" href="/wrist-hand/" data-category="Wrist/Hand">Wrist/Hand</a>
-        <button class="category-card" onclick="filterByCategory('Other', this)">Other</button>
+        <!-- Leg, Multiple, and Head have no landing page by design (see
+             NO_LANDING_PAGE in rp_data.py), so this points at the filtered
+             homepage rather than a region path. Still an <a>, so it matches the
+             other seven for keyboard, middle-click, and shareability, and the
+             delegated listener above filters in place instead of navigating. -->
+        <a class="category-card" href="/?category=Other" data-category="Other">Other</a>
       </div>
     </section>
 
@@ -105,10 +110,13 @@
       <div class="filter-bar">
         <div class="filter-group">
           <span class="filter-label">Type</span>
+          <!-- No Education button: infer_type() can return 'education', but zero
+               of 887 rows match its keywords, so the filter only ever rendered
+               "Showing 0 of 0". The classifier and its badge are still live —
+               restore this button if the corpus ever gains such protocols. -->
           <button class="filter-btn active" data-filter="type" onclick="setTypeFilter('',this)">All</button>
           <button class="filter-btn" data-filter="type" onclick="setTypeFilter('postop',this)">Post-Op</button>
           <button class="filter-btn" data-filter="type" onclick="setTypeFilter('nonop',this)">Non-Op</button>
-          <button class="filter-btn" data-filter="type" onclick="setTypeFilter('education',this)">Education</button>
         </div>
         <div class="filter-group">
           <span class="filter-label">WB Status</span>

@@ -240,6 +240,18 @@ def check_links(rep):
 
 # ── JSON-LD ───────────────────────────────────────────────────────────────────
 
+DATE_PROPS = ('datePublished', 'dateModified', 'dateCreated', 'guidelineDate')
+ISO_DATE_RE = re.compile(r'\d{4}(-\d{2}(-\d{2})?)?$')
+
+# A named entity whose name is CSV bookkeeping — one Person was published as
+# "Not listed". Absence must be an omitted key, never a placeholder value.
+PLACEHOLDER_NAME_RE = re.compile(
+    r'^(not listed|not specified|not stated|not provided|unknown|none|n/?a)'
+    r'(\s*\([^)]*\))?$',
+    re.IGNORECASE)
+NAMED_TYPES = ('Person', 'Organization')
+
+
 def walk_nodes(obj):
     """Yield every dict that has an @type, at any nesting depth."""
     if isinstance(obj, dict):
@@ -266,6 +278,20 @@ def check_jsonld(rep):
             for node in walk_nodes(data):
                 types = node['@type']
                 types = types if isinstance(types, list) else [types]
+
+                # Every schema.org Date-valued property must be ISO-8601.
+                # Raw CSV text used to flow into datePublished, shipping 443
+                # invalid values ("Not listed", "August 2024", "09/2024").
+                # Reduced precision (2024, 2024-08) is valid and intended.
+                for key in DATE_PROPS:
+                    val = node.get(key)
+                    if val is not None and not ISO_DATE_RE.match(str(val)):
+                        rep.fail(rel, f'{key} is not an ISO-8601 date: {str(val)[:40]!r}')
+
+                if any(t in types for t in NAMED_TYPES):
+                    name = str(node.get('name', ''))
+                    if PLACEHOLDER_NAME_RE.match(name.strip()):
+                        rep.fail(rel, f'{types[0]}.name is a placeholder: {name!r}')
 
                 if 'MedicalWebPage' in types:
                     url = node.get('url', '')

@@ -44,7 +44,7 @@ def render_breadcrumb(trail):
 def render_facts(record):
     rows = []
     for key, label in FACT_FIELDS:
-        val = normalize(record.get(key))
+        val = rp_data.field(record, key)
         if not val:
             continue
         rows.append(f'        <dt>{label}</dt>\n        <dd>{esc(val)}</dd>')
@@ -195,8 +195,8 @@ def generate(records, protocols, resolved=None, rekey=None):
         entries = []
         for i in ordered:
             org = normalize(records[i].get('Source Organization'))
-            bits = [b for b in (normalize(records[i].get('Surgeon(s) / Author(s)')),
-                                normalize(records[i].get('Publication Date'))) if b]
+            bits = [b for b in (rp_data.field(records[i], 'Surgeon(s) / Author(s)'),
+                                rp_data.field(records[i], 'Publication Date')) if b]
             # Within a hub the topic is constant, so the org alone often repeats
             # (one institution publishing several graft variants). Append the
             # variant so sibling links and table rows are distinguishable.
@@ -248,8 +248,8 @@ def generate(records, protocols, resolved=None, rekey=None):
                     url=f'{T.SITE}{path}', name=name, description=description,
                     condition=meta['display'], source_url=source_url,
                     publisher=org or None,
-                    author=normalize(record.get('Surgeon(s) / Author(s)')) or None,
-                    published=normalize(record.get('Publication Date')) or None,
+                    author=rp_data.field(record, 'Surgeon(s) / Author(s)') or None,
+                    published=rp_data.parse_pub_date(record.get('Publication Date')),
                 ),
             )
 
@@ -265,7 +265,7 @@ def generate(records, protocols, resolved=None, rekey=None):
                     f'{links}\n'
                     f'    </section>\n')
 
-            surgeons = normalize(record.get('Surgeon(s) / Author(s)'))
+            surgeons = rp_data.field(record, 'Surgeon(s) / Author(s)')
             org_meta = f' &middot; {esc(truncate(surgeons, 80))}' if surgeons else ''
 
             html_out = protocol_t.substitute(
@@ -391,8 +391,8 @@ def generate(records, protocols, resolved=None, rekey=None):
         cards = []
         for i in idxs:
             org = normalize(records[i].get('Source Organization'))
-            bits = [b for b in (normalize(records[i].get('Surgeon(s) / Author(s)')),
-                                normalize(records[i].get('Publication Date'))) if b]
+            bits = [b for b in (rp_data.field(records[i], 'Surgeon(s) / Author(s)'),
+                                rp_data.field(records[i], 'Publication Date')) if b]
             cards.append(protocol_card({
                 'path': paths[i][0],
                 'name': rp_data.protocol_name(records[i]),

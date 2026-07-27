@@ -8,6 +8,7 @@ styles.css or the inline CSS these templates carry.
 
 import html
 import json
+import re
 from string import Template
 from urllib.parse import urlparse
 
@@ -141,6 +142,9 @@ def breadcrumb(trail):
     return {'@type': 'BreadcrumbList', 'itemListElement': items}
 
 
+ISO_DATE_RE = re.compile(r'\d{4}(-\d{2}(-\d{2})?)?$')
+
+
 def medical_web_page(*, url, name, description, condition, source_url,
                      publisher=None, author=None, published=None):
     """The page's own URL is canonical here.
@@ -148,6 +152,12 @@ def medical_web_page(*, url, name, description, condition, source_url,
     The previous client-injected markup set url to the third-party PDF, which
     attributed ~887 entities to other domains. The source document is now a
     citation instead.
+
+    `published` must already be ISO-8601 (see rp_data.parse_pub_date) or None.
+    Anything else is dropped rather than emitted: raw CSV text used to flow
+    straight through, publishing 443 invalid datePublished values including 144
+    literal "Not listed". Omitting the key costs nothing; an invalid Date makes
+    Search Console reject the whole node.
     """
     node = {
         '@type': 'MedicalWebPage',
@@ -166,7 +176,7 @@ def medical_web_page(*, url, name, description, condition, source_url,
         node['sourceOrganization'] = {'@type': 'Organization', 'name': publisher}
     if author:
         node['author'] = {'@type': 'Person', 'name': author}
-    if published:
+    if published and ISO_DATE_RE.match(published):
         node['datePublished'] = published
     return node
 
