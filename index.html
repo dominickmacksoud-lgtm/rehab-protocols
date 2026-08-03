@@ -155,6 +155,12 @@
       </div>
       <div id="protocol-results" class="protocol-grid"></div>
       <div id="pagination-bottom"></div>
+      <!-- Shown when a search and a filter are both active and the filter is
+           actually costing the user matches. No aria-live: #results-summary above
+           is already a polite live region and names the same filters, so a second
+           one would double-announce on every debounced keystroke. The Clear button
+           inside is a real button, so keyboard users still reach this by Tab. -->
+      <div id="filter-hint" class="filter-hint" style="display:none;"></div>
     </section>
   </main>
 
@@ -251,6 +257,9 @@
     let searchDebounceTimer;
 
     const TYPE_LABELS = { postop: 'POST-OP', nonop: 'NON-OP', education: 'EDUCATION' };
+    // Same values in sentence case — TYPE_LABELS is sized for badges and reads as
+    // shouting inside the filter-hint prose.
+    const TYPE_FILTER_LABELS = { postop: 'Post-Op', nonop: 'Non-Op', education: 'Education' };
     const SOURCE_LABELS = { academic: 'Academic', hospital: 'Hospital', surgeon: 'Surgeon', clinic: 'Clinic' };
 
     // ── localStorage helpers ──────────────────────────────────────────────
@@ -410,10 +419,14 @@
         container.innerHTML = page.map(({ p, idx }, ri) => cardHTML(p, idx, ri)).join('');
       }
 
+      // Category and query are independent clauses, not either/or. As an `else if`
+      // the region was silently dropped whenever a query existed, so "Hip + ACL"
+      // read `matching "ACL"` with nothing on screen naming the filter that had
+      // emptied the results — the exact dead end this section now explains.
       const parts = [];
       if (favoritesSnapshot !== null) parts.push('Favorites');
-      if (currentQuery) parts.push(`matching "${currentQuery}"`);
-      else if (currentCategory) parts.push(`in ${currentCategory}`);
+      if (currentCategory) parts.push(`in ${currentCategory}`);
+      if (currentQuery) parts.push(`matching "${escHtml(currentQuery)}"`);
       if (currentType) parts.push(TYPE_LABELS[currentType]);
       if (currentWb) parts.push(currentWb);
       const ctx = parts.length ? ' — ' + parts.join(', ') : '';
@@ -422,6 +435,66 @@
         `Showing ${showing} of <strong>${total}</strong> protocol${total !== 1 ? 's' : ''}${ctx}.`;
 
       renderPagination(totalPages);
+      renderFilterHint(total);
+    }
+
+    // ── "Your filters are hiding results" hint ────────────────────────────
+    // Active filters are easy to forget once the category grid scrolls away, so a
+    // search that returns nothing looks like the library simply has no match.
+    function activeFilterNames() {
+      const names = [];
+      if (currentCategory) names.push(currentCategory);
+      if (currentType) names.push(TYPE_FILTER_LABELS[currentType] || currentType);
+      if (currentWb) names.push(currentWb);
+      if (favoritesSnapshot !== null) names.push('Favorites');
+      return names;
+    }
+
+    function joinNames(names) {
+      if (names.length === 1) return names[0];
+      if (names.length === 2) return `${names[0]} and ${names[1]}`;
+      return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
+    }
+
+    // How many protocols the query alone would return. One extra pass over the
+    // same memoized haystacks getFiltered() already walks, and only when a query
+    // and a filter are both active.
+    function countQueryOnlyMatches() {
+      const tokens = currentQuery.toLowerCase().split(/\s+/).filter(Boolean);
+      if (!tokens.length) return 0;
+      return protocols.reduce((n, p) => {
+        const haystack = searchHaystack(p);
+        return tokens.every(t => haystack.includes(t)) ? n + 1 : n;
+      }, 0);
+    }
+
+    function renderFilterHint(total) {
+      const el = document.getElementById('filter-hint');
+      const names = activeFilterNames();
+
+      // Only worth saying when clearing the filters would actually surface more.
+      const unfiltered = currentQuery && names.length ? countQueryOnlyMatches() : 0;
+      if (unfiltered <= total) {
+        el.style.display = 'none';
+        el.className = 'filter-hint';
+        el.innerHTML = '';
+        return;
+      }
+
+      const q = escHtml(currentQuery);
+      const label = joinNames(names.map(n => `<strong>${escHtml(n)}</strong>`));
+      const noun = `filter${names.length !== 1 ? 's' : ''}`;
+      const hidden = unfiltered - total;
+      const msg = total === 0
+        ? `No protocols match <strong>“${q}”</strong> with the ${label} ${noun} on.
+           <br>${unfiltered} protocol${unfiltered !== 1 ? 's' : ''} match${unfiltered === 1 ? 'es' : ''} <strong>“${q}”</strong> without ${names.length !== 1 ? 'them' : 'it'}.`
+        : `Not finding what you're looking for? The ${label} ${noun}
+           ${names.length !== 1 ? 'are' : 'is'} hiding ${hidden} other protocol${hidden !== 1 ? 's' : ''} matching <strong>“${q}”</strong>.`;
+
+      el.className = total === 0 ? 'filter-hint filter-hint-empty' : 'filter-hint';
+      el.innerHTML = `<p class="filter-hint-msg">${msg}</p>
+        <button class="clear-filters-btn" onclick="clearFiltersKeepSearch()">✕ Clear ${noun}, keep search</button>`;
+      el.style.display = 'block';
     }
 
     function renderPagination(totalPages) {
@@ -484,21 +557,36 @@
       renderAll();
     }
 
-    function clearAllFilters() {
+    // Resets every filter except the search box. Shared by the two clear paths so
+    // the button rows and aria state can't drift apart between them.
+    function resetFilterControls() {
       currentCategory = '';
       currentType = '';
       currentWb = '';
-      currentQuery = '';
       currentPage = 1;
       favoritesSnapshot = null;
-      document.getElementById('protocol-search').value = '';
-      toggleClearBtn('');
       document.querySelectorAll('.category-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
       document.querySelectorAll('[data-filter="type"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
       document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
       const favBtn = document.getElementById('fav-filter-btn');
       favBtn.classList.remove('active');
       favBtn.setAttribute('aria-pressed', 'false');
+    }
+
+    function clearAllFilters() {
+      resetFilterControls();
+      currentQuery = '';
+      document.getElementById('protocol-search').value = '';
+      toggleClearBtn('');
+      updateClearFiltersBtn();
+      renderAll();
+    }
+
+    // Keeps the query so the user doesn't have to retype it — the whole point of
+    // the hint is that the filters, not the search term, were the problem.
+    function clearFiltersKeepSearch() {
+      gtag('event', 'clear_filters_keep_search', { search_term: currentQuery });
+      resetFilterControls();
       updateClearFiltersBtn();
       renderAll();
     }

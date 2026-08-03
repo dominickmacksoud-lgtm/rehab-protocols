@@ -894,6 +894,28 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 }
 #results-summary { margin: 0; }
 
+/* ── Filter hint ("your filters are hiding results") ───────────────────── */
+.filter-hint {
+  margin: 1.5rem auto 0;
+  max-width: 46rem;
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+}
+/* With zero results this is the only thing in the results area, so it carries
+   the weight of an empty state rather than reading as a footnote. */
+.filter-hint-empty {
+  margin-top: 0.5rem;
+  padding: 1.75rem 1.25rem;
+  border-style: solid;
+}
+.filter-hint-msg { margin: 0 0 0.75rem; }
+.filter-hint strong { color: var(--color-secondary); }
+
 /* ── Top pagination (inline, minimal) ─────────────────────────────────── */
 .pagination-top-nav {
   display: flex;
@@ -1126,6 +1148,10 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 [data-theme="dark"] .page-btn:hover:not([disabled]) { background: #1a3a35; border-color: var(--color-primary); }
 [data-theme="dark"] #pagination-bottom { border-top-color: #334155; }
 [data-theme="dark"] .page-ellipsis { color: #4b6580; }
+
+/* Filter hint */
+[data-theme="dark"] .filter-hint { background: #1e293b; border-color: #334155; color: #94a3b8; }
+[data-theme="dark"] .filter-hint strong { color: #e2e8f0; }
 
 /* Guidelines page — page-specific inline style overrides */
 [data-theme="dark"] .page-intro { color: #94a3b8; }
