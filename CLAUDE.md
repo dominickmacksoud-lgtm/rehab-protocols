@@ -20,6 +20,7 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 | `terms-of-use/index.html` | Legal terms page at /terms-of-use/ |
 | `check-links.py` | Link health checker — verifies every URL in both CSVs (see below) |
 | `test-check-links.py` | Offline regression tests for the link checker — run after editing it |
+| `wayback-repoints.csv` | Revert ledger for protocols repointed at web.archive.org (see below) |
 
 ## Data Pipeline
 
@@ -62,6 +63,20 @@ If you edit a Protocol URL or Surgery Type on an existing row, the key changes a
 the generator reports it as one retirement plus one new page — the old URL will
 404. It prints a `possible renames?` note when it sees that pattern. To carry the
 existing URL across, run `python generate-protocols.py --rekey OLDPID=NEWPID`.
+
+**The generator does not delete retired pages.** Removing a row marks the ledger
+entry `retired` and drops it from `protocols.js` and `sitemap.xml`, but the
+already-written `protocols/<topic>/<slug>/index.html` stays on disk and keeps
+being served — pointing at whatever dead source made you remove the row. There is
+no prune step anywhere in `rp_pages.py`. After retiring a protocol, delete its
+directory by hand and re-run `rp_verify.py`:
+
+```
+git rm -r protocols/<topic>/<slug>
+python rp_verify.py
+```
+
+The slug stays reserved in the ledger either way, so nothing can inherit the URL.
 
 ### Curating `topics.csv`
 
@@ -152,6 +167,45 @@ Three things here are deliberate and should not be "cleaned up":
    "bot-blocked", which was a misdiagnosis.
 3. **No domain skip list.** Every URL gets checked. Use `--skip <domain>` for a
    temporary, explicit exemption instead of hardcoding one.
+
+## Archived (Wayback) protocol links
+
+82 protocols point at `web.archive.org` captures rather than the hospital's own
+site. In August 2026 Mass General Brigham retired the MGH and Brigham and Women's
+PDF asset trees in a CMS migration: every
+`massgeneral.org/assets/**` and `brighamandwomens.org/assets/**` protocol PDF
+began 301-ing to a generic marketing page. The documents were not withdrawn on
+clinical grounds — the whole tree went at once, index page included — so they were
+repointed at their last good capture rather than deleted.
+
+**Archived URLs must use the `id_` modifier** — `/web/<timestamp>id_/<original-url>`.
+The plain `/web/<timestamp>/` form content-negotiates: browsers and curl get the
+PDF, but urllib (and therefore `check-links.py`) gets Wayback's HTML toolbar page
+instead, so every archived link reads as a broken PDF forever. Verify any new
+archive.org link through the checker's own code path, not curl — curl cannot see
+this failure. `id_` serves the archived file itself and returns `application/pdf`.
+
+`wayback-repoints.csv` is the revert ledger: `original_url`, `wayback_url`,
+`snapshot_date`, `snapshot_timestamp`, `surgery_type`, `source_org`,
+`repointed_on`. `original_url` holds the **exact** value that was in
+`protocols-import.csv`, which is what a revert must write back and what the slug
+ledger's pid is derived from — not the archive's normalized copy of it, which
+differs in case.
+
+If MGB republishes, revert by writing `original_url` back over `wayback_url` in
+`protocols-import.csv`, then regenerate **with rekeys**, since Protocol URL is
+half the identity hash:
+
+```
+python -c "import csv,importlib.util as u;s=u.spec_from_file_location('r','rp_slugs.py');m=u.module_from_spec(s);s.loader.exec_module(m);[print(f'--rekey {m.pid(r[\"wayback_url\"],r[\"surgery_type\"])}={m.pid(r[\"original_url\"],r[\"surgery_type\"])}',end=' ') for r in csv.DictReader(open('wayback-repoints.csv',newline='',encoding='utf-8'))]"
+```
+
+Without `--rekey`, changing 82 Protocol URLs retires 82 slugs and allocates 82 new
+ones, 404-ing every indexed page. Confirm the generator reports `content updated`,
+not a matching count of `new` and `retired`.
+
+One protocol, MGH's Lower Trapezius Tendon Transfer, had no capture in the Wayback
+CDX index at all and was removed instead.
 
 ## Session Handoff
 

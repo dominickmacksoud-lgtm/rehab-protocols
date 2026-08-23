@@ -33,6 +33,7 @@ import csv
 import http.client
 import json
 import random
+import re
 import socket
 import ssl
 import sys
@@ -55,6 +56,16 @@ if hasattr(sys.stdout, "reconfigure"):
 USER_AGENT      = "RehabProtocols.com link-checker/2.0"
 TIMEOUT         = 20     # seconds per request
 DELAY           = 0.3    # seconds between requests to the SAME host
+
+# Hosts that throttle harder than DELAY allows. This is politeness pacing, not a
+# skip list -- every URL is still checked, just slower. archive.org drops roughly
+# a quarter of the connections in an unpaced 80-URL run; at 2.5s a full sweep of
+# them completes clean. (Pacing is NOT what makes archive.org return PDFs rather
+# than HTML -- that is the id_ modifier on the URL itself, see the archived-links
+# section of CLAUDE.md.)
+HOST_DELAY = {
+    "web.archive.org": 2.5,
+}
 HOST_WORKERS    = 12     # how many distinct hosts to check in parallel
 MAX_ATTEMPTS    = 3
 PDF_SNIFF_BYTES = 2048
@@ -232,6 +243,40 @@ def _trivial_redirect(original, final):
     return norm(original) == norm(final)
 
 
+# Words that appear in so many URL paths that sharing one proves nothing about
+# whether the destination is still the document we asked for.
+_GENERIC_PATH_WORDS = frozenset((
+    "www", "com", "org", "net", "edu", "gov", "http", "https", "html", "htm",
+    "pdf", "assets", "content", "documents", "document", "docs", "doc", "files",
+    "file", "download", "downloads", "sites", "site", "default", "uploads",
+    "media", "static", "public", "dam", "index", "page", "pages", "the", "and",
+    "for", "with", "our", "about", "patients", "families", "services", "service",
+))
+
+_URL_WORD_RE = re.compile(r"[a-z0-9]+")
+
+
+def _destination_still_names_it(original, final):
+    """Does the redirect target still mention the document we asked for?
+
+    A .pdf request that lands on HTML at a path sharing no distinctive word with
+    the requested filename is a soft-404: the blanket "we reorganized the site"
+    rule that dumps an entire asset tree onto a marketing page. A real download
+    interstitial or PDF viewer keeps the document id in its path or query, and a
+    bot wall answers in place without redirecting at all.
+    """
+    stem = urllib.parse.urlsplit(original).path.rsplit("/", 1)[-1]
+    if stem.lower().endswith(".pdf"):
+        stem = stem[:-4]
+    wanted = {w for w in _URL_WORD_RE.findall(stem.lower())
+              if len(w) > 2 and w not in _GENERIC_PATH_WORDS}
+    if not wanted:
+        return True  # nothing distinctive to match on; do not accuse the link
+    dest = urllib.parse.urlsplit(final)
+    found = set(_URL_WORD_RE.findall(f"{dest.path} {dest.query}".lower()))
+    return bool(wanted & found)
+
+
 # A .pdf URL answering with HTML is either a dead link dressed up as a page (a
 # soft-404) or a download interstitial / bot wall. Only the first is a real failure;
 # PMC, for one, serves a "Preparing to download" page that a browser gets past fine.
@@ -241,12 +286,20 @@ DEAD_PAGE_MARKERS = ("not found", "no longer available", "cannot be found",
                      "does not exist", "page has moved", "410 gone")
 
 
-def _not_a_pdf(resp, final, ctype, sniff, notes):
+def _not_a_pdf(url, resp, final, ctype, sniff, notes):
     text = sniff.decode("utf-8", "replace").lower()
     hit = next((m for m in DEAD_PAGE_MARKERS if m in text), None)
     if hit:
         notes.append(f"expected PDF, got '{ctype or 'unknown'}' page matching "
                      f"'{hit}' - link is probably dead")
+        return WRONG_TYPE, resp.status_code, final, "; ".join(notes)
+    # No marker, but if we were redirected somewhere that no longer names the
+    # document, the host retired the file and dressed the 404 as a real page.
+    if (resp.redirects and not _trivial_redirect(url, final)
+            and not _destination_still_names_it(url, final)):
+        notes.append(f"expected PDF, got '{ctype or 'unknown'}' at unrelated path "
+                     f"'{urllib.parse.urlsplit(final).path or '/'}' - "
+                     f"link is probably dead")
         return WRONG_TYPE, resp.status_code, final, "; ".join(notes)
     notes.append(f"expected PDF, got '{ctype or 'unknown'}' - download interstitial "
                  f"or bot protection; verify manually")
@@ -291,7 +344,7 @@ def _classify(opener, tracker, url, resp, body):
             sniff = got[1] or b""
 
         if sniff is not None and not sniff.startswith(b"%PDF"):
-            return _result(*_not_a_pdf(resp, final, ctype, sniff, notes))
+            return _result(*_not_a_pdf(url, resp, final, ctype, sniff, notes))
 
         clen = resp.headers.get("Content-Length")
         if clen and str(clen).isdigit() and int(clen) < MIN_PDF_BYTES:
@@ -399,9 +452,10 @@ def check_host(host, urls, ctx, progress, skip_domains):
         return results
 
     opener, tracker = make_opener(ctx)
+    delay = HOST_DELAY.get(host.lower(), DELAY)
     for i, u in enumerate(urls):
         if i:
-            time.sleep(DELAY)   # politeness, per-host only
+            time.sleep(delay)   # politeness, per-host only
         r = check_url(opener, tracker, u)
         results[u] = r
         progress.tick(r["status"])

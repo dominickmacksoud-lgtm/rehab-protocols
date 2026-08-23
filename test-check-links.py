@@ -39,6 +39,12 @@ TINY_PDF = b"%PDF-1.4\n" + b"x" * 50         # valid magic but implausibly small
 DEAD_PAGE = b"<html><body>Page not found</body></html>" * 40
 INTERSTITIAL = (b"<html><head><title>Preparing to download ...</title></head>"
                 b"<body>Please wait</body></html>") * 20
+# A genuine marketing page: 200, real content, and none of DEAD_PAGE_MARKERS.
+# This is what a host serves after it retires an asset tree and blanket-redirects
+# it, which is why text matching alone cannot catch that case.
+MARKETING = (b"<html><head><title>About Our Hospital</title></head><body>"
+             b"A teaching hospital committed to excellence in patient care, "
+             b"research and education.</body></html>") * 20
 
 # path -> (status, content-type, body)
 ROUTES = {
@@ -51,6 +57,16 @@ ROUTES = {
     "/headless.pdf": (200, "application/pdf", REAL_PDF),   # but 403s on HEAD, see below
     "/liar.pdf":     (200, "text/plain", REAL_PDF),
     "/interst.pdf":  (200, "text/html; charset=utf-8", INTERSTITIAL),
+    "/retired-protocol-for-acl.pdf": (301, None, None),
+    "/kept-protocol-for-mcl.pdf":    (301, None, None),
+    "/en/about/our-hospital": (200, "text/html; charset=utf-8", MARKETING),
+    "/viewer":                (200, "text/html; charset=utf-8", INTERSTITIAL),
+}
+
+# Where each redirecting route points. Anything not listed lands on /real.pdf.
+REDIRECTS = {
+    "/retired-protocol-for-acl.pdf": "/en/about/our-hospital",
+    "/kept-protocol-for-mcl.pdf":    "/viewer?file=kept-protocol-for-mcl.pdf",
 }
 
 # path -> (expected status, why this case exists)
@@ -64,7 +80,19 @@ CASES = {
     "/headless.pdf": (cl.OK, "HEAD rejected with 403, ranged GET rescues it"),
     "/liar.pdf":     (cl.OK, "content-type lies; %PDF magic bytes win"),
     "/interst.pdf":  (cl.WARN, "download gate, not a dead link, so it must not fail"),
+    "/retired-protocol-for-acl.pdf":
+        (cl.WRONG_TYPE, "301 onto an unrelated real page is a soft-404 in disguise"),
+    "/kept-protocol-for-mcl.pdf":
+        (cl.WARN, "redirect that still names the document is a viewer, not a death"),
 }
+
+
+# host -> (expected per-request delay, why this case exists)
+PACING = [
+    ("web.archive.org", 2.5, "archive.org throttles at DELAY and serves HTML, not PDFs"),
+    ("WEB.ARCHIVE.ORG", 2.5, "host casing must not defeat the override"),
+    ("example.org", 0.3, "ordinary hosts keep the default DELAY"),
+]
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -88,7 +116,7 @@ class Handler(BaseHTTPRequestHandler):
 
         if code in (301, 302):
             self.send_response(code)
-            self.send_header("Location", "/real.pdf")
+            self.send_header("Location", REDIRECTS.get(path, "/real.pdf"))
             self.end_headers()
             return
 
@@ -112,6 +140,7 @@ def main():
     threading.Thread(target=server.serve_forever, daemon=True).start()
     base = f"http://127.0.0.1:{server.server_address[1]}"
 
+    default_delay = cl.DELAY
     cl.DELAY = 0   # no politeness pause against ourselves
     opener, tracker = cl.make_opener(cl.make_ssl_context())
 
@@ -126,10 +155,21 @@ def main():
                 failures.append((path, expected, got, why))
             print(f"  {'PASS' if ok else 'FAIL'}  {path:<15} "
                   f"{got if ok else f'{expected} -> {got}':<28} {why}")
+        # Throttle-prone hosts get their own pause. Checked as a lookup
+        # rather than by timing a request: what matters is that the table
+        # is consulted at all and that host casing cannot defeat it.
+        for host, expected_delay, why in PACING:
+            got = cl.HOST_DELAY.get(host.lower(), default_delay)
+            ok = got == expected_delay
+            if not ok:
+                failures.append((host, expected_delay, got, why))
+            print(f"  {'PASS' if ok else 'FAIL'}  {host:<15} "
+                  f"{f'{got}s' if ok else f'{expected_delay} -> {got}':<28} {why}")
     finally:
         server.shutdown()
 
-    print(f"\n  {len(CASES) - len(failures)}/{len(CASES)} passed\n")
+    total = len(CASES) + len(PACING)
+    print(f"\n  {total - len(failures)}/{total} passed\n")
     for path, expected, got, why in failures:
         print(f"  {path} expected {expected}, got {got}\n      {why}")
 
