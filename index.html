@@ -273,6 +273,12 @@
       gtag('event', 'view_protocol', { protocol_name: p.name, category: p.category, source_org: p.sourceOrganization });
     }
 
+    // Deep link into the planner by path (the slug ledger's URL contract),
+    // never by array index, which shifts on every ingest.
+    function plannerHref(p) {
+      return '/treatment-planner/' + (p.path ? '?p=' + encodeURIComponent(p.path) : '');
+    }
+
     function trackTreatmentPlanClick(idx) {
       const p = protocols[idx];
       gtag('event', 'select_treatment_planner', { protocol_name: p.name, category: p.category });
@@ -347,7 +353,10 @@
         ${p.timelinePhases ? `<div class="card-detail"><strong>Timeline:</strong> ${trunc(p.timelinePhases, 80)}</div>` : ''}
         <div class="card-footer">
           <button class="fav-btn${fav ? ' is-fav' : ''}" onclick="event.stopPropagation(); toggleFavorite(${idx})" aria-label="${fav ? 'Remove from favorites' : 'Save to favorites'}">${fav ? '♥' : '♡'}</button>
-          <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="event.stopPropagation(); trackView(${idx})">View Protocol</a>
+          <span class="card-footer-actions">
+            <a href="${plannerHref(p)}" class="card-plan-link" onclick="event.stopPropagation(); trackTreatmentPlanClick(${idx})" title="Build an AI treatment plan prompt from this protocol">AI plan →</a>
+            <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="event.stopPropagation(); trackView(${idx})">View Protocol</a>
+          </span>
         </div>
       </div>`;
     }
@@ -362,7 +371,10 @@
           <span class="badge badge-type badge-${p.type}">${tLabel}</span>
           ${wb}
         </div>
-        <a href="${p.url}" target="_blank" rel="noopener" class="list-link" onclick="event.stopPropagation(); trackView(${idx})">View →</a>
+        <span class="list-actions">
+          <a href="${plannerHref(p)}" class="list-link list-link-ai" onclick="event.stopPropagation(); trackTreatmentPlanClick(${idx})" title="Build an AI treatment plan prompt from this protocol">AI plan</a>
+          <a href="${p.url}" target="_blank" rel="noopener" class="list-link" onclick="event.stopPropagation(); trackView(${idx})">View →</a>
+        </span>
         <div class="list-meta">
           <span>${escHtml(p.sourceOrganization || 'Unknown')}${year}</span>
           <span>${p.category}</span>
@@ -697,7 +709,7 @@
           </button>
           <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="trackView(${idx})">View Protocol →</a>
         </div>
-        <a href="/treatment-planner/${p.path ? '?p=' + encodeURIComponent(p.path) : ''}" class="btn btn-outline modal-cta-btn" onclick="trackTreatmentPlanClick(${idx})">Build an AI treatment plan prompt →</a>
+        <a href="${plannerHref(p)}" class="btn btn-outline modal-cta-btn" onclick="trackTreatmentPlanClick(${idx})">Build an AI treatment plan prompt →</a>
       `;
 
       document.getElementById('protocol-modal').style.display = 'flex';
