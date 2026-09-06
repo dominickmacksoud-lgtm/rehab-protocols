@@ -23,6 +23,7 @@
     srcName: $('tp-src-name'), srcOrg: $('tp-src-org'), srcMeta: $('tp-src-meta'),
     srcPage: $('tp-src-page'), srcDoc: $('tp-src-doc'),
     cpgRow: $('tp-cpg-row'), cpg: $('tp-cpg'), cpgLabel: $('tp-cpg-label'),
+    variantRow: $('tp-variant-row'), variant: $('tp-variant'), variantLabel: $('tp-variant-label'), variantHint: $('tp-variant-hint'),
     customType: $('tp-custom-type'), customDesc: $('tp-custom-desc'),
     age: $('tp-age'), procedure: $('tp-procedure'), dateLabel: $('tp-date-label'),
     surgdate: $('tp-surgdate'), weeksOut: $('tp-weeks-out'), comorbid: $('tp-comorbid'),
@@ -71,6 +72,31 @@
       if (cpgs[i].url === p.cpg) { return cpgs[i]; }
     }
     return null;
+  }
+
+  // Protocols whose precautions branch on a choice (approach, graft, fixation)
+  // carry a `variant` from protocol-variants.csv. The dropdown opens on a
+  // placeholder so nothing is assumed on the clinician's behalf.
+  function buildVariantOptions(p) {
+    var v = p && p.variant;
+    els.variant.innerHTML = '';
+    if (!v) { return; }
+    var ph = document.createElement('option');
+    ph.value = '';
+    ph.textContent = 'Choose the ' + v.label.toLowerCase() + '...';
+    els.variant.appendChild(ph);
+    v.options.forEach(function (o) {
+      var opt = document.createElement('option');
+      opt.value = o;
+      opt.textContent = o;
+      els.variant.appendChild(opt);
+    });
+  }
+
+  function variantChoice() {
+    var p = state.mode === 'library' ? state.protocol : null;
+    if (!p || !p.variant) { return null; }
+    return { label: p.variant.label, value: els.variant.value };
   }
 
   function isPostOp() {
@@ -188,6 +214,7 @@
     state.protocol = p;
     els.procedure.value = clean(p.name);
     els.cpg.checked = true;
+    buildVariantOptions(p);
     els.search.value = '';
     closeResults();
     els.searchStatus.textContent = '';
@@ -252,6 +279,15 @@
       els.srcPage.hidden = true;
     }
     els.srcDoc.href = p.url;
+
+    var v = p.variant;
+    els.variantRow.hidden = !v;
+    if (v) {
+      els.variantLabel.textContent = v.label;
+      els.variantHint.textContent = els.variant.value
+        ? 'The prompt tells the assistant to apply only this ' + v.label.toLowerCase() + '\'s precautions.'
+        : 'This protocol\'s precautions differ by ' + v.label.toLowerCase() + '. Pick the one that applies.';
+    }
 
     var g = guidelineFor(p);
     els.cpgRow.hidden = !g;
@@ -343,6 +379,8 @@
     s += '## Patient\n\n';
     s += line('Age range', els.age.value);
     if (p) { s += line('Procedure', els.procedure.value); }
+    var vc = variantChoice();
+    if (vc) { s += line(vc.label, vc.value || 'not specified'); }
     s += line(postop ? 'Date of surgery' : 'Date of injury or onset', els.surgdate.value);
     if (start !== null) {
       s += line(postop ? 'Weeks post-op as of today' : 'Weeks since onset as of today', String(start));
@@ -382,6 +420,18 @@
       s += 'the protocol specified it.\n\n';
       s += 'Tie progression to criteria met rather than to the calendar alone, and flag any\n';
       s += 'visit where the plan approaches or crosses one of the stated restrictions.\n';
+      if (vc) {
+        var lbl = vc.label.toLowerCase();
+        if (vc.value) {
+          s += '\nThis protocol covers more than one ' + lbl + '. This patient\'s is ' + vc.value + '.\n';
+          s += 'Apply only the precautions the protocol states for that one and leave the\n';
+          s += 'others out of the plan.\n';
+        } else {
+          s += '\nThis protocol covers more than one ' + lbl + ' and the clinician has not said\n';
+          s += 'which applies. Do not assume one. State which precautions belong to each ' + lbl + '\n';
+          s += 'and ask before building the plan around any of them.\n';
+        }
+      }
     } else {
       s += '## How to handle restrictions\n\n';
       s += "Treat the clinician's stated restrictions as fixed. Where published guidance\n";
@@ -501,6 +551,7 @@
   els.backBtn.addEventListener('click', useLibrary);
   els.clearBtn.addEventListener('click', clearProtocol);
   els.cpg.addEventListener('change', render);
+  els.variant.addEventListener('change', render);
 
   var REMEMBERED = ['vpw', 'vlen', 'weeks'];
   ['customType', 'customDesc', 'age', 'procedure', 'surgdate', 'comorbid', 'vpw', 'vlen', 'weeks'].forEach(function (k) {

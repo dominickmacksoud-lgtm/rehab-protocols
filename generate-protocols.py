@@ -155,7 +155,13 @@ def main():
         print(f'  WARNING: {w}')
     print(f'  CPG pairings: {len(cpg)} protocols carry a paired guideline')
 
-    protocols = rp_data.build_protocols(records, paths=resolved['paths'], cpg=cpg)
+    import rp_variants
+    variants, variant_warnings = rp_variants.resolve(resolved['paths'])
+    for w in variant_warnings:
+        print(f'  WARNING: {w}')
+    print(f'  Variants: {len(variants)} protocols offer a variant dropdown')
+
+    protocols = rp_data.build_protocols(records, paths=resolved['paths'], cpg=cpg, variants=variants)
 
     write_protocols_js(protocols)
     sync_counts(protocols)

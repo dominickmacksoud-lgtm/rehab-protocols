@@ -1,0 +1,7 @@
+pid,label,options,note
+880417457ba7,Surgical approach,Posterior|Anterior|Direct anterior|Lateral|Global precautions (all approaches),Brigham THA. Restrictions field lists precautions per approach.
+fa705ff7a11f,Surgical approach,Anterior or anterolateral|Direct lateral|Posterior,University Hospitals THA. Anterior/anterolateral/direct lateral share one precaution set; posterior has its own.
+61731d0edabb,Graft type,Hamstring autograft|BPTB autograft,UVA ACL. Strengthening guidance differs by graft.
+b95eb7b1f9e9,Graft type,BTB autograft|Hamstring autograft|Quad tendon autograft|Allograft,University Hospitals ACL. One PDF with distinct precautions per graft.
+3a566b849a0e,Graft type,BPTB autograft|BPTB allograft,Dr. Brian Cole ACL.
+d7d33892880c,Fixation type,Screws only (hip pinning)|Plate and screws|Intramedullary nail (IMN)|Hemiarthroplasty,Kaplin hip fracture. Weight bearing differs by fixation.

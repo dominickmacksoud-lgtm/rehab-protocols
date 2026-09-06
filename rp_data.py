@@ -310,7 +310,7 @@ def protocol_name(record):
     return surgery_category or surgery_type or 'Untitled Protocol'
 
 
-def build_protocols(records, paths=None, cpg=None):
+def build_protocols(records, paths=None, cpg=None, variants=None):
     """Build the record list that becomes protocols.js.
 
     Field order and content must stay stable — protocols.js is consumed by
@@ -323,6 +323,10 @@ def build_protocols(records, paths=None, cpg=None):
     cpg: optional {row_index: guideline_url} from rp_cpg.resolve adding a 'cpg'
     field, which the Treatment Planner uses to offer the paired clinical
     practice guideline. Only rows listed in cpg_pairings.csv carry one.
+
+    variants: optional {row_index: {'label', 'options'}} from rp_variants.resolve
+    adding a 'variant' field for protocols whose precautions branch on a choice
+    (surgical approach, graft type). Only rows in protocol-variants.csv carry one.
     """
     protocols = []
     for i, record in enumerate(records):
@@ -352,6 +356,8 @@ def build_protocols(records, paths=None, cpg=None):
             entry['path'] = paths[i][0]
         if cpg and i in cpg:
             entry['cpg'] = cpg[i]
+        if variants and i in variants:
+            entry['variant'] = variants[i]
         protocols.append(entry)
     return protocols
 

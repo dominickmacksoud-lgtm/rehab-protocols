@@ -1476,6 +1476,7 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 .tp-src-links { font-size: 0.78rem; margin: 0.55rem 0 0; color: var(--color-muted); display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .tp-src-links a { color: var(--color-primary); text-decoration: none; }
 .tp-src-links a:hover { text-decoration: underline; }
+.tp-variant { margin-top: 0.85rem; }
 .tp-check { display: flex; align-items: flex-start; gap: 0.45rem; margin-top: 0.8rem; font-size: 0.8rem; color: var(--color-text); line-height: 1.4; cursor: pointer; }
 .tp-check input { margin-top: 0.2rem; }
 
