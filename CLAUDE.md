@@ -170,8 +170,8 @@ Three things here are deliberate and should not be "cleaned up":
 
 ## Archived (Wayback) protocol links
 
-82 protocols point at `web.archive.org` captures rather than the hospital's own
-site. In August 2026 Mass General Brigham retired the MGH and Brigham and Women's
+13 protocols point at `web.archive.org` captures rather than the hospital's own
+site (down from 82; see the restoration note below). In August 2026 Mass General Brigham retired the MGH and Brigham and Women's
 PDF asset trees in a CMS migration: every
 `massgeneral.org/assets/**` and `brighamandwomens.org/assets/**` protocol PDF
 began 301-ing to a generic marketing page. The documents were not withdrawn on
@@ -206,6 +206,31 @@ not a matching count of `new` and `retired`.
 
 One protocol, MGH's Lower Trapezius Tendon Transfer, had no capture in the Wayback
 CDX index at all and was removed instead.
+
+### Restoration, 2026-09-06
+
+Mass General Brigham republished the MGH protocols inside its new site's asset
+store: `https://www.massgeneralbrigham.org/content/dam/unified-xwalk/pdf/patient-education/english/<file>.pdf`,
+mostly under the original filenames. The patient-education page lists that
+folder through one JSON endpoint, which is the fast way to enumerate it:
+
+```
+https://www.massgeneralbrigham.org/bin/mgb/pdflist?path=/content/dam/unified-xwalk/pdf/patient-education/english
+```
+
+69 MGH rows were repointed at the live URLs (with `--rekey`, so every page kept
+its URL; the generator reported content updates, not retirements), their
+`[Archived copy ...]` notes stripped, and their rows removed from
+`wayback-repoints.csv`. Still archived, deliberately:
+
+- **12 Brigham and Women's rows.** Their documents were not republished. The
+  folder's THA, TKA, rTSA, TSA, hip arthroscopy and ACL PDFs are the MGH
+  documents, already claimed by MGH rows. Pointing a Brigham row at one would
+  misattribute the source, so they stay on Wayback until Brigham's own files
+  reappear. Re-run the endpoint above and match on the original filenames in
+  `wayback-repoints.csv` to check.
+- **MGH pediatric ACL reconstruction.** Listed in the folder tree but returns
+  404 on both hosts, so it is unpublished.
 
 ## Usage tags (Popular, Trending, Most planned, New)
 
