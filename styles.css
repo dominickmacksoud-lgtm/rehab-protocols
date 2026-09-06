@@ -1456,7 +1456,16 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
   border-top: 1px solid var(--color-border);
   border-radius: 0 0 var(--radius) var(--radius);
 }
-.tp-source { background: var(--color-sunken); }
+.tp-source { background: var(--color-sunken); position: relative; padding-right: 3rem; }
+.tp-clear {
+  position: absolute; top: 0.6rem; right: 0.7rem;
+  width: 1.9rem; height: 1.9rem; border-radius: 50%;
+  border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-muted);
+  font: inherit; font-size: 1.15rem; line-height: 1; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tp-clear:hover { color: var(--color-secondary); border-color: var(--color-muted); }
 .tp-custom { display: flex; flex-direction: column; gap: 0.9rem; }
 .tp-custom .tp-linkbtn { align-self: flex-start; font-size: 0.8rem; }
 .tp-empty { font-size: 0.82rem; color: var(--color-muted); }

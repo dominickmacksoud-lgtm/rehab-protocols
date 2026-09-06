@@ -18,7 +18,7 @@
 
   var els = {
     search: $('tp-search'), results: $('tp-results'), searchStatus: $('tp-search-status'),
-    customBtn: $('tp-custom-btn'), backBtn: $('tp-back-btn'),
+    customBtn: $('tp-custom-btn'), backBtn: $('tp-back-btn'), clearBtn: $('tp-clear-btn'),
     source: $('tp-source'), empty: $('tp-empty'), custom: $('tp-custom'),
     srcName: $('tp-src-name'), srcOrg: $('tp-src-org'), srcMeta: $('tp-src-meta'),
     srcPage: $('tp-src-page'), srcDoc: $('tp-src-doc'),
@@ -210,6 +210,18 @@
 
   function useLibrary() {
     state.mode = 'library';
+    render();
+    els.search.focus();
+  }
+
+  // The x on the source card. Drops the protocol, returns to the empty state
+  // and hands focus to the search box. Patient fields are left alone: the
+  // clinician is swapping the protocol, not starting a new patient.
+  function clearProtocol() {
+    state.protocol = null;
+    state.mode = 'library';
+    if (els.procedure.dataset.fromLibrary === 'true') { els.procedure.value = ''; }
+    setQueryParam('');
     render();
     els.search.focus();
   }
@@ -487,6 +499,7 @@
 
   els.customBtn.addEventListener('click', useCustom);
   els.backBtn.addEventListener('click', useLibrary);
+  els.clearBtn.addEventListener('click', clearProtocol);
   els.cpg.addEventListener('change', render);
 
   var REMEMBERED = ['vpw', 'vlen', 'weeks'];
