@@ -1410,6 +1410,7 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 .tp-fieldset { border: none; margin: 0; padding: 1.15rem 1.25rem 1.25rem; display: flex; flex-direction: column; gap: 0.9rem; min-width: 0; }
 .tp-legend { padding: 0; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--color-muted); }
 
+.tp-panel-note { margin: -0.45rem 0 0; font-size: 0.78rem; color: var(--color-muted); }
 .tp-field { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
 .tp-field label { font-size: 0.82rem; font-weight: 500; color: var(--color-secondary); }
 .tp-hint { font-size: 0.74rem; color: var(--color-muted); line-height: 1.45; }
