@@ -207,6 +207,25 @@ not a matching count of `new` and `retired`.
 One protocol, MGH's Lower Trapezius Tendon Transfer, had no capture in the Wayback
 CDX index at all and was removed instead.
 
+## Usage tags (Popular, Trending, Most planned, New)
+
+`popularity.json` → `rp_signals.py` → a `tags` array on each protocols.js entry.
+Cards badge `popular` and `new`; the homepage Highlights filter offers all four
+and hides any button whose tag has no protocols yet.
+
+- `popularity.json` is **auto-managed**: `.github/workflows/popularity.yml` runs
+  `ga-popularity.py` every Monday, which pulls 28-day and 7-day protocol page
+  views plus `/treatment-planner/?p=` selections from Google Analytics (built-in
+  dimensions only, no custom definitions), then regenerates and pushes. It
+  needs two repository secrets, `GA4_PROPERTY_ID` and `GA4_SA_KEY`; without
+  them it leaves the file alone and only the `new` tag refreshes.
+- Thresholds live in `rp_signals.py`, not the export script, so tags are a pure
+  function of the committed data. `new` = catalogued within 60 days, from the
+  CSV's Cataloged Date (mixed formats, parsed) falling back to the ledger's
+  first_seen. Because `new` depends on today's date, the generator's output
+  drifts as protocols age out; the weekly workflow run is what keeps it current.
+- `python ga-popularity.py --selftest` exercises the path parsing offline.
+
 ## Session Handoff
 
 At the end of any work session (when asked to "wrap up" or "finish"):

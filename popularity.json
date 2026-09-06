@@ -1,0 +1,7 @@
+{
+ "generated": null,
+ "note": "Refreshed weekly by ga-popularity.py via .github/workflows/popularity.yml. Empty until the GA4 secrets are configured.",
+ "protocols": {},
+ "source": "Google Analytics 4, refreshed by .github/workflows/popularity.yml",
+ "window_days": 28
+}

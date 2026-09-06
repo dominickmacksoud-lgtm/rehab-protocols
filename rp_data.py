@@ -310,7 +310,7 @@ def protocol_name(record):
     return surgery_category or surgery_type or 'Untitled Protocol'
 
 
-def build_protocols(records, paths=None, cpg=None, variants=None):
+def build_protocols(records, paths=None, cpg=None, variants=None, tags=None):
     """Build the record list that becomes protocols.js.
 
     Field order and content must stay stable — protocols.js is consumed by
@@ -327,6 +327,9 @@ def build_protocols(records, paths=None, cpg=None, variants=None):
     variants: optional {row_index: {'label', 'options'}} from rp_variants.resolve
     adding a 'variant' field for protocols whose precautions branch on a choice
     (surgical approach, graft type). Only rows in protocol-variants.csv carry one.
+
+    tags: optional {row_index: ['popular', ...]} from rp_signals.resolve, the
+    usage and freshness badges shown on cards and used by the Highlights filter.
     """
     protocols = []
     for i, record in enumerate(records):
@@ -358,6 +361,8 @@ def build_protocols(records, paths=None, cpg=None, variants=None):
             entry['cpg'] = cpg[i]
         if variants and i in variants:
             entry['variant'] = variants[i]
+        if tags and i in tags:
+            entry['tags'] = tags[i]
         protocols.append(entry)
     return protocols
 

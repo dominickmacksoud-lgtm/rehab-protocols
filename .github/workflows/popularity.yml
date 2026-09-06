@@ -1,0 +1,64 @@
+name: Refresh popularity tags
+
+# Pulls protocol page views and planner selections from Google Analytics,
+# rewrites popularity.json, regenerates the site so the Popular / Trending /
+# Most planned / New tags update, and pushes. Pushing to master publishes.
+#
+# One-time setup (repository Settings -> Secrets and variables -> Actions):
+#   GA4_PROPERTY_ID  the numeric property id from Analytics Admin -> Property details
+#   GA4_SA_KEY       the full JSON key of a Google Cloud service account that has
+#                    Viewer access on the Analytics property, with the
+#                    "Google Analytics Data API" enabled in its project
+# Without the secrets the job still runs and only refreshes the `new` tag.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Every Monday at 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: popularity
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Analytics client
+        run: pip install --quiet google-analytics-data
+
+      - name: Pull counts from Google Analytics
+        env:
+          GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
+          GA4_SA_KEY: ${{ secrets.GA4_SA_KEY }}
+        run: python ga-popularity.py
+
+      - name: Regenerate site
+        run: |
+          python generate-protocols.py
+          python rp_verify.py
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "rehab-protocols-bot"
+          git config user.email "rehabprotocols@gmail.com"
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo "No changes."
+            exit 0
+          fi
+          git add -A
+          git commit -m "Refresh popularity tags ($(date -u +%Y-%m-%d))"
+          git push

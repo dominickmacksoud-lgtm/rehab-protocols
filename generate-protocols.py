@@ -161,7 +161,11 @@ def main():
         print(f'  WARNING: {w}')
     print(f'  Variants: {len(variants)} protocols offer a variant dropdown')
 
-    protocols = rp_data.build_protocols(records, paths=resolved['paths'], cpg=cpg, variants=variants)
+    import rp_signals
+    tags, signals = rp_signals.resolve(records, resolved['paths'], ledger=resolved['ledger'])
+    print(f"  Tags: {signals['counts']} ({signals['with_views']} protocols with views in popularity.json)")
+
+    protocols = rp_data.build_protocols(records, paths=resolved['paths'], cpg=cpg, variants=variants, tags=tags)
 
     write_protocols_js(protocols)
     sync_counts(protocols)

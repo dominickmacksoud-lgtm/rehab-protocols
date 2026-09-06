@@ -348,6 +348,13 @@ body {
 .fmt-pdf { background: #fff3cd; color: #856404; }
 .fmt-web { background: #d1ecf1; color: #0c5460; }
 
+/* Usage and freshness tags from rp_signals.py (Popular, Trending, Most planned, New) */
+.badge-tag { font-size: 0.67rem; font-weight: 700; }
+.badge-popular  { background: #e0f2ef; color: #14524a; }
+.badge-trending { background: #fde8e8; color: #9b1c1c; }
+.badge-planned  { background: #e9f0f7; color: #1a3a5c; }
+.badge-new      { background: #fff3cd; color: #856404; }
+
 /* ── Card source row ─────────────────────────────────────────────────────── */
 .card-source {
   font-size: 0.87rem;
@@ -1131,6 +1138,10 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 /* Format badges */
 [data-theme="dark"] .fmt-pdf { background: #3b2c05; color: #fde68a; }
 [data-theme="dark"] .fmt-web { background: #0a2a30; color: #67e8f9; }
+[data-theme="dark"] .badge-popular  { background: #0f3028; color: #6ee7b7; }
+[data-theme="dark"] .badge-trending { background: #3b1414; color: #fca5a5; }
+[data-theme="dark"] .badge-planned  { background: #1e3a5c; color: #90cdf4; }
+[data-theme="dark"] .badge-new      { background: #3b2c05; color: #fde68a; }
 
 /* Source labels */
 [data-theme="dark"] .src-academic { background: #1e3a5c; color: #90cdf4; }

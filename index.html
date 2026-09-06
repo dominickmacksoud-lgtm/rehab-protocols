@@ -126,6 +126,14 @@
           <button class="filter-btn wb-PWB" data-filter="wb" onclick="setWbFilter('PWB',this)">PWB</button>
           <button class="filter-btn wb-FWB" data-filter="wb" onclick="setWbFilter('FWB',this)">FWB</button>
         </div>
+        <div class="filter-group" id="tag-filter-group">
+          <span class="filter-label">Highlights</span>
+          <button class="filter-btn active" data-filter="tag" onclick="setTagFilter('',this)">All</button>
+          <button class="filter-btn" data-filter="tag" data-tag="popular" onclick="setTagFilter('popular',this)">Popular</button>
+          <button class="filter-btn" data-filter="tag" data-tag="trending" onclick="setTagFilter('trending',this)">Trending</button>
+          <button class="filter-btn" data-filter="tag" data-tag="planned" onclick="setTagFilter('planned',this)">Most planned</button>
+          <button class="filter-btn" data-filter="tag" data-tag="new" onclick="setTagFilter('new',this)">New</button>
+        </div>
         <div class="filter-group">
           <button id="fav-filter-btn" class="filter-btn" data-filter="fav" onclick="toggleFavoritesFilter(this)" aria-pressed="false">♥ Favorites</button>
         </div>
@@ -249,6 +257,7 @@
     let currentCategory = '';
     let currentType = '';
     let currentWb = '';
+    let currentTag = '';
     let currentView = 'grid';
     let currentPage = 1;
     let pageSize = 25;
@@ -260,6 +269,11 @@
     // Same values in sentence case — TYPE_LABELS is sized for badges and reads as
     // shouting inside the filter-hint prose.
     const TYPE_FILTER_LABELS = { postop: 'Post-Op', nonop: 'Non-Op', education: 'Education' };
+    // Usage and freshness tags stamped by rp_signals.py. CARD_TAGS are the ones
+    // that earn a badge on every card; the rest are filter-only so cards do not
+    // flicker as weekly numbers move.
+    const TAG_LABELS = { popular: 'Popular', trending: 'Trending', planned: 'Most planned', new: 'New' };
+    const CARD_TAGS = ['popular', 'new'];
     const SOURCE_LABELS = { academic: 'Academic', hospital: 'Hospital', surgeon: 'Surgeon', clinic: 'Clinic' };
 
     // ── localStorage helpers ──────────────────────────────────────────────
@@ -296,6 +310,12 @@
     }
 
     // ── Badge helpers ─────────────────────────────────────────────────────
+    function tagBadges(p, all) {
+      return (p.tags || [])
+        .filter(t => TAG_LABELS[t] && (all || CARD_TAGS.includes(t)))
+        .map(t => `<span class="badge badge-tag badge-${t}">${TAG_LABELS[t]}</span>`)
+        .join('');
+    }
     function wbBadge(wbInitial) {
       if (!wbInitial) return '';
       return `<span class="badge badge-wb wb-${wbInitial}">${wbInitial}</span>`;
@@ -340,7 +360,7 @@
           <h4>${nameHTML}</h4>
           <div class="card-badges">
             <span class="badge badge-type badge-${p.type}">${tLabel}</span>
-            ${wb}${fmt}
+            ${wb}${fmt}${tagBadges(p)}
           </div>
         </div>
         <div class="card-source">
@@ -369,7 +389,7 @@
         <div class="list-main">
           <span class="list-name">${escHtml(p.name)}</span>
           <span class="badge badge-type badge-${p.type}">${tLabel}</span>
-          ${wb}
+          ${wb}${tagBadges(p)}
         </div>
         <span class="list-actions">
           <a href="${plannerHref(p)}" class="list-link list-link-ai" onclick="event.stopPropagation(); trackTreatmentPlanClick(${idx})" title="Build an AI treatment plan prompt from this protocol">AI plan</a>
@@ -404,6 +424,7 @@
         } else if (currentCategory && p.category !== currentCategory) return acc;
         if (currentType && p.type !== currentType) return acc;
         if (currentWb && p.wbInitial !== currentWb) return acc;
+        if (currentTag && !(p.tags || []).includes(currentTag)) return acc;
         if (tokens.length) {
           const haystack = searchHaystack(p);
           if (!tokens.every(t => haystack.includes(t))) return acc;
@@ -441,6 +462,7 @@
       if (currentQuery) parts.push(`matching "${escHtml(currentQuery)}"`);
       if (currentType) parts.push(TYPE_LABELS[currentType]);
       if (currentWb) parts.push(currentWb);
+      if (currentTag) parts.push(TAG_LABELS[currentTag]);
       const ctx = parts.length ? ' — ' + parts.join(', ') : '';
       const showing = total === 0 ? '0' : `${start + 1}–${end}`;
       document.getElementById('results-summary').innerHTML =
@@ -458,6 +480,7 @@
       if (currentCategory) names.push(currentCategory);
       if (currentType) names.push(TYPE_FILTER_LABELS[currentType] || currentType);
       if (currentWb) names.push(currentWb);
+      if (currentTag) names.push(TAG_LABELS[currentTag]);
       if (favoritesSnapshot !== null) names.push('Favorites');
       return names;
     }
@@ -549,7 +572,7 @@
 
     // ── Filter controls ───────────────────────────────────────────────────
     function updateClearFiltersBtn() {
-      const active = currentCategory || currentType || currentWb || currentQuery || favoritesSnapshot !== null;
+      const active = currentCategory || currentType || currentWb || currentTag || currentQuery || favoritesSnapshot !== null;
       document.getElementById('clear-filters-btn').style.display = active ? 'inline-flex' : 'none';
     }
 
@@ -575,11 +598,13 @@
       currentCategory = '';
       currentType = '';
       currentWb = '';
+      currentTag = '';
       currentPage = 1;
       favoritesSnapshot = null;
       document.querySelectorAll('.category-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
       document.querySelectorAll('[data-filter="type"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
       document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
+      document.querySelectorAll('[data-filter="tag"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
       const favBtn = document.getElementById('fav-filter-btn');
       favBtn.classList.remove('active');
       favBtn.setAttribute('aria-pressed', 'false');
@@ -639,6 +664,17 @@
       renderAll();
     }
 
+    function setTagFilter(tag, btn) {
+      document.querySelectorAll('[data-filter="tag"]').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+      currentTag = tag;
+      currentPage = 1;
+      if (tag) gtag('event', 'filter_tag', { filter_value: tag });
+      updateClearFiltersBtn();
+      renderAll();
+    }
+
     function setView(view) {
       currentView = view;
       document.getElementById('grid-view-btn').classList.toggle('active', view === 'grid');
@@ -690,7 +726,7 @@
           <h2 id="modal-title">${escHtml(p.name)}</h2>
           <div class="card-badges">
             <span class="badge badge-type badge-${p.type}">${tLabel}</span>
-            ${wb}${fmt}
+            ${wb}${fmt}${tagBadges(p, true)}
           </div>
         </div>
         <div class="modal-source">
@@ -768,6 +804,17 @@
       document.querySelectorAll('[data-filter="type"]').forEach((b, i) => b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'));
       document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'));
       document.querySelectorAll('.category-card').forEach(c => c.setAttribute('aria-pressed', 'false'));
+
+      // A Highlights button with nothing behind it is a dead end, so buttons
+      // hide until their tag exists in the data (Popular, Trending and Most
+      // planned stay hidden until the weekly Analytics refresh has run).
+      const tagCounts = {};
+      protocols.forEach(p => (p.tags || []).forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+      document.querySelectorAll('[data-filter="tag"]').forEach((b, i) => {
+        b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+        if (b.dataset.tag && !tagCounts[b.dataset.tag]) b.style.display = 'none';
+      });
+      if (!Object.keys(tagCounts).length) document.getElementById('tag-filter-group').style.display = 'none';
 
       // The category cards are real links to the region pages so crawlers can
       // reach them. With JS on, keep the in-page filtering instead of navigating.
