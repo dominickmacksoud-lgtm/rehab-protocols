@@ -1,0 +1,9 @@
+cpg_url,match_type,match_value,note
+https://academic.oup.com/ptj/article/106/7/pzag058/8742282,topic,total-knee-arthroplasty,APTA 2026 TKA CPG. Not partial-knee-arthroplasty: a unicompartmental replacement is not a TKA.
+https://academic.oup.com/ptj/article/106/7/pzag058/8742282,topic,total-knee-replacement,"Duplicate slug of total-knee-arthroplasty, kept until the topics merge."
+https://www.orthopt.org/uploads/content_files/files/mehta_et_al_2024_distal_radius_fracture_rehabilitation.pdf,topic,distal-radius-fracture-orif,
+https://www.orthopt.org/uploads/content_files/files/mehta_et_al_2024_distal_radius_fracture_rehabilitation.pdf,topic,distal-radius-fracture,"Duplicate slug of distal-radius-fracture-orif, kept until the topics merge."
+https://www.orthopt.org/uploads/content_files/files/PT_Management_of_Older_Adults_with_Hip_Fracture.pdf,pid,53b8ffc16379,"Hip fracture rows match by pid: the fracture topic also holds a tibial spine avulsion fracture (c9bd770e4262), which is a knee."
+https://www.orthopt.org/uploads/content_files/files/PT_Management_of_Older_Adults_with_Hip_Fracture.pdf,pid,b38312d6840c,
+https://www.orthopt.org/uploads/content_files/files/PT_Management_of_Older_Adults_with_Hip_Fracture.pdf,pid,d7d33892880c,
+https://www.orthopt.org/uploads/content_files/files/PT_Management_of_Older_Adults_with_Hip_Fracture.pdf,pid,d7d6a3da23d7,

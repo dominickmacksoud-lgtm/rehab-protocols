@@ -279,6 +279,7 @@ def generate(records, protocols, resolved=None, rekey=None):
                 facts=render_facts(record),
                 source_url=esc(source_url),
                 source_host=esc(T.host_of(source_url)),
+                planner_path=esc(path),
                 siblings=sib_html,
                 topic_slug=esc(topic), topic_display=esc(meta['display']),
                 region=esc(region or 'All'), region_path=esc(region_path),

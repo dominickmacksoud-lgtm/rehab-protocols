@@ -148,7 +148,14 @@ def main():
     import rp_sitemap
 
     resolved = rp_pages.resolve(records, rekey=args.rekey)
-    protocols = rp_data.build_protocols(records, paths=resolved['paths'])
+
+    import rp_cpg
+    cpg, cpg_warnings = rp_cpg.resolve(resolved['paths'])
+    for w in cpg_warnings:
+        print(f'  WARNING: {w}')
+    print(f'  CPG pairings: {len(cpg)} protocols carry a paired guideline')
+
+    protocols = rp_data.build_protocols(records, paths=resolved['paths'], cpg=cpg)
 
     write_protocols_js(protocols)
     sync_counts(protocols)

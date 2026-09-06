@@ -11,29 +11,24 @@
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Treatment Planner | Rehab Protocols</title>
-  <meta name="description" content="Turn any rehab protocol into a progressive, session-by-session treatment plan — coming soon to Rehab Protocols Pro. Built to support your clinical judgment." />
+  <title>AI Treatment Planner for Physical Therapists | Rehab Protocols</title>
+  <meta name="description" content="Free AI treatment planner for physical therapists. Pick any rehab protocol, add patient details, and copy a ready-to-paste prompt into the AI assistant you use." />
   <link rel="canonical" href="https://rehabprotocols.com/treatment-planner/" />
   <meta name="robots" content="index, follow" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://rehabprotocols.com/treatment-planner/" />
-  <meta property="og:title" content="AI Treatment Planner | Rehab Protocols" />
-  <meta property="og:description" content="Turn any rehab protocol into a progressive, session-by-session treatment plan — coming soon to Rehab Protocols Pro." />
+  <meta property="og:title" content="AI Treatment Planner for Physical Therapists | Rehab Protocols" />
+  <meta property="og:description" content="Pick any rehab protocol, add patient details, and copy a ready-to-paste prompt into the AI assistant you already use. Free, and nothing leaves your browser." />
   <meta property="og:image" content="https://rehabprotocols.com/og-image.png" />
   <meta property="og:site_name" content="Rehab Protocols" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="AI Treatment Planner | Rehab Protocols" />
-  <meta name="twitter:description" content="Turn any rehab protocol into a progressive, session-by-session treatment plan — coming soon to Rehab Protocols Pro." />
+  <meta name="twitter:title" content="AI Treatment Planner for Physical Therapists | Rehab Protocols" />
+  <meta name="twitter:description" content="Pick any rehab protocol, add patient details, and copy a ready-to-paste prompt into the AI assistant you already use. Free." />
   <meta name="twitter:image" content="https://rehabprotocols.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="../styles.css" />
   <script>(function(){var s=localStorage.getItem('rp_theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||(s===null&&d))document.documentElement.setAttribute('data-theme','dark');})();</script>
-  <style>
-    .scaffold-page { padding: 0 0 4rem; }
-    .page-back { display: inline-block; margin: 1.5rem 0 0; color: var(--color-primary); font-weight: 600; text-decoration: none; font-size: 0.9rem; }
-    .page-back:hover { color: var(--color-secondary); }
-    .part-of-pro { text-align: center; margin: 2rem 0 0; color: var(--color-muted); font-size: 0.95rem; }
-  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AI Treatment Planner","url":"https://rehabprotocols.com/treatment-planner/","description":"Builds a copy-pastable treatment planning prompt from any catalogued rehabilitation protocol plus non-identifying patient parameters.","applicationCategory":"MedicalApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"audience":{"@type":"Audience","audienceType":"Licensed Physical Therapists and PT Students"},"publisher":{"@id":"https://rehabprotocols.com/#organization"}}</script>
 </head>
 <body>
   <header class="site-header">
@@ -46,7 +41,7 @@
         <a href="/" class="site-nav-link">Protocols</a>
         <a href="/guidelines/" class="site-nav-link">Guidelines</a>
         <a href="/hep/" class="site-nav-link">HEP Builder <span class="nav-badge-pro">Pro</span></a>
-        <a href="/treatment-planner/" class="site-nav-link active">Treatment Planner <span class="nav-badge-pro">Pro</span></a>
+        <a href="/treatment-planner/" class="site-nav-link active">Treatment Planner</a>
         <a href="/pricing/" class="site-nav-link">Pricing</a>
         <a href="/pricing/#waitlist" class="site-nav-link btn-nav-cta">Join Waitlist</a>
         <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">
@@ -59,35 +54,193 @@
   </header>
 
   <main>
-    <div class="container scaffold-page">
-      <a href="/" class="page-back">← Back to Rehab Protocols</a>
-
-      <div class="page-hero">
-        <h1>AI Treatment Planner <span class="badge-pro">Coming soon</span></h1>
-        <p>Pick a protocol and get a progressive, session-by-session plan — exercises, home program, and goals for every scheduled visit. Built to support your clinical judgment, never to replace it. Coming soon as part of Rehab Protocols Pro.</p>
+    <div class="container tp-page">
+      <div class="tp-intro">
+        <h1>AI Treatment Planner</h1>
+        <p>Pick a protocol from the library, add the patient details that matter, and copy a ready-to-paste prompt into whichever AI assistant you already use. Free, and nothing you type leaves your browser.</p>
       </div>
 
-      <ul class="feature-list">
-        <li><strong>Protocol-driven.</strong> Start from any of the protocols already in the library — the plan follows its phases and timelines.</li>
-        <li><strong>Session by session.</strong> Get a suggested plan for each visit: exercises, HEP, and subjective/objective goals.</li>
-        <li><strong>Patient education built in.</strong> Suggested talking points and education for each stage of recovery.</li>
-        <li><strong>You stay in control.</strong> Every plan is a starting point you review and adjust — your clinical judgment is always the final word.</li>
-      </ul>
+      <div class="tp-shell">
+        <div class="tp-form-col">
 
-      <p class="part-of-pro">Part of <a href="/pricing/">Rehab Protocols Pro</a>.</p>
+          <section class="tp-panel" aria-labelledby="tp-legend-source">
+            <fieldset class="tp-fieldset">
+              <legend class="tp-legend" id="tp-legend-source">Source</legend>
+              <div class="tp-field">
+                <label for="tp-search">Find a protocol</label>
+                <div class="tp-combo">
+                  <input id="tp-search" type="search" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="tp-results" aria-autocomplete="list" placeholder="Search protocols by procedure or organization" />
+                  <ul id="tp-results" class="tp-results" role="listbox" aria-label="Matching protocols" hidden></ul>
+                </div>
+                <span class="tp-hint" id="tp-search-status" aria-live="polite"></span>
+                <span class="tp-hint">Not in the library? <button type="button" class="tp-linkbtn" id="tp-custom-btn">Describe the case instead</button></span>
+              </div>
+            </fieldset>
 
-      <section class="waitlist" id="waitlist">
-        <h2>Join the waitlist</h2>
-        <p>We'll email you the moment the AI Treatment Planner is ready.</p>
-        <form class="waitlist-form" action="https://formspree.io/f/xqeonooe" method="POST">
-          <input type="hidden" name="interest" value="Treatment Planner" />
-          <input type="email" name="email" placeholder="you@clinic.com" required aria-label="Email address" />
-          <button type="submit" class="btn btn-primary">Notify me</button>
-        </form>
-        <p class="waitlist-fineprint">No spam. We'll only email you about Pro.</p>
-      </section>
+            <div class="tp-source" id="tp-source" hidden>
+              <div class="tp-eyebrow">Source protocol</div>
+              <h2 id="tp-src-name"></h2>
+              <p class="tp-src-org" id="tp-src-org"></p>
+              <p class="tp-src-meta" id="tp-src-meta"></p>
+              <p class="tp-src-links">
+                <a id="tp-src-page" href="/protocols/">Library page</a>
+                <span aria-hidden="true">·</span>
+                <a id="tp-src-doc" href="/" target="_blank" rel="noopener">Source document</a>
+              </p>
+              <label class="tp-check" id="tp-cpg-row" hidden>
+                <input type="checkbox" id="tp-cpg" checked />
+                <span id="tp-cpg-label"></span>
+              </label>
+            </div>
+
+            <div class="tp-empty" id="tp-empty">
+              No protocol selected yet. Search above to pick one, or describe a case that is not in the library.
+            </div>
+
+            <div class="tp-custom" id="tp-custom" hidden>
+              <div class="tp-eyebrow">Case not in the library</div>
+              <div class="tp-field">
+                <label for="tp-custom-type">Management</label>
+                <select id="tp-custom-type">
+                  <option value="postop">Post-operative</option>
+                  <option value="nonop">Non-operative</option>
+                </select>
+              </div>
+              <div class="tp-field">
+                <label for="tp-custom-desc">Describe the procedure or pathology</label>
+                <textarea id="tp-custom-desc" rows="4" placeholder="Approach, graft or fixation type, the surgeon's stated restrictions, and anything else the assistant should anchor on."></textarea>
+                <span class="tp-hint">The assistant has no protocol to work from here, so the prompt asks it to name its sources for every restriction.</span>
+              </div>
+              <button type="button" class="tp-linkbtn" id="tp-back-btn" hidden>Use a library protocol instead</button>
+            </div>
+          </section>
+
+          <section class="tp-panel" aria-labelledby="tp-legend-patient">
+            <fieldset class="tp-fieldset">
+              <legend class="tp-legend" id="tp-legend-patient">Patient</legend>
+
+              <div class="tp-field">
+                <label for="tp-age">Age range</label>
+                <select id="tp-age">
+                  <option>Under 18</option>
+                  <option>18 to 29</option>
+                  <option>30 to 39</option>
+                  <option selected>40 to 49</option>
+                  <option>50 to 59</option>
+                  <option>60 to 69</option>
+                  <option>70 and over</option>
+                </select>
+                <span class="tp-hint">A range, never a date of birth. Nothing identifying goes in this form.</span>
+              </div>
+
+              <div class="tp-field">
+                <label for="tp-procedure">Procedure or pathology</label>
+                <input id="tp-procedure" type="text" autocomplete="off" />
+                <span class="tp-hint">Prefilled from the protocol. Edit it for a variant or revision case.</span>
+              </div>
+
+              <div class="tp-field">
+                <label for="tp-surgdate" id="tp-date-label">Date of surgery</label>
+                <input id="tp-surgdate" type="date" />
+              </div>
+              <div class="tp-derived" id="tp-weeks-out" aria-live="polite"></div>
+
+              <div class="tp-field">
+                <label for="tp-comorbid">Relevant comorbidities and context</label>
+                <textarea id="tp-comorbid" rows="3" placeholder="Diabetes, well controlled. Desk job. Recreational runner before injury."></textarea>
+              </div>
+            </fieldset>
+          </section>
+
+          <section class="tp-panel" aria-labelledby="tp-legend-plan">
+            <fieldset class="tp-fieldset">
+              <legend class="tp-legend" id="tp-legend-plan">Plan of care</legend>
+              <div class="tp-row-2">
+                <div class="tp-field">
+                  <label for="tp-vpw">Visits per week</label>
+                  <input id="tp-vpw" type="number" min="1" max="7" step="1" value="2" />
+                </div>
+                <div class="tp-field">
+                  <label for="tp-vlen">Visit length</label>
+                  <select id="tp-vlen">
+                    <option>30 minutes</option>
+                    <option selected>45 minutes</option>
+                    <option>60 minutes</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tp-field">
+                <label for="tp-weeks">Plan length in weeks</label>
+                <input id="tp-weeks" type="number" min="1" max="52" step="1" value="8" />
+                <span class="tp-hint">These three are remembered in this browser for next time. The patient details above are always cleared.</span>
+              </div>
+              <div class="tp-derived" id="tp-plan-out" aria-live="polite"></div>
+            </fieldset>
+          </section>
+
+        </div>
+
+        <div class="tp-prompt-col">
+          <section class="tp-panel tp-prompt-panel" aria-labelledby="tp-prompt-title">
+            <div class="tp-prompt-head">
+              <h2 id="tp-prompt-title">Your prompt <span class="tp-edited-flag">Edited</span></h2>
+              <span class="tp-prompt-meta" id="tp-charcount"></span>
+              <div class="tp-prompt-actions">
+                <button class="tp-btn-reset" id="tp-reset" type="button" disabled>Reset</button>
+                <button class="tp-btn-copy" id="tp-copy" type="button" disabled>Copy prompt</button>
+              </div>
+            </div>
+            <div class="tp-held-notice">
+              <span>Your edits are safe. The form has stopped updating this prompt. Reset to rebuild it.</span>
+            </div>
+            <textarea class="tp-prompt-out" id="tp-out" spellcheck="false" aria-label="Generated prompt, editable" placeholder="Pick a protocol, or describe the case, and your prompt appears here."></textarea>
+          </section>
+
+          <aside class="tp-next">
+            <h2>Next step</h2>
+            <p>Paste the prompt into ChatGPT, Claude, Gemini, or whichever assistant your clinic uses, then review every line of what comes back before it reaches a patient.</p>
+            <p>Want to turn the result into a home exercise program your patient can open on their phone? <a href="/pricing/#waitlist">Join the Pro waitlist</a> for the HEP Builder.</p>
+          </aside>
+        </div>
+      </div>
+
+      <p class="tp-privacy">
+        <strong>Nothing here is sent anywhere.</strong>
+        The protocol library is already loaded in your browser, and the prompt is assembled on your own machine. No patient detail you type reaches a server. What the assistant you paste into does with it is governed by that assistant, so keep this form free of identifying information, which is why it asks for an age range rather than a birth date. This tool produces a prompt, not a plan of care. Any output needs your review before it reaches a patient.
+      </p>
     </div>
   </main>
+
+  <dialog class="tp-confirm" id="tp-resetdlg" aria-labelledby="tp-resetdlg-title">
+    <div class="tp-dlg-body">
+      <h3 id="tp-resetdlg-title">Reset the prompt?</h3>
+      <p>This deletes your edits and rebuilds the prompt from the form. It cannot be undone.</p>
+    </div>
+    <div class="tp-dlg-actions">
+      <button class="tp-btn-reset" id="tp-resetcancel" type="button" autofocus>Keep my edits</button>
+      <button class="tp-btn-danger" id="tp-resetconfirm" type="button">Discard and reset</button>
+    </div>
+  </dialog>
+
+  <!-- Clinical-use notice. Non-blocking by design: it does not cover page content
+       and does not lock scrolling. Same rp_disclaimer_ack cookie as the rest of
+       the site, so acknowledging anywhere covers this page too. -->
+  <div id="disclaimer-modal" class="disclaimer-sheet" style="display:none;" role="region" aria-label="Clinical use notice">
+    <div class="disclaimer-sheet-inner">
+      <div class="disclaimer-sheet-text">
+        <strong>For licensed healthcare professionals.</strong>
+        RehabProtocols.com catalogs protocols from third-party medical centers for clinical reference and education only. It is not intended for patients or the general public, and nothing here is medical advice or creates a clinician-patient relationship. Summaries may not reflect the current version of a source document; the operative surgeon's instructions and the original protocol always take precedence.
+        <a href="/terms-of-use/" target="_blank" rel="noopener" class="disclaimer-terms-link">Read full Terms of Use →</a>
+      </div>
+      <div class="disclaimer-sheet-actions">
+        <label class="disclaimer-check-label">
+          <input type="checkbox" id="disclaimer-checkbox" />
+          <span>I am a licensed healthcare professional and accept the Terms of Use.</span>
+        </label>
+        <button id="disclaimer-btn" class="disclaimer-btn" type="button" disabled>Acknowledge</button>
+      </div>
+    </div>
+  </div>
 
   <footer class="site-footer">
     <div class="container">
@@ -98,7 +251,7 @@
             <li><a href="/">Protocols</a></li>
             <li><a href="/guidelines/">Guidelines</a></li>
             <li><a href="/hep/">HEP Builder <span class="footer-soon">Soon</span></a></li>
-            <li><a href="/treatment-planner/">Treatment Planner <span class="footer-soon">Soon</span></a></li>
+            <li><a href="/treatment-planner/">Treatment Planner</a></li>
             <li><a href="/pricing/">Pricing</a></li>
           </ul>
         </div>
@@ -145,5 +298,8 @@
       localStorage.setItem('rp_theme', isDark ? 'light' : 'dark');
     }
   </script>
+  <script defer src="../protocols.js"></script>
+  <script defer src="../guidelines.js"></script>
+  <script defer src="../treatment-planner.js"></script>
 </body>
 </html>

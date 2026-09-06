@@ -47,7 +47,7 @@
         <a href="/" class="site-nav-link active">Protocols</a>
         <a href="/guidelines/" class="site-nav-link">Guidelines</a>
         <a href="/hep/" class="site-nav-link">HEP Builder <span class="nav-badge-pro">Pro</span></a>
-        <a href="/treatment-planner/" class="site-nav-link">Treatment Planner <span class="nav-badge-pro">Pro</span></a>
+        <a href="/treatment-planner/" class="site-nav-link">Treatment Planner</a>
         <a href="/pricing/" class="site-nav-link">Pricing</a>
         <a href="/pricing/#waitlist" class="site-nav-link btn-nav-cta">Join Waitlist</a>
         <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">
@@ -203,7 +203,7 @@
             <li><a href="/">Protocols</a></li>
             <li><a href="/guidelines/">Guidelines</a></li>
             <li><a href="/hep/">HEP Builder <span class="footer-soon">Soon</span></a></li>
-            <li><a href="/treatment-planner/">Treatment Planner <span class="footer-soon">Soon</span></a></li>
+            <li><a href="/treatment-planner/">Treatment Planner</a></li>
             <li><a href="/pricing/">Pricing</a></li>
           </ul>
         </div>
@@ -697,7 +697,7 @@
           </button>
           <a href="${p.url}" target="_blank" rel="noopener" class="view-btn" onclick="trackView(${idx})">View Protocol →</a>
         </div>
-        <a href="/treatment-planner/" class="btn btn-outline modal-cta-btn" onclick="trackTreatmentPlanClick(${idx})">Generate AI Treatment Plan →</a>
+        <a href="/treatment-planner/${p.path ? '?p=' + encodeURIComponent(p.path) : ''}" class="btn btn-outline modal-cta-btn" onclick="trackTreatmentPlanClick(${idx})">Build an AI treatment plan prompt →</a>
       `;
 
       document.getElementById('protocol-modal').style.display = 'flex';

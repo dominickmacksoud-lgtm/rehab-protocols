@@ -310,7 +310,7 @@ def protocol_name(record):
     return surgery_category or surgery_type or 'Untitled Protocol'
 
 
-def build_protocols(records, paths=None):
+def build_protocols(records, paths=None, cpg=None):
     """Build the record list that becomes protocols.js.
 
     Field order and content must stay stable — protocols.js is consumed by
@@ -319,6 +319,10 @@ def build_protocols(records, paths=None):
     paths: optional {row_index: (url_path, ...)} adding a 'path' field so homepage
     cards can link to each protocol's own page. Sourced from the same slug
     resolution the static pages use, so the two cannot disagree.
+
+    cpg: optional {row_index: guideline_url} from rp_cpg.resolve adding a 'cpg'
+    field, which the Treatment Planner uses to offer the paired clinical
+    practice guideline. Only rows listed in cpg_pairings.csv carry one.
     """
     protocols = []
     for i, record in enumerate(records):
@@ -346,6 +350,8 @@ def build_protocols(records, paths=None):
         }
         if paths and i in paths:
             entry['path'] = paths[i][0]
+        if cpg and i in cpg:
+            entry['cpg'] = cpg[i]
         protocols.append(entry)
     return protocols
 
