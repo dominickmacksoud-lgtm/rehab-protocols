@@ -29,7 +29,7 @@
     surgdate: $('tp-surgdate'), weeksOut: $('tp-weeks-out'), comorbid: $('tp-comorbid'),
     vpw: $('tp-vpw'), vlen: $('tp-vlen'), weeks: $('tp-weeks'),
     planOut: $('tp-plan-out'), out: $('tp-out'), charcount: $('tp-charcount'),
-    copybtn: $('tp-copy'), resetbtn: $('tp-reset'),
+    copybtn: $('tp-copy'), resetbtn: $('tp-reset'), promptPanel: $('tp-prompt-panel'),
     resetdlg: $('tp-resetdlg'), resetcancel: $('tp-resetcancel'), resetconfirm: $('tp-resetconfirm')
   };
 
@@ -514,8 +514,27 @@
 
     // Only the form owns the textarea while it is clean. Once it is dirty the
     // derived readouts still update, but the prompt itself is the clinician's.
-    if (!state.dirty) { els.out.value = buildPrompt(); }
+    if (!state.dirty) {
+      var next = buildPrompt();
+      // Pulse the panel only when the text really changed, and never on the
+      // first render, so the signal means one thing: the form just rewrote this.
+      if (state.rendered && next !== els.out.value) { pulsePrompt(); }
+      els.out.value = next;
+    }
+    state.rendered = true;
     syncMeta();
+  }
+
+  var pulseTimer = null;
+  function pulsePrompt() {
+    var el = els.promptPanel;
+    if (!el) { return; }
+    // Restart cleanly if the clinician is typing quickly in a form field.
+    el.classList.remove('is-updated');
+    void el.offsetWidth;
+    el.classList.add('is-updated');
+    clearTimeout(pulseTimer);
+    pulseTimer = setTimeout(function () { el.classList.remove('is-updated'); }, 900);
   }
 
   // ── Events ─────────────────────────────────────────────────────────────

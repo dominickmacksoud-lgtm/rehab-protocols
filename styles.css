@@ -1493,6 +1493,16 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 .tp-derived b { color: var(--color-secondary); font-weight: 600; font-variant-numeric: tabular-nums; }
 .tp-derived.warn { border-left-color: #c2410c; background: var(--color-note-bg); color: var(--color-note-text); }
 
+/* Prompt pane. .is-updated is added for ~0.9s each time the form rewrites the
+   prompt, so a change made far from the box still registers peripherally. */
+@keyframes tp-pulse {
+  0%   { border-color: var(--color-primary); box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.35); }
+  100% { border-color: var(--color-border); box-shadow: 0 0 0 0 rgba(45, 212, 191, 0); }
+}
+.tp-prompt-panel.is-updated { animation: tp-pulse 0.9s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .tp-prompt-panel.is-updated { animation: none; border-color: var(--color-primary); }
+}
 /* Prompt pane */
 .tp-prompt-col { position: sticky; top: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
 @media (max-width: 900px) { .tp-prompt-col { position: static; } }
