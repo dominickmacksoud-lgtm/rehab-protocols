@@ -283,7 +283,10 @@ def generate(records, protocols, resolved=None, rekey=None):
                 topic_slug=esc(topic), topic_display=esc(meta['display']),
                 region=esc(region or 'All'), region_path=esc(region_path),
             )
-            if write_text(OUT_DIR / topic / slug / 'index.html', html_out):
+            # Pinned topic from the ledger, not the live one: after a topics.csv
+            # merge the two diverge, and the page must stay at its indexed URL
+            # (which is also what canonical above declares).
+            if write_text(OUT_DIR / t_slug / slug / 'index.html', html_out):
                 written += 1
 
         # ── hub page ──
