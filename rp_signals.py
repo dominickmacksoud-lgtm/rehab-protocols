@@ -17,7 +17,9 @@ Rules (all relative, so they keep working as traffic grows):
   planned   planner selections in the top PLANNED_SHARE (never fewer than
             PLANNED_LIST), at least PLANNED_MIN
   trending  at least TREND_MIN views in the last 7 days, and that week at least
-            TREND_RATIO times the average of the three weeks before it
+            TREND_RATIO times the average of the three weeks before it; capped
+            to the TREND_LIST protocols with the most 7-day views, because on a
+            growing site almost everything clears the ratio
   new       catalogued within NEW_DAYS of today, from the CSV's Cataloged Date
             (falling back to the ledger's first_seen)
 """
@@ -38,6 +40,7 @@ PLANNED_MIN = 2
 PLANNED_LIST = 5
 TREND_MIN = 5
 TREND_RATIO = 2.0
+TREND_LIST = 15       # cap: the fastest movers only, so Trending is not just Popular again
 NEW_DAYS = 60
 
 TAG_ORDER = ('popular', 'trending', 'planned', 'new')
@@ -110,14 +113,20 @@ def resolve(records, paths, ledger=None, today=None, popularity=None):
     plan_cut = _cutoff([s['planned'] for s in stats.values()], PLANNED_SHARE, PLANNED_MIN, PLANNED_LIST)
     new_since = today - timedelta(days=NEW_DAYS)
 
+    def is_mover(s):
+        prior_weekly = max(0.0, (s['views'] - s['views7']) / 3.0)
+        return s['views7'] >= TREND_MIN and s['views7'] >= TREND_RATIO * max(prior_weekly, 1.0)
+    movers = sorted((i for i, s in stats.items() if is_mover(s)),
+                    key=lambda i: (-stats[i]['views7'], -stats[i]['views']))
+    trending = set(movers[:TREND_LIST])
+
     tags = {}
     counts = {t: 0 for t in TAG_ORDER}
     for i, s in stats.items():
         t = []
         if pop_cut is not None and s['views'] >= pop_cut:
             t.append('popular')
-        prior_weekly = max(0.0, (s['views'] - s['views7']) / 3.0)
-        if s['views7'] >= TREND_MIN and s['views7'] >= TREND_RATIO * max(prior_weekly, 1.0):
+        if i in trending:
             t.append('trending')
         if plan_cut is not None and s['planned'] >= plan_cut:
             t.append('planned')
