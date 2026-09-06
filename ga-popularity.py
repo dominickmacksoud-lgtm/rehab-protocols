@@ -122,8 +122,10 @@ def fetch(property_id, credentials_json):
                 break
         return rows
 
+    # With two date ranges the API appends a dateRange column to every row on
+    # its own; listing it as a dimension is rejected as INVALID_ARGUMENT.
     protocol_rows = run(
-        ['pagePath', 'dateRange'], 'screenPageViews',
+        ['pagePath'], 'screenPageViews',
         [DateRange(start_date=f'{WINDOW_DAYS}daysAgo', end_date='today', name='last28'),
          DateRange(start_date='7daysAgo', end_date='today', name='last7')],
         FilterExpression(filter=Filter(
