@@ -178,7 +178,11 @@ Link health runs in two halves, both on Mondays:
    republished copy, verifies candidates through the checker, computes the
    `--rekey` argument, and posts ONE comment with replacement URLs and the exact
    commands. It is advisory only: it never edits, commits, pushes, or opens PRs.
-   Manage it at https://claude.ai/code/routines.
+   Manage it at https://claude.ai/code/routines. It runs in the "Full Network"
+   cloud environment (the Default one blocks all outbound traffic). Even there,
+   web.archive.org resets connections from the sandbox, so Wayback captures are
+   verified by the detector, not the routine. The sandbox has no `gh`; the
+   routine uses the GitHub MCP tools instead.
 
 Three things here are deliberate and should not be "cleaned up":
 1. **stdlib urllib, not requests/httpx.** `requests` cannot be imported from the repo
