@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-06",
+ "generated": "2026-09-07",
  "protocols": {
   "/protocols/ac-joint-osteoarthritis/dr-michael-c-fu-md-hospital-for-special-ac-joint-osteoarthritis-non/": {
    "planned": 0,
@@ -143,8 +143,8 @@
   },
   "/protocols/acl-reconstruction/mammoth-orthopedic-institute-sierra-with-quad-tendon-graft-and/": {
    "planned": 0,
-   "views": 2,
-   "views7": 1
+   "views": 3,
+   "views7": 2
   },
   "/protocols/acl-reconstruction/massachusetts-general-hospital-allograft/": {
    "planned": 0,
@@ -168,8 +168,8 @@
   },
   "/protocols/acl-reconstruction/moon-group-multicenter-orthopaedics-moon-rehabilitation-guidelines/": {
    "planned": 0,
-   "views": 1,
-   "views7": 0
+   "views": 2,
+   "views7": 1
   },
   "/protocols/acl-reconstruction/mountain-orthopaedics-btb-bone-tendon-bone/": {
    "planned": 0,
@@ -179,7 +179,7 @@
   "/protocols/acl-reconstruction/ohio-state-university-wexner-medical-hamstring-autograft/": {
    "planned": 0,
    "views": 1,
-   "views7": 1
+   "views7": 0
   },
   "/protocols/acl-reconstruction/ohio-state-university-wexner-medical-quad-tendon-autograft/": {
    "planned": 0,
@@ -254,7 +254,7 @@
   "/protocols/acl/massachusetts-general-hospital-non-operative-acl-management/": {
    "planned": 0,
    "views": 9,
-   "views7": 5
+   "views7": 4
   },
   "/protocols/acl/orthopedic-and-sports-medicine-non-operative-acl-management/": {
    "planned": 0,
@@ -294,7 +294,7 @@
   "/protocols/ankle-fracture/massachusetts-general-hospital-orif/": {
    "planned": 0,
    "views": 15,
-   "views7": 7
+   "views7": 6
   },
   "/protocols/ankle-fracture/mountain-orthopedics-ankle-foot-fracture-rehabilitation/": {
    "planned": 0,
@@ -360,11 +360,6 @@
    "planned": 0,
    "views": 2,
    "views7": 2
-  },
-  "/protocols/arthroscopy/university-orthopedics-brown-university-ankle-arthroscopy/": {
-   "planned": 0,
-   "views": 1,
-   "views7": 0
   },
   "/protocols/athletic-pubalgia/massachusetts-general-hospital-athletic-pubalgia-non-operative/": {
    "planned": 0,
@@ -439,7 +434,7 @@
   "/protocols/calcaneus-fracture/university-of-colorado-anschutz-cu-orif/": {
    "planned": 0,
    "views": 3,
-   "views7": 1
+   "views7": 0
   },
   "/protocols/carpal-tunnel-release/university-of-virginia-orthopaedic/": {
    "planned": 0,
@@ -483,8 +478,8 @@
   },
   "/protocols/cervical-disc-arthroplasty/advanced-health-and-sports-medicine-cervical-disc-replacement-post-op/": {
    "planned": 0,
-   "views": 3,
-   "views7": 2
+   "views": 4,
+   "views7": 3
   },
   "/protocols/cervical-disc-arthroplasty/axis-spine-center-acda-anterior-cervical-disc-arthroplasty/": {
    "planned": 0,
@@ -518,8 +513,8 @@
   },
   "/protocols/clavicle-fracture-orif/massachusetts-general-hospital/": {
    "planned": 0,
-   "views": 22,
-   "views7": 6
+   "views": 23,
+   "views7": 7
   },
   "/protocols/clavicle-fracture-orif/university-of-virginia-orthopaedic-clavicle-fracture-orif-post/": {
    "planned": 0,
@@ -621,6 +616,11 @@
    "views": 2,
    "views7": 1
   },
+  "/protocols/epicondylalgia/iortho-non-operative-management/": {
+   "planned": 1,
+   "views": 0,
+   "views7": 0
+  },
   "/protocols/epl-repair/orthopaedic-associates-of-maine/": {
    "planned": 0,
    "views": 1,
@@ -634,12 +634,12 @@
   "/protocols/extensor-tendon-repair/uw-health-thumb-epl-apl-epb-zones-ii-v-early/": {
    "planned": 0,
    "views": 3,
-   "views7": 1
+   "views7": 0
   },
   "/protocols/flexor-tendon-repair/lahey-hospital-and-medical-center-zone-1-and-2-primary-repair-modified/": {
    "planned": 0,
    "views": 2,
-   "views7": 2
+   "views7": 1
   },
   "/protocols/flexor-tendon-repair/university-of-virginia-orthopaedic-zones-i-iv-early-active-place-and/": {
    "planned": 0,
@@ -683,8 +683,8 @@
   },
   "/protocols/grade-2-mcl-sprain/university-of-delaware-physical-therapy-grade-2-mcl-sprain-non/": {
    "planned": 0,
-   "views": 1,
-   "views7": 0
+   "views": 2,
+   "views7": 1
   },
   "/protocols/grade-3-mcl-sprain/university-of-delaware-physical-therapy-grade-3-mcl-sprain-non/": {
    "planned": 0,
@@ -754,7 +754,7 @@
   "/protocols/isolated-mcl-sprain/sanford-health/": {
    "planned": 0,
    "views": 3,
-   "views7": 1
+   "views7": 0
   },
   "/protocols/joint-reconstruction/university-orthopedics-brown-university-ac-sc-joint-reconstruction/": {
    "planned": 0,
@@ -808,8 +808,13 @@
   },
   "/protocols/lateral-ankle-sprain/massachusetts-general-hospital-lateral-ankle-sprain-non-operative/": {
    "planned": 0,
-   "views": 1,
-   "views7": 1
+   "views": 2,
+   "views7": 2
+  },
+  "/protocols/lateral-epicondyle-debridement/university-of-virginia-orthopaedic-lateral-epicondyle-tennis-elbow/": {
+   "planned": 1,
+   "views": 0,
+   "views7": 0
   },
   "/protocols/low-back-pain/massachusetts-general-hospital-low-back-pain-mobility-deficits-non/": {
    "planned": 0,
@@ -923,8 +928,8 @@
   },
   "/protocols/meniscectomy/massachusetts-general-hospital-arthroscopic-partial-meniscectomy/": {
    "planned": 0,
-   "views": 15,
-   "views7": 11
+   "views": 16,
+   "views7": 12
   },
   "/protocols/meniscectomy/ohio-state-university-wexner-medical-general-knee-debridement-partial/": {
    "planned": 0,
@@ -1068,8 +1073,8 @@
   },
   "/protocols/non-operative-mcl-rehabilitation/orthopedic-and-sports-medicine-mcl-rehabilitation/": {
    "planned": 0,
-   "views": 5,
-   "views7": 5
+   "views": 6,
+   "views7": 6
   },
   "/protocols/non-operative-patella-fracture/orthopedic-and-sports-medicine-patella-fracture/": {
    "planned": 0,
@@ -1083,8 +1088,8 @@
   },
   "/protocols/non-operative-radial-head-fracture-rehabilitation/orthopedic-and-sports-medicine-radial-head-fracture-rehabilitation/": {
    "planned": 0,
-   "views": 1,
-   "views7": 0
+   "views": 2,
+   "views7": 1
   },
   "/protocols/non-operative-rotator-cuff/massachusetts-general-hospital-non-operative-massive-rotator-cuff-tear/": {
    "planned": 0,
@@ -1123,8 +1128,8 @@
   },
   "/protocols/patellar-tendinopathy/university-of-delaware-physical-therapy-patellar-tendinopathy-non/": {
    "planned": 0,
-   "views": 6,
-   "views7": 5
+   "views": 7,
+   "views7": 6
   },
   "/protocols/patellar-tendon-repair/orthopaedic-associates-of-maine-with-medial-and-lateral-retinaculum/": {
    "planned": 0,
@@ -1349,7 +1354,7 @@
   "/protocols/reverse-total-shoulder-arthroplasty/brigham-and-womens-hospital-rtsa/": {
    "planned": 0,
    "views": 35,
-   "views7": 8
+   "views7": 7
   },
   "/protocols/reverse-total-shoulder-arthroplasty/massachusetts-general-hospital-rtsa/": {
    "planned": 0,
@@ -1369,7 +1374,7 @@
   "/protocols/reverse-total-shoulder-arthroplasty/orthopedic-and-sports-medicine-rtsa/": {
    "planned": 0,
    "views": 1,
-   "views7": 1
+   "views7": 0
   },
   "/protocols/rotator-cuff-repair/gundersen-health-system-glsm-small-to-medium-tears-1-4-cm/": {
    "planned": 0,
@@ -1399,7 +1404,7 @@
   "/protocols/rotator-cuff-repair/massachusetts-general-hospital-small-to-medium-tears-lte-3-cm/": {
    "planned": 0,
    "views": 34,
-   "views7": 20
+   "views7": 19
   },
   "/protocols/rotator-cuff-repair/nebraska-orthopaedic-center-massive-tears-5-cm-type-iii-protocol/": {
    "planned": 0,
@@ -1499,7 +1504,7 @@
   "/protocols/shoulder-instability/university-of-new-mexico-unm-sports-bankart-repair-and-latarjet/": {
    "planned": 0,
    "views": 1,
-   "views7": 1
+   "views7": 0
   },
   "/protocols/shoulder-labral-repair/childrens-hospital-of-philadelphia-arthroscopic-bankart-repair/": {
    "planned": 0,
@@ -1509,7 +1514,7 @@
   "/protocols/shoulder-labral-repair/massachusetts-general-hospital-anterior-bankart-repair-pediatric/": {
    "planned": 0,
    "views": 1,
-   "views7": 1
+   "views7": 0
   },
   "/protocols/shoulder-labral-repair/massachusetts-general-hospital-anterior-bankart-repair/": {
    "planned": 0,
@@ -1529,7 +1534,7 @@
   "/protocols/shoulder-labral-repair/massachusetts-general-hospital-slap-repair-type-ii/": {
    "planned": 0,
    "views": 35,
-   "views7": 18
+   "views7": 17
   },
   "/protocols/shoulder-labral-repair/ohio-state-university-wexner-medical-anterior-shoulder-stabilization/": {
    "planned": 0,
@@ -1564,7 +1569,7 @@
   "/protocols/slap-repair/dr-michael-c-fu-md-hospital-for-special-slap-ii-repair/": {
    "planned": 0,
    "views": 1,
-   "views7": 1
+   "views7": 0
   },
   "/protocols/slap-repair/iortho-type-ii/": {
    "planned": 0,
@@ -1578,8 +1583,8 @@
   },
   "/protocols/soft-tissue-lengthening/childrens-colorado-center-for-gait-and-tendo-achilles-lengthening-tal/": {
    "planned": 0,
-   "views": 4,
-   "views7": 3
+   "views": 5,
+   "views7": 4
   },
   "/protocols/spinal-instability-spondylolysis/massachusetts-general-hospital-spinal-instability-spondylolysis-non/": {
    "planned": 0,
@@ -1589,7 +1594,7 @@
   "/protocols/spondylolysis-spondylolisthesis/massachusetts-general-hospital/": {
    "planned": 0,
    "views": 5,
-   "views7": 2
+   "views7": 1
   },
   "/protocols/subacromial-decompression/sutter-health-palo-alto-medical-distal-clavicle-excision-biceps/": {
    "planned": 0,
@@ -1672,7 +1677,7 @@
    "views7": 5
   },
   "/protocols/total-hip-arthroplasty/brigham-and-womens-hospital-total-hip-arthroplasty-all-approaches/": {
-   "planned": 1,
+   "planned": 2,
    "views": 28,
    "views7": 9
   },
@@ -1764,7 +1769,7 @@
   "/protocols/total-knee-arthroplasty/massachusetts-general-hospital-total-knee-arthroplasty-tka/": {
    "planned": 0,
    "views": 72,
-   "views7": 37
+   "views7": 36
   },
   "/protocols/total-knee-arthroplasty/mountain-orthopaedics/": {
    "planned": 0,
@@ -1803,8 +1808,8 @@
   },
   "/protocols/total-shoulder-arthroplasty/brigham-and-womens-hospital-tsa-hemiarthroplasty/": {
    "planned": 0,
-   "views": 13,
-   "views7": 8
+   "views": 14,
+   "views7": 9
   },
   "/protocols/total-shoulder-arthroplasty/massachusetts-general-hospital-tsa-hemiarthroplasty/": {
    "planned": 0,
