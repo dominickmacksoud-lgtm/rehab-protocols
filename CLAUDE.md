@@ -20,6 +20,7 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 | `terms-of-use/index.html` | Legal terms page at /terms-of-use/ |
 | `check-links.py` | Link health checker — verifies every URL in both CSVs (see below) |
 | `test-check-links.py` | Offline regression tests for the link checker — run after editing it |
+| `link-issue.py` | Turns `link-report.json` into the weekly GitHub issue body, with verified Wayback suggestions (see below) |
 | `wayback-repoints.csv` | Revert ledger for protocols repointed at web.archive.org (see below) |
 
 ## Data Pipeline
@@ -156,6 +157,28 @@ After changing `check-links.py`, run `python test-check-links.py` — 9 offline 
 against a localhost server, ~2 seconds, no network. It pins the classification rules
 that are easy to break by accident (soft-404 vs. interstitial, HEAD-hostile fallback,
 mislabeled content types, permanent vs. temporary redirects).
+
+### Weekly automation
+
+Link health runs in two halves, both on Mondays:
+
+1. **Detector**, `.github/workflows/link-check.yml`, 09:00 UTC. Runs the checker,
+   then `python link-issue.py` reads `link-report.json` and files or refreshes one
+   issue labeled `link-check` (title `Link health: N broken, M moved (date)`),
+   closing it automatically once everything passes. Only BROKEN, WRONG_TYPE and
+   REDIRECT_PERM trigger an issue; WARN/TIMEOUT/ERROR are listed collapsed because
+   the Actions IP range hits bot walls that a browser does not. For each broken
+   URL it asks the Wayback availability API for the latest capture, rewrites it in
+   the `id_` form, and verifies it through `check_url` so the suggestion is known
+   to serve a PDF. The previous week's report is carried in the Actions cache so
+   the issue can say which failures are new. `issue-body.md` and
+   `link-report.previous.json` are its gitignored scratch files.
+2. **Triage**, a claude.ai routine named "Link health triage" (Sonnet 5), 11:00
+   UTC. Reads the open issue, searches the source org's own site for a
+   republished copy, verifies candidates through the checker, computes the
+   `--rekey` argument, and posts ONE comment with replacement URLs and the exact
+   commands. It is advisory only: it never edits, commits, pushes, or opens PRs.
+   Manage it at https://claude.ai/code/routines.
 
 Three things here are deliberate and should not be "cleaned up":
 1. **stdlib urllib, not requests/httpx.** `requests` cannot be imported from the repo

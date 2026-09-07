@@ -24,3 +24,7 @@ link-report.json
 
 # Python cache
 __pycache__/
+
+# Link health issue builder artifacts
+issue-body.md
+link-report.previous.json
