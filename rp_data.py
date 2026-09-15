@@ -323,6 +323,11 @@ def protocol_name(record):
     surgery_type = normalize(record.get('Surgery Type'))
     cleaned_type = _strip_nonop_suffix(surgery_category, dedupe_name(surgery_category, surgery_type))
     if surgery_category and cleaned_type:
+        # Category-first reads well for surgeries ("ACL Reconstruction — BPTB
+        # Autograft") but not for the catch-all Non-Operative category, where
+        # the condition is the headline: "Cervical Radiculopathy — Non-Operative".
+        if surgery_category.lower() == 'non-operative':
+            return f'{cleaned_type} — {surgery_category}'
         return f'{surgery_category} — {cleaned_type}'
     return surgery_category or surgery_type or 'Untitled Protocol'
 
