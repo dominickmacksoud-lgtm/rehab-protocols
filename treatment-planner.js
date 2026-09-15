@@ -124,7 +124,10 @@
   }
 
   function search(q) {
-    var tokens = q.toLowerCase().split(/\s+/).filter(Boolean);
+    // Shares the abbreviation dictionary with the library search, so "TKA"
+    // and "RCR" find the same protocols here as on the homepage.
+    var tokens = window.rpSearchTokens ? rpSearchTokens(q) : q.toLowerCase().split(/\s+/).filter(Boolean);
+    var matches = window.rpTokenMatches || function (hay, t) { return hay.indexOf(t) !== -1; };
     if (!tokens.length) { return []; }
     var scored = [];
     for (var i = 0; i < lib.length; i++) {
@@ -132,7 +135,7 @@
       var hay = haystack(p);
       var ok = true;
       for (var t = 0; t < tokens.length; t++) {
-        if (hay.indexOf(tokens[t]) === -1) { ok = false; break; }
+        if (!matches(hay, tokens[t])) { ok = false; break; }
       }
       if (!ok) { continue; }
       var name = (p.name || '').toLowerCase();
