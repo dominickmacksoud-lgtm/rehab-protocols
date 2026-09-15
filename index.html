@@ -136,6 +136,16 @@
           <button class="filter-btn" data-filter="tag" data-tag="planned" onclick="setTagFilter('planned',this)">Most planned</button>
           <button class="filter-btn" data-filter="tag" data-tag="new" onclick="setTagFilter('new',this)">New</button>
         </div>
+        <!-- Institution filter. ~220 searches a month were hospital names typed
+             into the search box (MGH, Brigham, Ohio State...), and the library had
+             no way to browse by source. Options are built from the data at init so
+             the list and its counts never drift from the catalog. -->
+        <div class="filter-group" id="org-filter-group">
+          <label class="filter-label" for="org-filter-select">Institution</label>
+          <select id="org-filter-select" class="page-size-select org-select" onchange="setOrgFilter(this.value)" aria-label="Filter by institution">
+            <option value="">All institutions</option>
+          </select>
+        </div>
         <div class="filter-group">
           <button id="fav-filter-btn" class="filter-btn" data-filter="fav" onclick="toggleFavoritesFilter(this)" aria-pressed="false">♥ Favorites</button>
         </div>
@@ -261,6 +271,7 @@
     let currentType = '';
     let currentWb = '';
     let currentTag = '';
+    let currentOrg = '';
     let currentView = 'grid';
     let currentPage = 1;
     let pageSize = 25;
@@ -438,6 +449,7 @@
         if (currentType && p.type !== currentType) return acc;
         if (currentWb && p.wbInitial !== currentWb) return acc;
         if (currentTag && !(p.tags || []).includes(currentTag)) return acc;
+        if (currentOrg && p.sourceOrganization !== currentOrg) return acc;
         if (tokens.length) {
           const haystack = searchHaystack(p);
           if (!tokens.every(t => rpTokenMatches(haystack, t))) return acc;
@@ -476,6 +488,7 @@
       if (currentType) parts.push(TYPE_LABELS[currentType]);
       if (currentWb) parts.push(currentWb);
       if (currentTag) parts.push(TAG_LABELS[currentTag]);
+      if (currentOrg) parts.push(`from ${escHtml(currentOrg)}`);
       const ctx = parts.length ? ' — ' + parts.join(', ') : '';
       const showing = total === 0 ? '0' : `${start + 1}–${end}`;
       document.getElementById('results-summary').innerHTML =
@@ -494,6 +507,7 @@
       if (currentType) names.push(TYPE_FILTER_LABELS[currentType] || currentType);
       if (currentWb) names.push(currentWb);
       if (currentTag) names.push(TAG_LABELS[currentTag]);
+      if (currentOrg) names.push(currentOrg);
       if (favoritesSnapshot !== null) names.push('Favorites');
       return names;
     }
@@ -585,7 +599,7 @@
 
     // ── Filter controls ───────────────────────────────────────────────────
     function updateClearFiltersBtn() {
-      const active = currentCategory || currentType || currentWb || currentTag || currentQuery || favoritesSnapshot !== null;
+      const active = currentCategory || currentType || currentWb || currentTag || currentOrg || currentQuery || favoritesSnapshot !== null;
       document.getElementById('clear-filters-btn').style.display = active ? 'inline-flex' : 'none';
     }
 
@@ -612,8 +626,10 @@
       currentType = '';
       currentWb = '';
       currentTag = '';
+      currentOrg = '';
       currentPage = 1;
       favoritesSnapshot = null;
+      document.getElementById('org-filter-select').value = '';
       document.querySelectorAll('.category-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-pressed', 'false'); });
       document.querySelectorAll('[data-filter="type"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
       document.querySelectorAll('[data-filter="wb"]').forEach((b, i) => { b.classList.toggle('active', i === 0); b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); });
@@ -688,6 +704,42 @@
       renderAll();
     }
 
+    function setOrgFilter(org) {
+      const select = document.getElementById('org-filter-select');
+      if (select.value !== org) select.value = org;
+      currentOrg = select.value === org ? org : '';
+      currentPage = 1;
+      if (currentOrg) gtag('event', 'filter_org', { org: currentOrg });
+      updateClearFiltersBtn();
+      renderAll();
+    }
+
+    // From the modal: close it and show everything the same institution
+    // publishes. Keeps the region and search in place so "Knee + MGH" is
+    // one click away from any MGH knee protocol.
+    function filterByOrgFromModal(idx) {
+      const org = protocols[idx].sourceOrganization || '';
+      closeModal();
+      setOrgFilter(org);
+      document.getElementById('protocol-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Alphabetical, with counts, straight from the catalog.
+    function populateOrgFilter() {
+      const counts = new Map();
+      protocols.forEach(p => {
+        const org = p.sourceOrganization || '';
+        if (org) counts.set(org, (counts.get(org) || 0) + 1);
+      });
+      const select = document.getElementById('org-filter-select');
+      [...counts.keys()].sort((a, b) => a.localeCompare(b)).forEach(org => {
+        const opt = document.createElement('option');
+        opt.value = org;
+        opt.textContent = `${org} (${counts.get(org)})`;
+        select.appendChild(opt);
+      });
+    }
+
     function setView(view) {
       currentView = view;
       document.getElementById('grid-view-btn').classList.toggle('active', view === 'grid');
@@ -746,6 +798,7 @@
           <strong>${escHtml(p.sourceOrganization || 'Unknown')}</strong>
           ${sLabel ? `<span class="source-label src-${p.sourceType}">${sLabel}</span>` : ''}
           ${year ? `<span class="pub-year">${year}</span>` : ''}
+          ${p.sourceOrganization ? `<button type="button" class="modal-org-btn" onclick="filterByOrgFromModal(${idx})">More from this institution →</button>` : ''}
         </div>
         ${p.surgeons ? `<div class="modal-row"><span class="modal-row-label">Surgeon / Author</span><span>${escHtml(p.surgeons)}</span></div>` : ''}
         ${p.wbStatus ? `<div class="modal-row"><span class="modal-row-label">WB Status</span><span>${escHtml(p.wbStatus)}</span></div>` : ''}
@@ -829,6 +882,8 @@
       });
       if (!Object.keys(tagCounts).length) document.getElementById('tag-filter-group').style.display = 'none';
 
+      populateOrgFilter();
+
       // The category cards are real links to the region pages so crawlers can
       // reach them. With JS on, keep the in-page filtering instead of navigating.
       // Modified clicks fall through so open-in-new-tab still works.
@@ -846,6 +901,8 @@
       const params = new URLSearchParams(location.search);
       const qParam = params.get('q');
       const catParam = params.get('category');
+      const orgParam = params.get('org');
+      if (orgParam) setOrgFilter(orgParam);
       if (catParam) {
         const card = document.querySelector(`.category-card[data-category="${CSS.escape(catParam)}"]`);
         if (card) filterByCategory(catParam, card);
@@ -856,7 +913,7 @@
         toggleClearBtn(qParam);
         filterProtocols(qParam);
       }
-      if (!catParam && !qParam) renderAll();
+      if (!catParam && !qParam && !orgParam) renderAll();
 
       let slashJustFocused = false;
 

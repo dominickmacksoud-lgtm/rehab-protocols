@@ -998,6 +998,25 @@ main:not(.rp-page) > .rp-siblings { margin-bottom: 1rem; }
 .page-ellipsis { display: inline-flex; align-items: center; min-width: 1.5rem; justify-content: center; color: #7a95a8; font-size: 0.88rem; user-select: none; }
 
 /* ── Page size select ──────────────────────────────────────────────────── */
+.org-select {
+  max-width: 16rem;
+  text-overflow: ellipsis;
+}
+
+.modal-org-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 0.5rem;
+  color: var(--color-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.modal-org-btn:hover { text-decoration: none; }
+
 .page-size-select {
   padding: 0.3rem 0.5rem;
   border: 1px solid #c8d8e4;
