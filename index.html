@@ -436,6 +436,10 @@
     }
 
     function getFiltered() {
+      return rankByQuery(getFilteredUnranked());
+    }
+
+    function getFilteredUnranked() {
       // Every word of the query must appear somewhere in the protocol
       // (any field), so "ACL allograft" matches "ACL Reconstruction — Allograft".
       // Abbreviations and misspellings ("TKA", "RCR", "menisectomy") resolve
@@ -457,6 +461,31 @@
         acc.push({ p, idx });
         return acc;
       }, []);
+    }
+
+    // With a query, put the protocols whose NAME matches ahead of the ones that
+    // only match in notes or through a dictionary fallback. Without this the
+    // results kept catalog order, so a brand-new "Cervical Radiculopathy"
+    // protocol sat last on page 2 behind 27 cervical fusion pages that only
+    // matched because "radiculopathy" falls back to "cervical". Stable sort:
+    // ties keep catalog order.
+    function rankByQuery(list) {
+      const tokens = queryTokens();
+      if (!tokens.length) return list;
+      const phrase = tokens.join(' ');
+      const score = p => {
+        const name = (p.name || '').toLowerCase();
+        // "Meniscus Repair — ..." outranks "ACL Reconstruction — with Meniscus Repair".
+        if (name.split(' — ').some(seg => seg.startsWith(phrase))) return 4;
+        if (name.includes(phrase)) return 3;
+        if (tokens.every(t => name.includes(t))) return 2;
+        if (tokens.every(t => rpTokenMatches(name, t))) return 1;
+        return 0;
+      };
+      return list
+        .map((item, i) => ({ item, i, s: score(item.p) }))
+        .sort((a, b) => b.s - a.s || a.i - b.i)
+        .map(x => x.item);
     }
 
     // ── Rendering ─────────────────────────────────────────────────────────

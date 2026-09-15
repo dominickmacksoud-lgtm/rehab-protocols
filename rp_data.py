@@ -301,10 +301,27 @@ def classify_source(url, source_org):
     return 'clinic'
 
 
+_NONOP_SUFFIX = re.compile(r'\s*(?:[—–-]\s*)?\(?non-?operative\)?(?=\s|$)', re.IGNORECASE)
+
+
+def _strip_nonop_suffix(category, cleaned_type):
+    """Drop a redundant 'Non-Operative' from the type when it is also the category.
+
+    38 rows carried the label in both places, rendering as
+    'Non-Operative — Cervical Radiculopathy (Non-Operative)'. Display only:
+    slugs come from dedupe_name(), so URLs are untouched.
+    """
+    if not cleaned_type or (category or '').lower() != 'non-operative':
+        return cleaned_type
+    stripped = _NONOP_SUFFIX.sub('', cleaned_type)
+    stripped = re.sub(r'\s{2,}', ' ', stripped).strip().strip('—–- ').strip()
+    return stripped or cleaned_type
+
+
 def protocol_name(record):
     surgery_category = normalize(record.get('Surgery Category'))
     surgery_type = normalize(record.get('Surgery Type'))
-    cleaned_type = dedupe_name(surgery_category, surgery_type)
+    cleaned_type = _strip_nonop_suffix(surgery_category, dedupe_name(surgery_category, surgery_type))
     if surgery_category and cleaned_type:
         return f'{surgery_category} — {cleaned_type}'
     return surgery_category or surgery_type or 'Untitled Protocol'
