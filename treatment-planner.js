@@ -27,6 +27,7 @@
     customType: $('tp-custom-type'), customDesc: $('tp-custom-desc'),
     age: $('tp-age'), procedure: $('tp-procedure'), dateLabel: $('tp-date-label'),
     surgdate: $('tp-surgdate'), weeksOut: $('tp-weeks-out'), comorbid: $('tp-comorbid'),
+    concomitantRow: $('tp-concomitant-row'), concomitant: $('tp-concomitant'),
     vpw: $('tp-vpw'), vlen: $('tp-vlen'), weeks: $('tp-weeks'),
     planOut: $('tp-plan-out'), out: $('tp-out'), charcount: $('tp-charcount'),
     copybtn: $('tp-copy'), resetbtn: $('tp-reset'), promptPanel: $('tp-prompt-panel'),
@@ -388,6 +389,8 @@
     if (start !== null) {
       s += line(postop ? 'Weeks post-op as of today' : 'Weeks since onset as of today', String(start));
     }
+    var concomitant = postop ? clean(els.concomitant.value) : '';
+    s += line('Concomitant procedures and op-report details', concomitant);
     s += line('Relevant comorbidities and context', els.comorbid.value);
     s += line('Visit frequency', n.vpw + ' per week');
     s += line('Visit length', els.vlen.value);
@@ -399,7 +402,22 @@
     }
     s += '.\n\n';
 
+    // Patients often reach therapy weeks after surgery or onset, so the
+    // calendar says where the tissue is but not where the rehab is.
+    var guide = p ? 'the protocol' : 'published guidance';
+    var when = start === null
+      ? 'at their current stage'
+      : 'by ' + (postop ? 'post-op week ' : 'week ') + start + (postop ? '' : ' since onset');
     s += '## What to produce\n\n';
+    s += 'Before planning, check the patient against the milestones ' + guide + '\n';
+    s += 'expects ' + when + ', such as range of motion, muscle activation and gait.\n';
+    s += 'The patient may have started therapy late. Time-based precautions follow the\n';
+    s += 'calendar. Progression follows criteria met, so start the plan at the phase\n';
+    s += 'whose criteria the patient actually meets, even if the calendar points to a\n';
+    s += 'later one, and do not accelerate loading to catch up. Flag any finding the\n';
+    s += (postop ? 'surgeon' : 'referring provider') + ' should hear about, such as range of motion well behind the\n';
+    s += 'expected timeline. If the plan runs past the end of ' + guide + ', say where\n';
+    s += 'it ends and label anything beyond it as your own clinical reasoning.\n\n';
     s += 'First, an initial evaluation covering:\n\n';
     s += '- Subjective history to gather\n';
     s += '- Precautions and contraindications for this patient at this ' + (postop ? 'post-op week' : 'stage') + '\n';
@@ -412,6 +430,9 @@
     s += 'the ' + (postop ? 'post-op week' : 'week since onset') + ' it falls in. For each visit give the focus, the\n';
     s += 'interventions with dosage, the home program changes, and the criteria the\n';
     s += 'patient must meet before progressing.\n\n';
+    s += 'If the whole plan will not fit in one reply, stop at the end of a visit and\n';
+    s += 'tell the clinician to reply "continue". Never shorten later visits to "as\n';
+    s += 'above" or group them together to save space.\n\n';
 
     if (p) {
       s += '## How to handle the protocol\n\n';
@@ -423,6 +444,20 @@
       s += 'the protocol specified it.\n\n';
       s += 'Tie progression to criteria met rather than to the calendar alone, and flag any\n';
       s += 'visit where the plan approaches or crosses one of the stated restrictions.\n';
+      if (postop) {
+        s += '\nSome restrictions may apply only if another procedure was done in the same\n';
+        s += 'surgery, such as a meniscus repair, biceps tenodesis or subscapularis repair.\n';
+        s += 'List each conditional restriction you find. ';
+        if (concomitant) {
+          s += 'Apply the ones that match the\n';
+          s += 'concomitant procedures above, leave out the ones they rule out, and ask\n';
+          s += 'about any the clinician has not addressed before building the plan on it.\n';
+        } else {
+          s += 'The clinician has not listed\n';
+          s += 'any concomitant procedures, so treat each conditional restriction as\n';
+          s += 'unresolved and ask about it before building the plan on it.\n';
+        }
+      }
       if (vc) {
         var lbl = vc.label.toLowerCase();
         if (vc.value) {
@@ -442,6 +477,10 @@
       s += 'and do not present an invented number as if a source specified it.\n\n';
       s += 'Tie progression to criteria met rather than to the calendar alone, and flag any\n';
       s += 'visit where the plan approaches a commonly stated restriction for this case.\n';
+      if (concomitant) {
+        s += '\nApply the precautions commonly stated for each concomitant procedure above\n';
+        s += 'as well, and name the source for each.\n';
+      }
     }
     return s;
   }
@@ -493,6 +532,7 @@
 
     var postop = isPostOp();
     els.dateLabel.textContent = postop ? 'Date of surgery' : 'Date of injury or onset';
+    els.concomitantRow.hidden = !postop;
 
     var wks = weeksSince();
     if (wks === null) {
@@ -576,7 +616,7 @@
   els.variant.addEventListener('change', render);
 
   var REMEMBERED = ['vpw', 'vlen', 'weeks'];
-  ['customType', 'customDesc', 'age', 'procedure', 'surgdate', 'comorbid', 'vpw', 'vlen', 'weeks'].forEach(function (k) {
+  ['customType', 'customDesc', 'age', 'procedure', 'surgdate', 'concomitant', 'comorbid', 'vpw', 'vlen', 'weeks'].forEach(function (k) {
     function onChange() {
       if (k === 'procedure') { els.procedure.dataset.fromLibrary = 'false'; }
       if (REMEMBERED.indexOf(k) !== -1) { savePrefs(); }
