@@ -47,7 +47,9 @@
     acj: ['ac joint', 'acromioclavicular'],
     acromioclavicular: ['ac joint'],
     labrum: ['labral'],
-    labral: ['labrum'],
+    // "capsulolabral" spelled out, since keys match on word boundaries and
+    // three Bankart protocols only ever say "capsulolabral repair".
+    labral: ['labrum', 'capsulolabral'],
     bankart: ['labral', 'instability'],
     latarjet: ['instability'],
     slap: ['labral'],
