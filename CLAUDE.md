@@ -197,8 +197,9 @@ Three things here are deliberate and should not be "cleaned up":
 
 ## Archived (Wayback) protocol links
 
-13 protocols point at `web.archive.org` captures rather than the hospital's own
-site (down from 82; see the restoration note below). In August 2026 Mass General Brigham retired the MGH and Brigham and Women's
+14 protocols point at `web.archive.org` captures rather than the hospital's own
+site (13 MGB, down from 82, see the restoration note below; plus 1 UVA, see
+the UVA note at the end of this section). In August 2026 Mass General Brigham retired the MGH and Brigham and Women's
 PDF asset trees in a CMS migration: every
 `massgeneral.org/assets/**` and `brighamandwomens.org/assets/**` protocol PDF
 began 301-ing to a generic marketing page. The documents were not withdrawn on
@@ -258,6 +259,24 @@ its URL; the generator reported content updates, not retirements), their
   `wayback-repoints.csv` to check.
 - **MGH pediatric ACL reconstruction.** Listed in the folder tree but returns
   404 on both hosts, so it is unpublished.
+
+### UVA site migration, 2026-11-07
+
+UVA rebuilt med.virginia.edu (orthopaedics moved under `/clinical/`) and every
+`med.virginia.edu/orthopaedic-surgery/wp-content/uploads/**` PDF began 404ing.
+The PDFs were republished as `https://brand.uvahealth.com/api/asset/<token>/download`
+links on the department pages: `/clinical/orthopaedic-surgery/sports-medicine/protocols`,
+`.../hand-and-upper-extremity/post-operative-rehabilitation`,
+`.../trauma/clinic-information/trauma-protocols`. 77 rows were repointed with
+`--rekey` (every page kept its URL). Each document is also posted on
+`.../orthopaedic-education/protocols` under a *different* asset token; the
+department-page tokens are the ones in the CSV. The asset URL carries no filename,
+so match on the link text and check the PDF title before repointing.
+
+The Achilles Tendon Repair protocol was not republished and points at its
+Wayback capture (logged in `wayback-repoints.csv`). Rekeying also changes the pid
+that `protocol-variants.csv` uses, so update any pid in that file after a rekey;
+the generator warns `pid ... matches no protocol` when one goes stale.
 
 ## Usage tags (Popular, Trending, Most planned, New)
 
