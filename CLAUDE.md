@@ -37,7 +37,7 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 `protocols-import.csv` → `python generate-protocols.py` → `protocols.js`, `protocols/**`,
 `protocol-slugs.csv`, `sitemap.xml`, and the region pages.
 
-CSV has 13 columns: Body Region, Body Region Display, Surgery Category, Surgery Type, Source Organization, Surgeon(s)/Author(s), Protocol URL, Publication Date, Cataloged Date, WB Status, Key Restrictions, Timeline/Phases, Notes
+CSV has 13 columns, in this order: Body Region, Body Region Display, Surgery Category, Surgery Type, Source Organization, Surgeon(s) / Author(s), Protocol URL, Publication Date, Cataloged Date, WB Status, Key Restrictions, Timeline / Phases, Notes
 
 ```
 python generate-protocols.py                    # everything
@@ -144,7 +144,7 @@ failing silently.
 `guidelines-structured-data.js`, the JSON-LD block in `guidelines/index.html`, and
 the guideline count in `about/index.html`.
 
-CSV has 9 columns: Condition, Body Region, Body Region Display, Issuing Organization, Publication Date, Cataloged Date, Guideline URL, Key Recommendations, Notes
+CSV has 9 columns, in this order: Condition, Body Region, Body Region Display, Issuing Organization, Publication Date, Guideline URL, Key Recommendations, Notes, Cataloged Date
 
 After editing the CSV, run `python generate-guidelines.py` and commit every file it
 changed. Never edit `guidelines.js` manually. The guidelines page lives at

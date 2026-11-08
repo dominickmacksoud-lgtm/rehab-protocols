@@ -31,14 +31,14 @@ guidelines use `Other` for non-regional guidelines, so reuse a value already in
 
 3. Extract every guideline found in the document. Do not filter by body region or assumed scope.
 
-4. For each guideline, fill all 9 CSV fields, in header order:
-   Condition, Body Region, Body Region Display, Issuing Organization,
-   Publication Date, Cataloged Date, Guideline URL, Key Recommendations, Notes.
+4. For each guideline, fill all 9 CSV fields. Take the exact column names from
+   `head -1 guidelines-import.csv`. Note that Cataloged Date is the **last** column.
 
-5. Write the new rows as a JSON list of lists (one list of 9 strings per row) to a
-   file in the scratchpad, then append them with this snippet. It appends bytes
-   only and never rewrites the existing file, and it refuses rows with the wrong
-   field count.
+5. Write the new rows to a file in the scratchpad as a JSON list of objects, one
+   object per row, keyed by those exact column names (all 9 keys, string values).
+   Then append them with this snippet. It fills columns in the file's own order, so
+   key order does not matter, and it refuses any row with a missing or misspelled
+   key. It appends bytes only and never rewrites the existing file.
    ```bash
    python -c "
    import csv, io, json, sys
@@ -50,8 +50,9 @@ guidelines use `Other` for non-regional guidelines, so reuse a value already in
    rows = json.load(open(rows_path, encoding='utf-8'))
    buf = io.StringIO()
    w = csv.writer(buf, lineterminator='\n')
-   for r in rows:
-       assert len(r) == len(header), f'{len(r)} fields, header has {len(header)}: {r[:4]}'
+   for d in rows:
+       assert set(d) == set(header), f'missing keys {set(header) - set(d)}, unknown keys {set(d) - set(header)}'
+       r = [d[h] for h in header]
        assert not any('\n' in f or '\r' in f for f in r), 'fields must be single-line'
        w.writerow(r)
    add = buf.getvalue().encode('utf-8').replace(b'\n', nl)

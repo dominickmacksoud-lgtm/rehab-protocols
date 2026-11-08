@@ -8,6 +8,11 @@ canonical Body Region Display values, no silent filtering, no confirmation step)
 
 1. For each URL, first check it is not already catalogued:
    `grep -F "<URL>" protocols-import.csv`. If it is, report it and skip it.
+   After extracting, also look for a row with the same Source Organization and
+   Surgery Type. If one exists, compare the documents: the same document at a new
+   URL is a repoint of the existing row (see CLAUDE.md, with `--rekey`), not a new
+   row. A genuinely different protocol (another surgeon, approach or version) is
+   added normally.
 
 2. Extract the text. For a PDF (or any URL that downloads a file), run this from
    the repo root. It uses stdlib urllib and the link checker's TLS context, because
@@ -30,17 +35,18 @@ canonical Body Region Display values, no silent filtering, no confirmation step)
 
 3. Extract every protocol found in the document. Do not filter by body region or assumed scope.
 
-4. For each protocol, fill all 13 CSV fields, in header order:
-   Body Region, Body Region Display, Surgery Category, Surgery Type,
-   Source Organization, Surgeon(s)/Author(s), Protocol URL, Publication Date,
-   Cataloged Date, WB Status, Key Restrictions, Timeline/Phases, Notes.
-   Match the existing spelling of the Source Organization if that org is already
-   in the CSV. Every claim in the summary fields must be in the source document.
+4. For each protocol, fill all 13 CSV fields. Take the exact column names from
+   `head -1 protocols-import.csv` (note the spaces in `Surgeon(s) / Author(s)` and
+   `Timeline / Phases`). Match the existing spelling of the Source Organization if
+   that org is already in the CSV. Every claim in the summary fields must be in the
+   source document.
 
-5. Write the new rows as a JSON list of lists (one list of 13 strings per row) to a
-   file in the scratchpad, then append them with this snippet. It appends bytes
-   only and never rewrites the existing file (a DictReader/DictWriter round trip
-   truncates it; see CLAUDE.md). It refuses rows with the wrong field count.
+5. Write the new rows to a file in the scratchpad as a JSON list of objects, one
+   object per row, keyed by those exact column names (all 13 keys, string values).
+   Then append them with this snippet. It fills columns in the file's own order, so
+   key order does not matter, and it refuses any row with a missing or misspelled
+   key. It appends bytes only and never rewrites the existing file (a
+   DictReader/DictWriter round trip truncates it; see CLAUDE.md).
    ```bash
    python -c "
    import csv, io, json, sys
@@ -52,8 +58,9 @@ canonical Body Region Display values, no silent filtering, no confirmation step)
    rows = json.load(open(rows_path, encoding='utf-8'))
    buf = io.StringIO()
    w = csv.writer(buf, lineterminator='\n')
-   for r in rows:
-       assert len(r) == len(header), f'{len(r)} fields, header has {len(header)}: {r[:4]}'
+   for d in rows:
+       assert set(d) == set(header), f'missing keys {set(header) - set(d)}, unknown keys {set(d) - set(header)}'
+       r = [d[h] for h in header]
        assert not any('\n' in f or '\r' in f for f in r), 'fields must be single-line'
        w.writerow(r)
    add = buf.getvalue().encode('utf-8').replace(b'\n', nl)
