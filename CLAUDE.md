@@ -18,7 +18,7 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 | `sitemap.xml` | Auto-generated — do not hand-edit |
 | `topics.csv` | Hand-curated surgery-topic taxonomy (see below) |
 | `protocol-variants.csv` | Hand-curated variant dropdowns (graft type, approach), keyed by **pid** |
-| `cpg_pairings.csv` | Hand-curated protocol-to-guideline pairings shown on protocol pages |
+| `cpg_pairings.csv` | Hand-curated protocol-to-guideline pairings for the Treatment Planner; matches protocols by topic or **pid**, guidelines by URL |
 | `popularity.json` | Auto-managed GA4 usage data behind the Popular/Trending/Planned tags |
 | `ga-popularity.py` | Weekly GA4 export that writes `popularity.json` |
 | `search-synonyms.js` | Search synonym map used by `index.html` |
@@ -35,7 +35,8 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 ## Data Pipeline
 
 `protocols-import.csv` → `python generate-protocols.py` → `protocols.js`, `protocols/**`,
-`protocol-slugs.csv`, `sitemap.xml`, and the region pages.
+`protocol-slugs.csv`, `sitemap.xml`, the region pages, and the protocol counts and
+JSON-LD in `index.html` and `about/index.html`.
 
 CSV has 13 columns, in this order: Body Region, Body Region Display, Surgery Category, Surgery Type, Source Organization, Surgeon(s) / Author(s), Protocol URL, Publication Date, Cataloged Date, WB Status, Key Restrictions, Timeline / Phases, Notes
 
@@ -52,8 +53,9 @@ and badges. It is fine for a quick validation pass; run the full generator befor
 committing.
 
 After editing the CSV, run the generator, then `python rp_verify.py` (read-only, a
-few seconds), and commit every file they changed. Also confirm idempotency: run the
-generator twice and check that `git status --porcelain` is empty on the second run.
+few seconds), and commit every file they changed. Also confirm idempotency: after
+the first run, `git add -A`, run the generator again, and check that `git diff` is
+empty (the second run must change nothing).
 
 **Edit `protocols-import.csv` line by line, never with a whole-file
 DictReader/DictWriter round trip.** Three OSMS rows carry more than 13 fields
@@ -95,10 +97,12 @@ existing URL across, run `python generate-protocols.py --rekey OLDPID=NEWPID`
 rekey shows as `content updated` in the generator output, not as a matching count
 of `new` and `retired`.
 
-**After a rekey, update `protocol-variants.csv`.** It is keyed by pid, so a rekeyed
-row silently loses its variant dropdown. The generator warns
-`protocol-variants.csv line N: pid ... matches no protocol`; replace the old pid
-with the new one.
+**After a rekey, update every pid-keyed file.** `protocol-variants.csv` (variant
+dropdowns) and the `match_type=pid` rows of `cpg_pairings.csv` (planner guideline
+pairings) refer to protocols by pid, so a rekeyed row loses its dropdown or its
+guideline. The generator warns `<file> line N: pid ... matches no protocol`; replace
+the old pid with the new one and regenerate. To check a batch of rekeys at once, grep
+both files for the old pids.
 
 **The generator does not delete retired pages.** Removing a row drops it from
 `protocols.js` and `sitemap.xml`, but the already-written
@@ -147,7 +151,12 @@ the guideline count in `about/index.html`.
 CSV has 9 columns, in this order: Condition, Body Region, Body Region Display, Issuing Organization, Publication Date, Guideline URL, Key Recommendations, Notes, Cataloged Date
 
 After editing the CSV, run `python generate-guidelines.py` and commit every file it
-changed. Never edit `guidelines.js` manually. The guidelines page lives at
+changed. Never edit `guidelines.js` manually.
+
+**If you change a guideline's URL**, also update its `cpg_url` in `cpg_pairings.csv`
+and run `python generate-protocols.py`: pairings match guidelines by URL, and the
+pairing lands in `protocols.js`. The protocol generator warns
+`cpg_url is not in guidelines-import.csv` when one goes stale. The guidelines page lives at
 `guidelines/index.html` and references `../styles.css` and `../guidelines.js`.
 
 ## Ingestion (protocols and guidelines)
@@ -159,6 +168,10 @@ tested snippets. These rules apply to both:
 - Go straight to extraction → CSV append → generate → commit → push. No enumeration or confirmation step needed.
 - Do not silently filter or exclude entries — add all candidates found in the source (other than the completeness guard below).
 - Run the generator and verify no unexpected errors before committing.
+- Every claim in a summary field (WB Status, Key Restrictions, Timeline / Phases,
+  Key Recommendations, Notes) must be stated in the source document. Do not infer or
+  add standard-of-care detail. (A 2026-10 audit had to correct summaries that did.)
+- No em dashes in new user-facing text (summary fields, Notes); use periods or commas.
 
 Protocols only:
 - Completeness guard: if pdfplumber extracts under ~200 characters (image-only scan) or the protocol text ends mid-phase / is missing its later phases, do NOT add it to the CSV — report the rejected PDF and why instead. (Past incidents: image-only and incomplete PDFs reached production and needed removal commits.)
@@ -183,7 +196,7 @@ Statuses worth knowing:
 - **WRONG_TYPE** — a `.pdf` URL returned 200 but served an HTML page whose text
   matches a dead-page marker. Also fix the CSV.
 - **REDIRECT_PERM** — a 301/308. The link still works, but update the CSV to the
-  final URL (with a rekey). A 302/307 (`REDIRECT_TEMP`) does not call for an edit.
+  final URL (protocols need a rekey). A 302/307 (`REDIRECT_TEMP`) does not call for an edit.
 - **WARN** — 403 bot walls, rate limits, and download interstitials (e.g. PMC's
   "Preparing to download" page). Verify in a browser; usually fine. Does not fail the run.
 
@@ -251,8 +264,8 @@ usually a CMS move, not a withdrawn protocol.
    each old URL occurs once). Do not round-trip the CSV.
 5. Compute one `--rekey OLDPID=NEWPID` per row from the old and new URL, then
    regenerate with all of them. Confirm `content updated`, not `new`/`retired`.
-6. Fix any stale pid in `protocol-variants.csv`, run `rp_verify.py`, check
-   idempotency, and re-run `check-links.py --filter <domain>`.
+6. Fix any stale pid in `protocol-variants.csv` and `cpg_pairings.csv`, run
+   `rp_verify.py`, check idempotency, and re-run `check-links.py --filter <domain>`.
 7. Anything not republished goes to its Wayback capture (next section).
 
 Per-source notes:
@@ -286,7 +299,8 @@ Find captures with the CDX API
 (`https://web.archive.org/cdx/search/cdx?url=<url>&output=json&filter=statuscode:200&limit=-3`);
 the availability API rate-limits quickly.
 
-Each archived row gets an `[Archived copy. ...]` note at the end of its Notes field,
+Each archived row gets an `[Archived copy ...]` note at the end of its Notes field
+(older rows use an em dash after "copy"; write new ones without),
 and a row in `wayback-repoints.csv`, the revert ledger: `original_url`, `wayback_url`,
 `snapshot_date`, `snapshot_timestamp`, `surgery_type`, `source_org`,
 `repointed_on`. `original_url` holds the **exact** value that was in
