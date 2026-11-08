@@ -11,12 +11,21 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 | `protocols-import.csv` | Master data (source of truth — never edit protocols.js manually) |
 | `protocols.js` | Auto-generated output |
 | `generate-protocols.py` | Only generator — do not delete |
-| `protocols/**` | Auto-generated static pages (887 protocol + 241 hub + 1 index) |
-| `protocol-slugs.csv` | **URL contract** — auto-managed, never hand-edit (see below) |
-| `topics.csv` | Hand-curated surgery-topic taxonomy |
-| `sitemap.xml` | Auto-generated — do not hand-edit |
 | `rp_*.py` | Generator modules imported by `generate-protocols.py` |
 | `rp_verify.py` | Read-only checker for pages, links, JSON-LD, ledger, sitemap |
+| `protocols/**` | Auto-generated static pages (one per protocol, plus topic hubs and an index) |
+| `protocol-slugs.csv` | **URL contract** — auto-managed, never hand-edit (see below) |
+| `sitemap.xml` | Auto-generated — do not hand-edit |
+| `topics.csv` | Hand-curated surgery-topic taxonomy (see below) |
+| `protocol-variants.csv` | Hand-curated variant dropdowns (graft type, approach), keyed by **pid** |
+| `cpg_pairings.csv` | Hand-curated protocol-to-guideline pairings shown on protocol pages |
+| `popularity.json` | Auto-managed GA4 usage data behind the Popular/Trending/Planned tags |
+| `ga-popularity.py` | Weekly GA4 export that writes `popularity.json` |
+| `search-synonyms.js` | Search synonym map used by `index.html` |
+| `treatment-planner.js` | Treatment Planner app (`/treatment-planner/`) |
+| `templates/` | Page templates used by the generator |
+| `guidelines-import.csv` | Guidelines master data |
+| `generate-guidelines.py` | Guidelines generator |
 | `terms-of-use/index.html` | Legal terms page at /terms-of-use/ |
 | `check-links.py` | Link health checker — verifies every URL in both CSVs (see below) |
 | `test-check-links.py` | Offline regression tests for the link checker — run after editing it |
@@ -25,24 +34,43 @@ Static HTML/CSS/JS site. No build step. Push to `master` on GitHub (dominickmack
 
 ## Data Pipeline
 
-`protocols-import.csv` → `python generate-protocols.py` → `protocols.js`
+`protocols-import.csv` → `python generate-protocols.py` → `protocols.js`, `protocols/**`,
+`protocol-slugs.csv`, `sitemap.xml`, and the region pages.
 
 CSV has 13 columns: Body Region, Body Region Display, Surgery Category, Surgery Type, Source Organization, Surgeon(s)/Author(s), Protocol URL, Publication Date, Cataloged Date, WB Status, Key Restrictions, Timeline/Phases, Notes
 
-After editing CSV, always run `python generate-protocols.py` and commit the changed
-files. One command still does everything; it now also writes `protocols/**`,
-`protocol-slugs.csv`, and `sitemap.xml`, so expect more files in `git status`.
-
 ```
 python generate-protocols.py                    # everything
-python generate-protocols.py --skip-pages       # protocols.js only (fast)
+python generate-protocols.py --skip-pages       # fast validation only (see warning)
 python generate-protocols.py --emit-topics-skeleton  # draft topics.csv
 python rp_verify.py                             # check the result
 ```
 
-Then run `python rp_verify.py` before committing. It is read-only and takes a few
-seconds. Also confirm idempotency: run the generator twice and check that
-`git status --porcelain` is empty on the second run.
+**Never commit `protocols.js` from a `--skip-pages` run.** That mode writes it
+without each entry's page `path` and usage `tags`, which strips every card's link
+and badges. It is fine for a quick validation pass; run the full generator before
+committing.
+
+After editing the CSV, run the generator, then `python rp_verify.py` (read-only, a
+few seconds), and commit every file they changed. Also confirm idempotency: run the
+generator twice and check that `git status --porcelain` is empty on the second run.
+
+**Edit `protocols-import.csv` line by line, never with a whole-file
+DictReader/DictWriter round trip.** Three OSMS rows carry more than 13 fields
+(unescaped quotes in their Notes), so `csv.DictWriter` raises *after* truncating
+the file it opened. A round trip also re-quotes hundreds of untouched rows. To
+change a row, parse and rewrite only that line; to add rows, append bytes (the
+`/ingest-protocols` command has a tested snippet). The file is bare-LF, no BOM,
+one record per line.
+
+**Known expected generator warnings.** Neither needs action:
+- `Shares URL with row N but different Surgery Type` (21 rows). One PDF covers
+  several approaches or graft types: MGH ACL, Lahey THA, University Hospitals ACL
+  and hip arthroscopy, nine UW Health hand/upper-extremity PDFs, SOMOS Bankart,
+  and SAM meniscus repair.
+- `topic would move X -> Y; keeping pinned URL` (about 30, full runs only).
+  `topics.csv` has been refined since those pages were allocated; the ledger keeps
+  the original topic so the URL never changes. This is the ledger working.
 
 ### The slug ledger — `protocol-slugs.csv`
 
@@ -51,26 +79,31 @@ once allocated, never changes. **Never hand-edit it, and never delete and
 regenerate it** — doing so can reassign hundreds of URLs at once, 404-ing pages
 that Google has already indexed.
 
-Identity is `sha1(Protocol URL + Surgery Type)`, which is a verified primary key
-across all rows. Row order deliberately plays no part: the CSV is hand-edited and
-periodically re-sorted, and a position-derived slug would change every URL below
-an inserted row. Reordering the CSV or inserting rows at the top is verified to
-move zero existing URLs.
+Identity is `sha1(Protocol URL + Surgery Type)` (the pid), a verified primary key
+across all rows. Row order plays no part, so reordering the CSV or inserting rows
+anywhere moves zero existing URLs.
 
 Removing a row from the CSV marks its ledger entry `retired` and reserves that
 slug forever, so a future protocol cannot inherit a dead URL.
 
-If you edit a Protocol URL or Surgery Type on an existing row, the key changes and
+If you edit a Protocol URL or Surgery Type on an existing row, the pid changes and
 the generator reports it as one retirement plus one new page — the old URL will
 404. It prints a `possible renames?` note when it sees that pattern. To carry the
-existing URL across, run `python generate-protocols.py --rekey OLDPID=NEWPID`.
+existing URL across, run `python generate-protocols.py --rekey OLDPID=NEWPID`
+(repeat `--rekey` once per row). Compute pids from the repo root with
+`python -c "import rp_slugs; print(rp_slugs.pid(URL, SURGERY_TYPE))"`. A correct
+rekey shows as `content updated` in the generator output, not as a matching count
+of `new` and `retired`.
 
-**The generator does not delete retired pages.** Removing a row marks the ledger
-entry `retired` and drops it from `protocols.js` and `sitemap.xml`, but the
-already-written `protocols/<topic>/<slug>/index.html` stays on disk and keeps
-being served — pointing at whatever dead source made you remove the row. There is
-no prune step anywhere in `rp_pages.py`. After retiring a protocol, delete its
-directory by hand and re-run `rp_verify.py`:
+**After a rekey, update `protocol-variants.csv`.** It is keyed by pid, so a rekeyed
+row silently loses its variant dropdown. The generator warns
+`protocol-variants.csv line N: pid ... matches no protocol`; replace the old pid
+with the new one.
+
+**The generator does not delete retired pages.** Removing a row drops it from
+`protocols.js` and `sitemap.xml`, but the already-written
+`protocols/<topic>/<slug>/index.html` stays on disk and keeps being served. After
+retiring a protocol, delete its directory by hand and re-run `rp_verify.py`:
 
 ```
 git rm -r protocols/<topic>/<slug>
@@ -91,10 +124,11 @@ aliases, intro`.
 - `merge:<slug>` — alias-only, rows resolve to `<slug>`
 - `exclude` — never a topic; rows fall through to their Surgery Type
 
-Catch-all categories (`Non-Operative`, `Surgical`, `Knee`, `Total Joint
-Replacement`) are `exclude` on purpose. Excluding them is what splits Total Joint
-Replacement into Total Hip and Total Knee, since nobody searches the merged term.
-Leave `intro` blank to get a synthesized factual paragraph, or write your own.
+Catch-all categories are excluded on purpose. `Non-Operative`, `Surgical`, `Knee`,
+`Other` and `General` are hardcoded in `DEFAULT_EXCLUDE` in `rp_topics.py`; `Total
+Joint Replacement` is an `exclude` row in `topics.csv`. Excluding it is what splits
+it into Total Hip and Total Knee, since nobody searches the merged term. Leave
+`intro` blank to get a synthesized factual paragraph, or write your own.
 
 ### Region page sentinels
 
@@ -104,37 +138,35 @@ between them; the hand-written intro paragraph on each page sits outside and is
 never overwritten. If a sentinel goes missing the generator warns rather than
 failing silently.
 
-Known expected generator warnings: MGH ACL protocol (one PDF covers BPTB, Hamstring, and Allograft variants — same URL, different Surgery Types), and Lahey Hospital THA variants (one PDF covers multiple approaches). These are intentional shared-URL entries.
-
-## Protocol Ingestion
-
-- When given a URL or PDF, use `pdfplumber` via Bash for extraction **first** — do not attempt WebFetch on PDFs.
-- Completeness guard: if pdfplumber extracts under ~200 characters (image-only scan) or the protocol text ends mid-phase / is missing its later phases, do NOT add it to the CSV — report the rejected PDF and why instead. (Past incidents: image-only and incomplete PDFs reached production and needed removal commits.)
-- Body Region Display must be one of the canonical values: Shoulder, Knee, Hip, Spine, Ankle/Foot, Elbow, Wrist/Hand, Leg, Multiple, Head. The generator warns on any other value — fix the CSV rather than ignoring the warning (variant spellings fragment the category filter).
-- Go straight to extraction → CSV append → generate → commit → push. No enumeration or confirmation step needed.
-- Do not silently filter or exclude protocols (other than the completeness guard above) — add all candidates found in the source.
-- Run the generator and verify no unexpected errors before committing.
-
 ## Guidelines Pipeline
 
-`guidelines-import.csv` → `python generate-guidelines.py` → `guidelines.js`
+`guidelines-import.csv` → `python generate-guidelines.py` → `guidelines.js`, plus
+`guidelines-structured-data.js`, the JSON-LD block in `guidelines/index.html`, and
+the guideline count in `about/index.html`.
 
 CSV has 9 columns: Condition, Body Region, Body Region Display, Issuing Organization, Publication Date, Cataloged Date, Guideline URL, Key Recommendations, Notes
 
-After editing the CSV, run `python generate-guidelines.py` and commit both files. Never edit `guidelines.js` manually.
+After editing the CSV, run `python generate-guidelines.py` and commit every file it
+changed. Never edit `guidelines.js` manually. The guidelines page lives at
+`guidelines/index.html` and references `../styles.css` and `../guidelines.js`.
 
-The guidelines page lives at `guidelines/index.html` and references `../styles.css` and `../guidelines.js`.
+## Ingestion (protocols and guidelines)
 
-## Guideline Ingestion
+`/ingest-protocols` and `/ingest-guidelines` hold the step-by-step procedure and
+tested snippets. These rules apply to both:
 
-- When given a URL or PDF, use `pdfplumber` via Bash for extraction **first** — do not attempt WebFetch on PDFs.
+- When given a URL or PDF, use `pdfplumber` via Bash for extraction **first** — do not attempt WebFetch on PDFs. Use stdlib urllib to download; `import requests` fails from the repo root (see Link Checking).
 - Go straight to extraction → CSV append → generate → commit → push. No enumeration or confirmation step needed.
-- Do not silently filter or exclude guidelines — add all candidates found in the source.
+- Do not silently filter or exclude entries — add all candidates found in the source (other than the completeness guard below).
 - Run the generator and verify no unexpected errors before committing.
+
+Protocols only:
+- Completeness guard: if pdfplumber extracts under ~200 characters (image-only scan) or the protocol text ends mid-phase / is missing its later phases, do NOT add it to the CSV — report the rejected PDF and why instead. (Past incidents: image-only and incomplete PDFs reached production and needed removal commits.)
+- Body Region Display must be one of the canonical values: Shoulder, Knee, Hip, Spine, Ankle/Foot, Elbow, Wrist/Hand, Leg, Multiple, Head. The generator warns on any other value — fix the CSV rather than ignoring the warning (variant spellings fragment the category filter). Guidelines use their own values, including `Other`.
 
 ## Link Checking
 
-`python check-links.py` verifies every URL in both CSVs. ~900 URLs, ~2.5 min.
+`python check-links.py` verifies every URL in both CSVs. About 970 URLs, about 3 min.
 
 ```
 python check-links.py                    # everything
@@ -149,14 +181,22 @@ Exit codes: `0` clean, `1` broken links found, `2` script error. Results land in
 Statuses worth knowing:
 - **BROKEN** — real HTTP failure. Fix the CSV.
 - **WRONG_TYPE** — a `.pdf` URL returned 200 but served an HTML page whose text
-  matches a dead-page marker. Also fix the CSV; the old checker reported these as OK.
+  matches a dead-page marker. Also fix the CSV.
+- **REDIRECT_PERM** — a 301/308. The link still works, but update the CSV to the
+  final URL (with a rekey). A 302/307 (`REDIRECT_TEMP`) does not call for an edit.
 - **WARN** — 403 bot walls, rate limits, and download interstitials (e.g. PMC's
   "Preparing to download" page). Verify in a browser; usually fine. Does not fail the run.
 
-After changing `check-links.py`, run `python test-check-links.py` — 9 offline cases
+After changing `check-links.py`, run `python test-check-links.py` — offline cases
 against a localhost server, ~2 seconds, no network. It pins the classification rules
 that are easy to break by accident (soft-404 vs. interstitial, HEAD-hostile fallback,
 mislabeled content types, permanent vs. temporary redirects).
+
+To verify a single URL the way the checker does (curl can disagree):
+
+```
+python -c "import importlib.util as u;s=u.spec_from_file_location('c','check-links.py');m=u.module_from_spec(s);s.loader.exec_module(m);o,t=m.make_opener(m.make_ssl_context());print(m.check_url(o,t,'URL'))"
+```
 
 ### Weekly automation
 
@@ -182,7 +222,9 @@ Link health runs in two halves, both on Mondays:
    cloud environment (the Default one blocks all outbound traffic). Even there,
    web.archive.org resets connections from the sandbox, so Wayback captures are
    verified by the detector, not the routine. The sandbox has no `gh`; the
-   routine uses the GitHub MCP tools instead.
+   routine uses the GitHub MCP tools instead. **Its prompt tells it to read this
+   file's slug ledger, archived Wayback links and 2026-09-06 restoration
+   sections, so keep those headings and their rules intact.**
 
 Three things here are deliberate and should not be "cleaned up":
 1. **stdlib urllib, not requests/httpx.** `requests` cannot be imported from the repo
@@ -190,21 +232,49 @@ Three things here are deliberate and should not be "cleaned up":
    package. httpx was tried and reverted: ~105 URLs answer 200 to urllib but 403 to
    httpx. Do not swap the transport without re-running a full check and comparing 403s.
 2. **Legacy TLS renegotiation is enabled.** lahey.org (33 URLs) runs an old TLS stack
-   that OpenSSL 3 rejects outright. These were previously blanket-skipped as
-   "bot-blocked", which was a misdiagnosis.
+   that OpenSSL 3 rejects outright, so it is not "bot-blocked".
 3. **No domain skip list.** Every URL gets checked. Use `--skip <domain>` for a
    temporary, explicit exemption instead of hardcoding one.
+
+## Repointing a source that moved its PDFs
+
+Hospitals migrate their sites wholesale (MGB in 2026-08, UVA in 2026-11), so a whole
+organization's links break at once. Repoint rather than delete; a dead link is
+usually a CMS move, not a withdrawn protocol.
+
+1. Find the republished copies on the **same organization's** site. Never point a
+   row at another organization's document, even for the same surgery.
+2. Match each row to its new document by filename or link text, then download the
+   PDF and confirm its title, procedure and completeness against the row.
+3. Verify every new URL with the `check_url` one-liner above.
+4. Swap old URL for new with a byte-level replace in `protocols-import.csv` (assert
+   each old URL occurs once). Do not round-trip the CSV.
+5. Compute one `--rekey OLDPID=NEWPID` per row from the old and new URL, then
+   regenerate with all of them. Confirm `content updated`, not `new`/`retired`.
+6. Fix any stale pid in `protocol-variants.csv`, run `rp_verify.py`, check
+   idempotency, and re-run `check-links.py --filter <domain>`.
+7. Anything not republished goes to its Wayback capture (next section).
+
+Per-source notes:
+- **UVA (2026-11-07).** Orthopaedics moved under `med.virginia.edu/clinical/`; PDFs
+  are `https://brand.uvahealth.com/api/asset/<token>/download` links on the
+  department pages (`.../sports-medicine/protocols`,
+  `.../hand-and-upper-extremity/post-operative-rehabilitation`,
+  `.../trauma/clinic-information/trauma-protocols`). Each document is also on
+  `.../orthopaedic-education/protocols` under a *different* token; the CSV uses the
+  department-page tokens. The URL carries no filename, so match on link text.
+  Achilles Tendon Repair was not republished and is on Wayback.
+- **MGB.** See the restoration section below.
 
 ## Archived (Wayback) protocol links
 
 14 protocols point at `web.archive.org` captures rather than the hospital's own
-site (13 MGB, down from 82, see the restoration note below; plus 1 UVA, see
-the UVA note at the end of this section). In August 2026 Mass General Brigham retired the MGH and Brigham and Women's
-PDF asset trees in a CMS migration: every
-`massgeneral.org/assets/**` and `brighamandwomens.org/assets/**` protocol PDF
-began 301-ing to a generic marketing page. The documents were not withdrawn on
-clinical grounds — the whole tree went at once, index page included — so they were
-repointed at their last good capture rather than deleted.
+site: 12 Brigham and Women's rows, MGH pediatric ACL, and UVA Achilles. In August
+2026 Mass General Brigham retired the MGH and Brigham and Women's PDF asset trees in
+a CMS migration (every `massgeneral.org/assets/**` and `brighamandwomens.org/assets/**`
+PDF began 301-ing to a generic marketing page), so 82 rows were repointed at their
+last good capture rather than deleted. One protocol, MGH's Lower Trapezius Tendon
+Transfer, had no capture at all and was removed.
 
 **Archived URLs must use the `id_` modifier** — `/web/<timestamp>id_/<original-url>`.
 The plain `/web/<timestamp>/` form content-negotiates: browsers and curl get the
@@ -212,28 +282,29 @@ PDF, but urllib (and therefore `check-links.py`) gets Wayback's HTML toolbar pag
 instead, so every archived link reads as a broken PDF forever. Verify any new
 archive.org link through the checker's own code path, not curl — curl cannot see
 this failure. `id_` serves the archived file itself and returns `application/pdf`.
+Find captures with the CDX API
+(`https://web.archive.org/cdx/search/cdx?url=<url>&output=json&filter=statuscode:200&limit=-3`);
+the availability API rate-limits quickly.
 
-`wayback-repoints.csv` is the revert ledger: `original_url`, `wayback_url`,
+Each archived row gets an `[Archived copy. ...]` note at the end of its Notes field,
+and a row in `wayback-repoints.csv`, the revert ledger: `original_url`, `wayback_url`,
 `snapshot_date`, `snapshot_timestamp`, `surgery_type`, `source_org`,
 `repointed_on`. `original_url` holds the **exact** value that was in
 `protocols-import.csv`, which is what a revert must write back and what the slug
 ledger's pid is derived from — not the archive's normalized copy of it, which
 differs in case.
 
-If MGB republishes, revert by writing `original_url` back over `wayback_url` in
-`protocols-import.csv`, then regenerate **with rekeys**, since Protocol URL is
-half the identity hash:
+If a source republishes, revert by writing `original_url` back over `wayback_url` in
+`protocols-import.csv`, strip the archived note, remove the ledger row, then
+regenerate **with rekeys**, since Protocol URL is half the identity hash. This
+prints the rekeys for every row still in the ledger (trim to the rows you revert):
 
 ```
 python -c "import csv,importlib.util as u;s=u.spec_from_file_location('r','rp_slugs.py');m=u.module_from_spec(s);s.loader.exec_module(m);[print(f'--rekey {m.pid(r[\"wayback_url\"],r[\"surgery_type\"])}={m.pid(r[\"original_url\"],r[\"surgery_type\"])}',end=' ') for r in csv.DictReader(open('wayback-repoints.csv',newline='',encoding='utf-8'))]"
 ```
 
-Without `--rekey`, changing 82 Protocol URLs retires 82 slugs and allocates 82 new
-ones, 404-ing every indexed page. Confirm the generator reports `content updated`,
-not a matching count of `new` and `retired`.
-
-One protocol, MGH's Lower Trapezius Tendon Transfer, had no capture in the Wayback
-CDX index at all and was removed instead.
+If the republished URL differs from `original_url`, rekey from `wayback_url` to the
+new URL instead.
 
 ### Restoration, 2026-09-06
 
@@ -246,10 +317,7 @@ folder through one JSON endpoint, which is the fast way to enumerate it:
 https://www.massgeneralbrigham.org/bin/mgb/pdflist?path=/content/dam/unified-xwalk/pdf/patient-education/english
 ```
 
-69 MGH rows were repointed at the live URLs (with `--rekey`, so every page kept
-its URL; the generator reported content updates, not retirements), their
-`[Archived copy ...]` notes stripped, and their rows removed from
-`wayback-repoints.csv`. Still archived, deliberately:
+69 MGH rows were repointed at the live URLs with `--rekey`. Still archived, deliberately:
 
 - **12 Brigham and Women's rows.** Their documents were not republished. The
   folder's THA, TKA, rTSA, TSA, hip arthroscopy and ACL PDFs are the MGH
@@ -259,24 +327,6 @@ its URL; the generator reported content updates, not retirements), their
   `wayback-repoints.csv` to check.
 - **MGH pediatric ACL reconstruction.** Listed in the folder tree but returns
   404 on both hosts, so it is unpublished.
-
-### UVA site migration, 2026-11-07
-
-UVA rebuilt med.virginia.edu (orthopaedics moved under `/clinical/`) and every
-`med.virginia.edu/orthopaedic-surgery/wp-content/uploads/**` PDF began 404ing.
-The PDFs were republished as `https://brand.uvahealth.com/api/asset/<token>/download`
-links on the department pages: `/clinical/orthopaedic-surgery/sports-medicine/protocols`,
-`.../hand-and-upper-extremity/post-operative-rehabilitation`,
-`.../trauma/clinic-information/trauma-protocols`. 77 rows were repointed with
-`--rekey` (every page kept its URL). Each document is also posted on
-`.../orthopaedic-education/protocols` under a *different* asset token; the
-department-page tokens are the ones in the CSV. The asset URL carries no filename,
-so match on the link text and check the PDF title before repointing.
-
-The Achilles Tendon Repair protocol was not republished and points at its
-Wayback capture (logged in `wayback-repoints.csv`). Rekeying also changes the pid
-that `protocol-variants.csv` uses, so update any pid in that file after a rekey;
-the generator warns `pid ... matches no protocol` when one goes stale.
 
 ## Usage tags (Popular, Trending, Most planned, New)
 
@@ -290,6 +340,9 @@ and hides any button whose tag has no protocols yet.
   dimensions only, no custom definitions), then regenerates and pushes. It
   needs two repository secrets, `GA4_PROPERTY_ID` and `GA4_SA_KEY`; without
   them it leaves the file alone and only the `new` tag refreshes.
+- Because that workflow pushes to `master` every Monday, a local branch started
+  before then will be rejected on push. Rebase; if `protocols.js` or `sitemap.xml`
+  conflict, take either side and re-run the generator rather than merging by hand.
 - Thresholds live in `rp_signals.py`, not the export script, so tags are a pure
   function of the committed data. `new` = catalogued within 60 days, from the
   CSV's Cataloged Date (mixed formats, parsed) falling back to the ledger's
@@ -299,8 +352,6 @@ and hides any button whose tag has no protocols yet.
 
 ## Session Handoff
 
-At the end of any work session (when asked to "wrap up" or "finish"):
-
-1. Run `git status` and `git diff --stat` to review what changed.
-2. Stage, commit with a descriptive message, and push.
-3. Output a handoff summary covering: files changed, commits made, what's next, and any blockers.
+When asked to "wrap up" or "finish", follow `.claude/commands/handoff.md`
+(review changes, commit, push, then summarize files changed, commits, what's
+next, and blockers).
