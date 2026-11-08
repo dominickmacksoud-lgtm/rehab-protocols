@@ -210,7 +210,9 @@ def build_body(report, previous):
              "For a Wayback repoint also add a row to `wayback-repoints.csv` and note the archived copy in the row's Notes.")
     L.append("3. Changing a Protocol URL changes the page's identity. Regenerate with a rekey so the page keeps its address "
              "(see the slug ledger section of CLAUDE.md): `python generate-protocols.py --rekey OLDPID=NEWPID`, "
-             "then `python rp_verify.py`. Guidelines only need `python generate-guidelines.py`.")
+             "then `python rp_verify.py`. Guidelines need `python generate-guidelines.py`. "
+             "If the guideline's old URL also appears in `cpg_pairings.csv` (it is paired with protocols in the Treatment Planner), "
+             "update it there too and run `python generate-protocols.py`.")
     L.append("4. If the document is gone for good, remove the row and delete its `protocols/<topic>/<slug>/` directory.")
     L.append("5. Confirm with `python check-links.py --failed`, then commit and push.")
     L.append("")
