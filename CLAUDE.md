@@ -276,13 +276,14 @@ Per-source notes:
   `.../trauma/clinic-information/trauma-protocols`). Each document is also on
   `.../orthopaedic-education/protocols` under a *different* token; the CSV uses the
   department-page tokens. The URL carries no filename, so match on link text.
-  Achilles Tendon Repair was not republished and is on Wayback.
+  Achilles Tendon Repair was republished later on the sports medicine page (link
+  text "Achilles Repair") and came off Wayback on 2026-11-13.
 - **MGB.** See the restoration section below.
 
 ## Archived (Wayback) protocol links
 
-14 protocols point at `web.archive.org` captures rather than the hospital's own
-site: 12 Brigham and Women's rows, MGH pediatric ACL, and UVA Achilles. In August
+12 protocols point at `web.archive.org` captures rather than the hospital's own
+site, all of them Brigham and Women's rows. In August
 2026 Mass General Brigham retired the MGH and Brigham and Women's PDF asset trees in
 a CMS migration (every `massgeneral.org/assets/**` and `brighamandwomens.org/assets/**`
 PDF began 301-ing to a generic marketing page), so 82 rows were repointed at their
@@ -339,8 +340,10 @@ https://www.massgeneralbrigham.org/bin/mgb/pdflist?path=/content/dam/unified-xwa
   misattribute the source, so they stay on Wayback until Brigham's own files
   reappear. Re-run the endpoint above and match on the original filenames in
   `wayback-repoints.csv` to check.
-- **MGH pediatric ACL reconstruction.** Listed in the folder tree but returns
-  404 on both hosts, so it is unpublished.
+- **MGH pediatric ACL reconstruction.** Was listed in the folder tree but 404 until
+  it went live as `pediatric-acl-reconstruction.pdf` (a new filename). Repointed
+  2026-11-13 after its text matched the archived copy exactly. The file is served
+  gzip-encoded, so decompress before reading it with pdfplumber.
 
 ### Monthly Wayback republish check
 
