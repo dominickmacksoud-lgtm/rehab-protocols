@@ -342,6 +342,35 @@ https://www.massgeneralbrigham.org/bin/mgb/pdflist?path=/content/dam/unified-xwa
 - **MGH pediatric ACL reconstruction.** Listed in the folder tree but returns
   404 on both hosts, so it is unpublished.
 
+### Monthly Wayback republish check
+
+A second claude.ai routine, "Wayback republish check" (Sonnet 5.5, Full Network,
+no connectors), runs on the 1st of each month at 12:00 UTC. It reads
+`wayback-repoints.csv`, looks for each archived document on the same
+organization's own site, and files one issue titled `Wayback revert candidates: ...`
+only when it finds something. A quiet month means nothing was republished. Like the
+triage routine it is advisory only and relies on this file's Wayback and restoration
+sections.
+
+## Claude Code guardrail hooks
+
+`.claude/settings.json` runs `.claude/hooks/guard.py` before every Edit, Write, Bash
+and PowerShell call in a Claude Code session. It blocks:
+
+- hand edits to `protocol-slugs.csv`, `protocols.js`, `sitemap.xml`, `guidelines.js`,
+  `guidelines-structured-data.js`, `popularity.json` and anything under `protocols/`
+- shell commands that delete, move or overwrite `protocol-slugs.csv` or
+  `generate-protocols.py`
+- `git commit` while `protocols.js` is a `--skip-pages` build
+- `git commit` while `rp_verify.py --ledger --sitemap --jsonld --pages` fails (only
+  when pipeline files changed; about 15 seconds)
+
+The commit check skips `--links` because that pass can take two minutes, so still run
+the full `python rp_verify.py` by hand after generating. The match is on command
+text, so a command that merely quotes a blocked pattern is also refused; put such
+text in a file instead. `python .claude/hooks/guard.py --selftest` checks the rules.
+The hooks only bind Claude sessions, not commits made by hand or by the workflows.
+
 ## Usage tags (Popular, Trending, Most planned, New)
 
 `popularity.json` → `rp_signals.py` → a `tags` array on each protocols.js entry.
